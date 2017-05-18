@@ -1,0 +1,39 @@
+html, body {
+    width: 100%;
+    user-select: none;
+    color: white;
+    background-color: rgb(26, 26, 26);
+}
+
+#root {
+    width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgb(54, 59, 64);
+}
+
+.title {
+    text-align: center;
+}
+
+.vbox {
+    display: flex;
+    flex-direction: column;
+}
+
+.hbox {
+    display: flex;
+    flex-direction: row;
+}
+
+.block-type-button {
+    cursor: pointer;
+}
+
+.active-block-type {
+    border: 1px solid black;
+}
+
+.inactive-block-type {
+    border: 1px solid transparent;
+}
