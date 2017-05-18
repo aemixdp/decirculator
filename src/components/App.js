@@ -205,6 +205,16 @@ export default class extends React.Component {
             selectedObject: object,
         });
     }
+    handlePropertyChange = (e, object, propName, propValue) => {
+        const mapper = (o) =>
+            o.id !== object.id ? o
+                : { ...o, [propName]: propValue };
+        this.setState({
+            blocks: this.state.blocks.map(mapper),
+            wires: this.state.wires.map(mapper),
+            selectedObject: mapper(this.state.selectedObject),
+        }, () => console.log(this.state));
+    }
     renderBlock = (block) => {
         return block &&
             <block.blockType.component {...block}
@@ -231,7 +241,9 @@ export default class extends React.Component {
     }
     renderProps = (object) => {
         return object &&
-            <Props {...object} />;
+            <Props {...object}
+                onPropertyChange={this.handlePropertyChange}
+            />;
     }
     render() {
         return (

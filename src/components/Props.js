@@ -57,7 +57,7 @@ export default class Props extends React.Component {
                 </span>
                 {filteredProps.map(([key, value]) =>
                     <div key={key}>
-                        <span>{mangle(key)}=</span>
+                        <span>{mangle(key)}:</span>
                         <input data-prop={key}
                             value={value}
                             onChange={this.handlePropertyChange}
