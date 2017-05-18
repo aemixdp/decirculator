@@ -37,3 +37,21 @@ html, body {
 .inactive-block-type {
     border: 1px solid transparent;
 }
+
+.object-properties {
+    padding: 4px;
+    height: 20px;
+    background-color: gray;
+}
+
+.object-properties input[type="checkbox"] {
+    margin-top: 6px;
+}
+
+.object-properties > * {
+    margin-right: 10px;
+}
+
+.object-properties input {
+    height: 10px;
+}
