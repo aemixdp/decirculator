@@ -1,6 +1,7 @@
 import React from 'react';
 import { Group, Rect, Circle, Line } from 'react-konva';
 import Side from '../data/Side';
+import utils from '../utils';
 
 export default class Port extends React.Component {
     static LocationInfo = {
@@ -9,30 +10,37 @@ export default class Port extends React.Component {
         [Side.Top]: { x: 23, y: -2, width: 6, height: 4, side: Side.Top },
         [Side.Bottom]: { x: 23, y: 48, width: 6, height: 4, side: Side.Bottom },
     }
-    static centerPoint = (portInfo) => {
-        const pli = portInfo && Port.LocationInfo[portInfo.side];
-        return {
-            x: portInfo.block.x + pli.x + pli.width / 2,
-            y: portInfo.block.y + pli.y + pli.height / 2,
-        };
-    }
-    static defaultProps = {
-        onClick: () => { },
-        onMouseEnter: () => { },
-        onMouseLeave: () => { },
-    }
-    handleClick = (e) => {
-        this.props.onClick(e, this.props.side);
-    }
-    handleMouseEnter = (e) => {
-        this.props.onMouseEnter(e, this.props.side);
-    }
-    handleMouseLeave = (e) => {
-        this.props.onMouseLeave(e, this.props.side);
+    static HoverZones = class extends React.Component {
+        static defaultProps = {
+            onClick: () => { },
+            onMouseEnter: () => { },
+            onMouseLeave: () => { },
+        }
+        handleClick = (e) => {
+            this.props.onClick(e, this.props);
+        }
+        handleMouseEnter = (e) => {
+            this.props.onMouseEnter(e, this.props);
+        }
+        handleMouseLeave = (e) => {
+            this.props.onMouseLeave(e, this.props);
+        }
+        render() {
+            const c = utils.shapes.center(this.props);
+            return (
+                <Circle
+                    x={c.x}
+                    y={c.y}
+                    radius={10}
+                    onClick={this.handleClick}
+                    onMouseEnter={this.handleMouseEnter}
+                    onMouseLeave={this.handleMouseLeave}
+                />
+            );
+        }
     }
     render() {
-        const cx = this.props.x + this.props.width / 2;
-        const cy = this.props.y + this.props.height / 2;
+        const c = utils.shapes.center(this.props);
         return (
             <Group>
                 <Rect
@@ -44,19 +52,11 @@ export default class Port extends React.Component {
                 />
                 {this.props.isHovering &&
                     <Line
-                        points={[cx, cy, cx + this.props.side.x * 6, cy + this.props.side.y * 6]}
+                        points={[c.x, c.y, c.x + this.props.side.x * 6, c.y + this.props.side.y * 6]}
                         strokeWidth={1}
                         stroke="black"
                     />
                 }
-                <Circle
-                    x={cx}
-                    y={cy}
-                    radius={10}
-                    onClick={this.handleClick}
-                    onMouseEnter={this.handleMouseEnter}
-                    onMouseLeave={this.handleMouseLeave}
-                />
             </Group>
         );
     };

@@ -1,17 +1,18 @@
 import React from 'react';
 import { Stage, Layer } from 'react-konva';
-import Port from './Port';
 import Wire from './Wire';
 import Block from './Block';
 import BlockButton from './BlockButton';
 import Props from './Props';
 import Wireframe from './Wireframe';
 import blocks from '../data/blocks';
+import utils from '../utils';
 
 export default class extends React.Component {
     constructor() {
         super();
         this.state = {
+
             idCounter: 0,
             selectedObject: null,
             blocks: [],
@@ -97,7 +98,10 @@ export default class extends React.Component {
                         return {
                             ...wire,
                             startPortInfo: transformedSpi,
-                            startPosition: Port.centerPoint(transformedSpi),
+                            startPosition: utils.shapes.center(
+                                transformedSpi.port,
+                                transformedSpi.block
+                            ),
                         };
                     } else if (epi.block.id === block.id) {
                         const transformedEpi = {
@@ -107,7 +111,10 @@ export default class extends React.Component {
                         return {
                             ...wire,
                             endPortInfo: transformedEpi,
-                            endPosition: Port.centerPoint(transformedEpi),
+                            endPosition: utils.shapes.center(
+                                transformedEpi.port,
+                                transformedEpi.block
+                            ),
                         };
                     } else {
                         return wire;
@@ -131,7 +138,7 @@ export default class extends React.Component {
     handleViewportMouseDown = (e) => {
         if (this.state.hoveringPortInfo) {
             const hpi = this.state.hoveringPortInfo;
-            const startPosition = Port.centerPoint(hpi);
+            const startPosition = utils.shapes.center(hpi.port, hpi.block);
             this.setState({
                 idCounter: this.state.idCounter + 1,
                 newWire: {
@@ -162,12 +169,12 @@ export default class extends React.Component {
     }
     handleViewportMouseMove = (e) => {
         if (this.state.newWire) {
-            const w = this.state.newWire;
             const hpi = this.state.hoveringPortInfo;
+            const ep = hpi && utils.shapes.center(hpi.port, hpi.block);
             this.setState({
                 newWire: {
-                    ...w,
-                    endPosition: hpi ? Port.centerPoint(hpi) : {
+                    ...this.state.newWire,
+                    endPosition: ep || {
                         x: e.evt.offsetX - this.state.viewportOffset.x,
                         y: e.evt.offsetY - this.state.viewportOffset.y,
                     },
@@ -176,25 +183,25 @@ export default class extends React.Component {
             });
         }
     }
-    handlePortClick = (e, block, side) => {
+    handlePortClick = (e, block, port) => {
         this.setState({
             blocks: this.state.blocks.map(b =>
                 b.id !== block.id ? b : {
                     ...b, ports: {
                         ...b.ports,
-                        [side]: b.ports[side] === 'in' ? 'out' : 'in'
+                        [port.side]: b.ports[port.side] === 'in' ? 'out' : 'in'
                     }
                 }
             )
         });
     }
-    handlePortMouseEnter = (e, block, side) => {
+    handlePortMouseEnter = (e, block, port) => {
         this.setState({
-            hoveringPortInfo: { block, side },
+            hoveringPortInfo: { block, port },
         });
         document.body.style.cursor = 'pointer';
     }
-    handlePortMouseLeave = (e, side) => {
+    handlePortMouseLeave = (e, port) => {
         this.setState({
             hoveringPortInfo: null,
         });
@@ -213,7 +220,7 @@ export default class extends React.Component {
             blocks: this.state.blocks.map(mapper),
             wires: this.state.wires.map(mapper),
             selectedObject: mapper(this.state.selectedObject),
-        }, () => console.log(this.state));
+        });
     }
     renderBlock = (block) => {
         return block &&
@@ -221,12 +228,17 @@ export default class extends React.Component {
                 key={`block_${block.id}`}
                 isSelected={this.state.selectedObject &&
                     block.id === this.state.selectedObject.id}
+                hoveringPort={
+                    (
+                        this.state.hoveringPortInfo &&
+                        block.id === this.state.hoveringPortInfo.block.id
+                    )
+                        ? this.state.hoveringPortInfo.port
+                        : null
+                }
                 onDragMove={this.handleBlockDrag}
                 onMouseEnter={this.handleBlockMouseEnter}
                 onMouseLeave={this.handleBlockMouseLeave}
-                onPortMouseEnter={this.handlePortMouseEnter}
-                onPortMouseLeave={this.handlePortMouseLeave}
-                onPortClick={this.handlePortClick}
                 onClick={this.handleObjectClick}
             />;
     }
@@ -244,6 +256,16 @@ export default class extends React.Component {
             <Props {...object}
                 onPropertyChange={this.handlePropertyChange}
             />;
+    }
+    renderHoverZones = () => {
+        return this.state.blocks.map(block =>
+            <Block.HoverZones {...block}
+                key={`hover_zones_${block.id}`}
+                onPortMouseEnter={this.handlePortMouseEnter}
+                onPortMouseLeave={this.handlePortMouseLeave}
+                onPortClick={this.handlePortClick}
+            />
+        );
     }
     render() {
         return (
@@ -282,6 +304,7 @@ export default class extends React.Component {
                         {this.renderBlock(this.state.newBlock)}
                         {this.state.wires.map(this.renderWire)}
                         {this.renderWire(this.state.newWire)}
+                        {this.renderHoverZones()}
                     </Layer>
                 </Stage>
             </div>

@@ -10,31 +10,44 @@ export default class extends React.Component {
         [Side.Bottom]: 'in',
         [Side.Left]: 'in',
     };
+    static HoverZones = class extends React.Component {
+        static defaultProps = {
+            onPortMouseEnter: () => { },
+            onPortMouseLeave: () => { },
+            onPortClick: () => { },
+        }
+        handlePortMouseEnter = (e, port) => {
+            this.props.onPortMouseEnter(e, this.props, port);
+        }
+        handlePortMouseLeave = (e, port) => {
+            this.props.onPortMouseLeave(e, this.props, port);
+        }
+        handlePortClick = (e, port) => {
+            this.props.onPortClick(e, this.props, port);
+        }
+        render() {
+            return (
+                <Group
+                    x={this.props.x}
+                    y={this.props.y}
+                >
+                    {Object.values(Port.LocationInfo).map(pli =>
+                        <Port.HoverZones {...pli}
+                            key={pli.side}
+                            onClick={this.handlePortClick}
+                            onMouseEnter={this.handlePortMouseEnter}
+                            onMouseLeave={this.handlePortMouseLeave}
+                        />
+                    )}
+                </Group>
+            );
+        }
+    }
     static defaultProps = {
-        onPortMouseEnter: () => { },
-        onPortMouseLeave: () => { },
-        onPortClick: () => { },
         onDragStart: () => { },
         onDragEnd: () => { },
         onDragMove: () => { },
         onClick: () => { },
-    }
-    constructor() {
-        super();
-        this.state = {
-            hoveringPortSide: null,
-        };
-    }
-    handlePortMouseEnter = (e, side) => {
-        this.setState({ hoveringPortSide: side });
-        this.props.onPortMouseEnter(e, this.props, side);
-    }
-    handlePortMouseLeave = (e, side) => {
-        this.setState({ hoveringPortSide: null });
-        this.props.onPortMouseLeave(e, this.props, side);
-    }
-    handlePortClick = (e, side) => {
-        this.props.onPortClick(e, this.props, side);
     }
     handleDragStart = (e) => {
         this.props.onDragStart(e, this.props);
@@ -53,7 +66,7 @@ export default class extends React.Component {
             <Group
                 x={this.props.x}
                 y={this.props.y}
-                draggable={this.state.hoveringPortSide === null}
+                draggable={!this.props.hoveringPort}
                 onDragStart={this.handleDragStart}
                 onDragEnd={this.handleDragEnd}
                 onDragMove={this.handleDragMove}
@@ -80,10 +93,8 @@ export default class extends React.Component {
                     <Port {...pli}
                         key={pli.side}
                         direction={this.props.ports[pli.side]}
-                        isHovering={pli.side === this.state.hoveringPortSide}
-                        onClick={this.handlePortClick}
-                        onMouseEnter={this.handlePortMouseEnter}
-                        onMouseLeave={this.handlePortMouseLeave}
+                        isHovering={this.props.hoveringPort &&
+                            pli.side === this.props.hoveringPort.side}
                     />
                 )}
             </Group>
