@@ -29,6 +29,7 @@ export default class Props extends React.Component {
         active: true,
         isSelected: true,
         children: true,
+        hoveringPort: true,
     }
     handlePropertyChange = (e) => {
         this.props.onPropertyChange(e,
@@ -38,7 +39,6 @@ export default class Props extends React.Component {
         );
     }
     render() {
-        console.log(this.props);
         const filteredProps = Object.entries(this.props)
             .filter(([key, value]) =>
                 key.indexOf('on') !== 0 &&
