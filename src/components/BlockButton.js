@@ -24,6 +24,7 @@ export default class BlockButton extends React.Component {
                     <Layer>
                         <this.props.component
                             theme={this.props.theme}
+                            active="true"
                             ports={Block.DefaultPorts}
                             x={2}
                             y={2}

@@ -11,7 +11,11 @@ import utils from '../utils';
 export default class extends React.Component {
     constructor() {
         super();
+        this.themeManager = new utils.ThemeManager({
+            onThemeChanged: this.handleThemeChanged,
+        });
         this.state = {
+            theme: this.themeManager.theme,
             idCounter: 0,
             selectedObject: null,
             blocks: [],
@@ -27,6 +31,11 @@ export default class extends React.Component {
     }
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
+    }
+    handleThemeChanged = () => {
+        this.setState({
+            theme: this.themeManager.theme,
+        });
     }
     handleKeyDown = (e) => {
         if (e.keyCode === 46 /* delete */) {
@@ -225,7 +234,7 @@ export default class extends React.Component {
         return block &&
             <block.blockType.component {...block}
                 key={`block_${block.id}`}
-                theme={this.props.theme}
+                theme={this.state.theme}
                 isSelected={this.state.selectedObject &&
                     block.id === this.state.selectedObject.id}
                 hoveringPort={
@@ -246,7 +255,7 @@ export default class extends React.Component {
         return wire &&
             <Wire {...wire}
                 key={`wire_${wire.id}`}
-                theme={this.props.theme}
+                theme={this.state.theme}
                 isSelected={this.state.selectedObject &&
                     wire.id === this.state.selectedObject.id}
                 onClick={this.handleObjectClick}
@@ -275,7 +284,7 @@ export default class extends React.Component {
                 <div className="hbox">{
                     blocks.map(blockType =>
                         <BlockButton {...blockType}
-                            theme={this.props.theme}
+                            theme={this.state.theme}
                             key={blockType.label}
                             onDragStart={this.handleNewBlockDragStart}
                             onDragEnd={this.handleNewBlockDragEnd}
