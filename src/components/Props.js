@@ -30,6 +30,7 @@ export default class Props extends React.Component {
         isSelected: true,
         children: true,
         hoveringPort: true,
+        theme: true,
     }
     handlePropertyChange = (e) => {
         this.props.onPropertyChange(e,

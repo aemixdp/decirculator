@@ -14,8 +14,8 @@ export default [
         label: 'Pulse (rel)',
         component: (props) =>
             <Block label="P" {...props}>
-                <Text key={1} text="1" x={25} y={11} />
-                <Text key={2} text="4" x={25} y={27} />
+                <Text key={1} fill={props.theme.blockTextColor} text="1" x={25} y={11} />
+                <Text key={2} fill={props.theme.blockTextColor} text="4" x={25} y={27} />
             </Block>
     },
     {
@@ -23,8 +23,8 @@ export default [
         label: 'Pulse (abs)',
         component: (props) =>
             <Block label="P" {...props}>
-                <Text key={1} text="ms" x={27} y={11} />
-                <Text key={2} text="100" x={25} y={27} />
+                <Text key={1} fill={props.theme.blockTextColor} text="ms" x={27} y={11} />
+                <Text key={2} fill={props.theme.blockTextColor} text="100" x={25} y={27} />
             </Block>
     },
     {
@@ -32,8 +32,8 @@ export default [
         label: 'Delay (rel)',
         component: (props) =>
             <Block label="D" {...props}>
-                <Text key={1} text="1" x={25} y={11} />
-                <Text key={2} text="4" x={25} y={27} />
+                <Text key={1} fill={props.theme.blockTextColor} text="1" x={25} y={11} />
+                <Text key={2} fill={props.theme.blockTextColor} text="4" x={25} y={27} />
             </Block>
     },
     {
@@ -41,8 +41,8 @@ export default [
         label: 'Delay (abs)',
         component: (props) =>
             <Block label="D" {...props}>
-                <Text key={1} text="ms" x={27} y={11} />
-                <Text key={2} text="100" x={25} y={27} />
+                <Text key={1} fill={props.theme.blockTextColor} text="ms" x={27} y={11} />
+                <Text key={2} fill={props.theme.blockTextColor} text="100" x={25} y={27} />
             </Block>
     },
     {
@@ -50,8 +50,8 @@ export default [
         label: 'Midi out',
         component: (props) =>
             <Block label="M" {...props}>
-                <Text key={1} text="1" x={28} y={11} />
-                <Text key={2} text="64" x={28} y={27} />
+                <Text key={1} fill={props.theme.blockTextColor} text="1" x={28} y={11} />
+                <Text key={2} fill={props.theme.blockTextColor} text="64" x={28} y={27} />
             </Block>
     },
 ];

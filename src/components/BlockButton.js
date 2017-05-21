@@ -23,6 +23,7 @@ export default class BlockButton extends React.Component {
                 <Stage width={54} height={54}>
                     <Layer>
                         <this.props.component
+                            theme={this.props.theme}
                             ports={Block.DefaultPorts}
                             x={2}
                             y={2}

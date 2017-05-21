@@ -24,7 +24,12 @@ export default class Wire extends React.Component {
                 <Line
                     points={points}
                     strokeWidth={1}
-                    stroke={this.props.isSelected ? 'orange' : 'yellow'}
+                    stroke={this.props.isSelected
+                        ? this.props.theme.selectionColor
+                        : this.props.active
+                        ? this.props.theme.wireColor
+                        : this.props.theme.inactiveColor
+                    }
                 />
                 <Line
                     points={points}

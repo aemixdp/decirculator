@@ -80,11 +80,19 @@ export default class extends React.Component {
                         width={50}
                         height={50}
                         strokeWidth={4}
-                        stroke={this.props.isSelected ? 'orange' : 'black'}
+                        stroke={this.props.isSelected
+                            ? this.props.theme.selectionColor
+                            : this.props.theme.blockOutlineColor
+                        }
+                        fill={this.props.active
+                            ? this.props.theme.blockFillColor
+                            : this.props.theme.inactiveColor
+                        }
                     />
                     <Text
                         x={4} y={11}
                         fontSize={30}
+                        fill={this.props.theme.blockTextColor}
                         text={this.props.label}
                     />
                     {this.props.children}
@@ -92,6 +100,7 @@ export default class extends React.Component {
                 {Object.values(Port.LocationInfo).map(pli =>
                     <Port {...pli}
                         key={pli.side}
+                        theme={this.props.theme}
                         direction={this.props.ports[pli.side]}
                         isHovering={this.props.hoveringPort &&
                             pli.side === this.props.hoveringPort.side}

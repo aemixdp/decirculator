@@ -48,7 +48,10 @@ export default class Port extends React.Component {
                     y={this.props.y}
                     width={this.props.width}
                     height={this.props.height}
-                    fill={this.props.direction === 'in' ? 'red' : 'green'}
+                    fill={this.props.direction === 'in'
+                        ? this.props.theme.inPortColor
+                        : this.props.theme.outPortColor
+                    }
                 />
                 {this.props.isHovering &&
                     <Line
