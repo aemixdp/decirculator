@@ -9,18 +9,22 @@ export default class Wire extends React.Component {
         this.props.onClick(e, this.props);
     }
     render() {
+        const sp = this.props.startPosition;
+        const sd = this.props.startPortInfo.port.side;
+        const ep = this.props.endPosition;
+        const ed = this.props.endPortInfo && this.props.endPortInfo.port.side;
         const points = [
-            this.props.startPosition.x,
-            this.props.startPosition.y,
-            this.props.endPosition.x,
-            this.props.endPosition.y,
+            sp.x, sp.y,
+            sp.x + sd.x * 10, sp.y + sd.y * 10,
+            ...(ed ? [ep.x + ed.x * 10, ep.y + ed.y * 10] : []),
+            ep.x, ep.y,
         ];
         return (
             <Group>
                 <Line
                     points={points}
                     strokeWidth={1}
-                    stroke={this.props.isSelected ? 'orange' : 'purple'}
+                    stroke={this.props.isSelected ? 'orange' : 'yellow'}
                 />
                 <Line
                     points={points}
