@@ -12,9 +12,19 @@ export default class extends React.Component {
         return (
             <Layer {...this.props}>
                 {Array.from({ length: Math.floor(980 / c) }, (_, n) =>
-                    <Line key={+n} stroke="gray" strokeWidth={0.1} points={[c * n - 1, 0, c * n - 1, 600]} />)}
+                    <Line key={+n}
+                        stroke={this.props.theme.wireframeColor}
+                        strokeWidth={0.1}
+                        points={[c * n - 1, 0, c * n - 1, 600]}
+                    />
+                )}
                 {Array.from({ length: Math.floor(610 / c) }, (_, n) =>
-                    <Line key={-n} stroke="gray" strokeWidth={0.1} points={[0, c * n - 1, 960, c * n - 1]} />)}
+                    <Line key={-n}
+                        stroke={this.props.theme.wireframeColor}
+                        strokeWidth={0.1}
+                        points={[0, c * n - 1, 960, c * n - 1]}
+                    />
+                )}
             </Layer>
         );
     }

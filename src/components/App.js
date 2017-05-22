@@ -262,10 +262,11 @@ export default class extends React.Component {
             />;
     }
     renderProps = (object) => {
-        return object &&
-            <Props {...object}
+        return (
+            <Props {...(object || {})}
                 onPropertyChange={this.handlePropertyChange}
-            />;
+            />
+        );
     }
     renderHoverZones = () => {
         return this.state.blocks.map(block =>
@@ -280,8 +281,7 @@ export default class extends React.Component {
     render() {
         return (
             <div className="vbox">
-                <header className="title">DECIRCULATOR</header>
-                <div className="hbox">{
+                <div className="hbox block-buttons">{
                     blocks.map(blockType =>
                         <BlockButton {...blockType}
                             theme={this.state.theme}
@@ -297,7 +297,7 @@ export default class extends React.Component {
                 <Stage ref="viewport"
                     x={this.state.viewportOffset.x}
                     y={this.state.viewportOffset.y}
-                    width={960}
+                    width={952}
                     height={600}
                     draggable={this.state.hoveringPortInfo === null}
                     onDragMove={this.handleViewportDrag}
@@ -306,6 +306,7 @@ export default class extends React.Component {
                     onContentMouseMove={this.handleViewportMouseMove}
                 >
                     <Wireframe
+                        theme={this.state.theme}
                         x={-this.state.viewportOffset.x}
                         y={-this.state.viewportOffset.y}
                         wireframeCellSize={this.props.config.wireframeCellSize}

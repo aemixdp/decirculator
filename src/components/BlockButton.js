@@ -19,24 +19,25 @@ export default class BlockButton extends React.Component {
     }
     render() {
         return (
-            <div className="vbox block-type-button">
-                <Stage width={54} height={54}>
-                    <Layer>
-                        <this.props.component
-                            theme={this.props.theme}
-                            active="true"
-                            ports={Block.DefaultPorts}
-                            x={2}
-                            y={2}
-                            draggable="true"
-                            onDragStart={this.handleDragStart}
-                            onDragEnd={this.handleDragEnd}
-                            onDragMove={this.handleDragMove}
-                        />
-                    </Layer>
-                </Stage>
-                <div>{this.props.label}</div>
-            </div>
+            <Stage
+                className="block-type-button"
+                width={54}
+                height={54}
+            >
+                <Layer>
+                    <this.props.component
+                        theme={this.props.theme}
+                        active="true"
+                        ports={Block.DefaultPorts}
+                        x={2}
+                        y={2}
+                        draggable="true"
+                        onDragStart={this.handleDragStart}
+                        onDragEnd={this.handleDragEnd}
+                        onDragMove={this.handleDragMove}
+                    />
+                </Layer>
+            </Stage>
         );
     }
 }

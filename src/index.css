@@ -1,26 +1,32 @@
 :root {
-    --block-outline-color: black;
-    --block-text-color: black;
-    --block-fill-color: rgb(54, 59, 64);
-    --in-port-color: red;
-    --out-port-color: green;
-    --wire-color: yellow;
-    --selection-color: green;
-    --inactive-color: black;
+    --page-background-color: #141D25;
+    --app-background-color: #8896A6;
+    --wireframe-color: #141D25;
+    --block-outline-color: #374558;
+    --block-text-color: #374558;
+    --block-fill-color: #CDD3D7;
+    --in-port-color: transparent;
+    --out-port-color: #CDD3D7;
+    --wire-color: #CDD3D7;
+    --selection-color: white;
+    --inactive-color: #374558;
 }
 
 html, body {
     width: 100%;
     user-select: none;
-    color: white;
-    background-color: rgb(26, 26, 26);
+    color: #073040;
+    background-color: var(--page-background-color);
+    margin: 0;
+    padding: 10px 0 0 0;
 }
 
 #root {
-    width: 960px;
+    width: 952px;
     margin-left: auto;
     margin-right: auto;
-    background-color: rgb(54, 59, 64);
+    padding-top: 10px;
+    background-color: var(--app-background-color);
 }
 
 .title {
@@ -37,6 +43,10 @@ html, body {
     flex-direction: row;
 }
 
+.block-buttons > * {
+    margin-left: 10px;
+}
+
 .block-type-button {
     cursor: pointer;
 }
@@ -50,9 +60,10 @@ html, body {
 }
 
 .object-properties {
+    margin-top: 10px;
     padding: 4px;
     height: 20px;
-    background-color: gray;
+    background-color: #CDD3D7;
 }
 
 .object-properties input[type="checkbox"] {

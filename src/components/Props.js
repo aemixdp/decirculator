@@ -47,15 +47,18 @@ export default class Props extends React.Component {
             );
         return (
             <div className="hbox object-properties">
-                <input type="checkbox"
-                    data-prop="active"
-                    data-value="checked"
-                    checked={this.props.active}
-                    onChange={this.handlePropertyChange}
-                />
-                <span>
-                    {this.props.kind === 'block' ? this.props.blockType.name : 'wire'}
-                </span>
+                {!this.props.hasOwnProperty('id') ? [] : [
+                    <input type="checkbox"
+                        key="active"
+                        data-prop="active"
+                        data-value="checked"
+                        checked={this.props.active}
+                        onChange={this.handlePropertyChange}
+                    />,
+                    <span key="name">
+                        {this.props.kind === 'block' ? this.props.blockType.name : 'wire'}
+                    </span>,
+                ]}
                 {filteredProps.map(([key, value]) =>
                     <div key={key}>
                         <span>{mangle(key)}:</span>

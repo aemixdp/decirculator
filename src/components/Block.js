@@ -5,10 +5,10 @@ import Port from './Port';
 
 export default class extends React.Component {
     static DefaultPorts = {
-        [Side.Top]: 'in',
-        [Side.Right]: 'in',
-        [Side.Bottom]: 'in',
-        [Side.Left]: 'in',
+        [Side.Top]: 'out',
+        [Side.Right]: 'out',
+        [Side.Bottom]: 'out',
+        [Side.Left]: 'out',
     };
     static HoverZones = class extends React.Component {
         static defaultProps = {
