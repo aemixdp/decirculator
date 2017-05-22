@@ -1,5 +1,6 @@
 import React from 'react';
 import { Stage, Layer } from 'react-konva';
+import update from 'immutability-helper';
 import Wire from './Wire';
 import Block from './Block';
 import BlockButton from './BlockButton';
@@ -162,13 +163,22 @@ export default class extends React.Component {
         }
     }
     handleViewportMouseUp = (e) => {
+        const newWire = this.state.newWire;
         if (
-            this.state.newWire &&
-            this.state.newWire.endPortInfo &&
-            this.state.newWire.endPortInfo.block.id !== this.state.newWire.startPortInfo.block.id
+            newWire &&
+            newWire.endPortInfo &&
+            newWire.endPortInfo.block.id !== newWire.startPortInfo.block.id
         ) {
             this.setState({
-                wires: [...this.state.wires, this.state.newWire],
+                wires: [...this.state.wires, newWire],
+                blocks: this.state.blocks.map(block => {
+                    if (block.id === newWire.startPortInfo.block.id)
+                        return update(block, { ports: { [newWire.startPortInfo.port.side]: { $set: 'out' } } });
+                    else if (block.id === newWire.endPortInfo.block.id)
+                        return update(block, { ports: { [newWire.endPortInfo.port.side]: { $set: 'in' } } });
+                    else
+                        return block;
+                }),
             });
         }
         this.setState({
@@ -192,15 +202,22 @@ export default class extends React.Component {
         }
     }
     handlePortClick = (e, block, port) => {
+        const wire = this.state.wires.find(wire =>
+            (wire.startPortInfo.block.id === block.id && wire.startPortInfo.port.side === port.side) ||
+            (wire.endPortInfo.block.id === block.id && wire.endPortInfo.port.side === port.side)
+        );
+        const togglePort = (block, side) =>
+            update(block, { ports: { [side]: { $set: block.ports[side] === 'in' ? 'out' : 'in' } } });
         this.setState({
-            blocks: this.state.blocks.map(b =>
-                b.id !== block.id ? b : {
-                    ...b, ports: {
-                        ...b.ports,
-                        [port.side]: b.ports[port.side] === 'in' ? 'out' : 'in'
-                    }
-                }
-            )
+            blocks: this.state.blocks.map(b => {
+                if (b.id === block.id)
+                    return togglePort(b, port.side);
+                else if (wire && b.id === wire.startPortInfo.block.id)
+                    return togglePort(b, wire.startPortInfo.port.side);
+                else if (wire && b.id === wire.endPortInfo.block.id)
+                    return togglePort(b, wire.endPortInfo.port.side);
+                else return b;
+            }),
         });
     }
     handlePortMouseEnter = (e, block, port) => {
@@ -263,7 +280,7 @@ export default class extends React.Component {
     }
     renderProps = (object) => {
         return (
-            <Props {...(object || {})}
+            <Props {...(object || {}) }
                 onPropertyChange={this.handlePropertyChange}
             />
         );

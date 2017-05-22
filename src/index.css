@@ -21,6 +21,10 @@ html, body {
     padding: 10px 0 0 0;
 }
 
+input[type="checkbox"]:focus {
+    outline: 0;
+}
+
 #root {
     width: 952px;
     margin-left: auto;
