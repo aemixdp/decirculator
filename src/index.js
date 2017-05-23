@@ -6,5 +6,5 @@ import './index.css';
 
 ReactDOM.render(
     <App config={config} />,
-    document.getElementById('root')
+    document.getElementById('mount')
 );

@@ -6,4 +6,7 @@ export default {
     ThemeManager,
     ...textUtils,
     ...geometryUtils,
+    events: {
+        propagationStopper: (e) => e.stopPropagation(),
+    },
 }

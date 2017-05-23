@@ -13,6 +13,7 @@ const mangle = (str) => {
 export default class Props extends React.Component {
     static defaultProps = {
         onPropertyChange: () => { },
+        onPropertyClick: () => { },
     }
     static ExcludedProps = {
         id: true,
@@ -39,6 +40,9 @@ export default class Props extends React.Component {
             e.target[e.target.dataset.value || 'value']
         );
     }
+    handlePropertyClick = (e) => {
+        this.props.onPropertyClick(e);
+    }
     render() {
         const filteredProps = Object.entries(this.props)
             .filter(([key, value]) =>
@@ -54,6 +58,7 @@ export default class Props extends React.Component {
                         data-value="checked"
                         checked={this.props.active}
                         onChange={this.handlePropertyChange}
+                        onClick={this.handlePropertyClick}
                     />,
                     <span key="name">
                         {this.props.kind === 'block' ? this.props.blockType.name : 'wire'}
@@ -65,6 +70,7 @@ export default class Props extends React.Component {
                         <input data-prop={key}
                             value={value}
                             onChange={this.handlePropertyChange}
+                            onClick={this.handlePropertyClick}
                         />
                     </div>
                 )}

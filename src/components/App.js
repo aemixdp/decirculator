@@ -12,6 +12,7 @@ import utils from '../utils';
 export default class extends React.Component {
     constructor() {
         super();
+        this.clickHandled = false;
         this.themeManager = new utils.ThemeManager({
             onThemeChanged: this.handleThemeChanged,
         });
@@ -29,6 +30,9 @@ export default class extends React.Component {
     }
     componentWillMount() {
         document.addEventListener('keydown', this.handleKeyDown);
+    }
+    componentDidMount() {
+        this.refs.viewport.domNode.addEventListener('click', utils.events.propagationStopper);
     }
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
@@ -50,6 +54,8 @@ export default class extends React.Component {
                 ),
                 selectedObject: null,
             });
+        } else if (e.keyCode === 27 /* esc */) {
+            this.setState({ selectedObject: null });
         }
     }
     handleNewBlockDragStart = (e, blockType) => {
@@ -201,6 +207,17 @@ export default class extends React.Component {
             });
         }
     }
+    handleViewportClick = (e) => {
+        if (!this.clickHandled) {
+            this.setState({
+                selectedObject: null,
+            });
+        }
+        this.clickHandled = false;
+    }
+    handleOuterClick = () => {
+        this.setState({ selectedObject: null });
+    }
     handlePortClick = (e, block, port) => {
         const wire = this.state.wires.find(wire =>
             (wire.startPortInfo.block.id === block.id && wire.startPortInfo.port.side === port.side) ||
@@ -219,6 +236,7 @@ export default class extends React.Component {
                 else return b;
             }),
         });
+        this.clickHandled = true;
     }
     handlePortMouseEnter = (e, block, port) => {
         this.setState({
@@ -236,6 +254,7 @@ export default class extends React.Component {
         this.setState({
             selectedObject: object,
         });
+        this.clickHandled = true;
     }
     handlePropertyChange = (e, object, propName, propValue) => {
         const mapper = (o) =>
@@ -282,6 +301,7 @@ export default class extends React.Component {
         return (
             <Props {...(object || {}) }
                 onPropertyChange={this.handlePropertyChange}
+                onPropertyClick={utils.events.propagationStopper}
             />
         );
     }
@@ -297,45 +317,51 @@ export default class extends React.Component {
     }
     render() {
         return (
-            <div className="vbox">
-                <div className="hbox block-buttons">{
-                    blocks.map(blockType =>
-                        <BlockButton {...blockType}
+            <div
+                className="app-container"
+                onClick={this.handleOuterClick}
+            >
+                <div className="vbox app">
+                    <div className="hbox block-buttons">{
+                        blocks.map(blockType =>
+                            <BlockButton {...blockType}
+                                theme={this.state.theme}
+                                key={blockType.label}
+                                onDragStart={this.handleNewBlockDragStart}
+                                onDragEnd={this.handleNewBlockDragEnd}
+                                onDragMove={this.handleBlockDrag}
+                            />
+                        )
+                    }
+                    </div>
+                    {this.renderProps(this.state.selectedObject)}
+                    <Stage ref="viewport"
+                        x={this.state.viewportOffset.x}
+                        y={this.state.viewportOffset.y}
+                        width={952}
+                        height={600}
+                        draggable={this.state.hoveringPortInfo === null}
+                        onDragMove={this.handleViewportDrag}
+                        onContentMouseDown={this.handleViewportMouseDown}
+                        onContentMouseUp={this.handleViewportMouseUp}
+                        onContentMouseMove={this.handleViewportMouseMove}
+                        onContentClick={this.handleViewportClick}
+                    >
+                        <Wireframe
                             theme={this.state.theme}
-                            key={blockType.label}
-                            onDragStart={this.handleNewBlockDragStart}
-                            onDragEnd={this.handleNewBlockDragEnd}
-                            onDragMove={this.handleBlockDrag}
+                            x={-this.state.viewportOffset.x}
+                            y={-this.state.viewportOffset.y}
+                            wireframeCellSize={this.props.config.wireframeCellSize}
                         />
-                    )
-                }
+                        <Layer>
+                            {this.state.blocks.map(this.renderBlock)}
+                            {this.renderBlock(this.state.newBlock)}
+                            {this.state.wires.map(this.renderWire)}
+                            {this.renderWire(this.state.newWire)}
+                            {this.renderHoverZones()}
+                        </Layer>
+                    </Stage>
                 </div>
-                {this.renderProps(this.state.selectedObject)}
-                <Stage ref="viewport"
-                    x={this.state.viewportOffset.x}
-                    y={this.state.viewportOffset.y}
-                    width={952}
-                    height={600}
-                    draggable={this.state.hoveringPortInfo === null}
-                    onDragMove={this.handleViewportDrag}
-                    onContentMouseDown={this.handleViewportMouseDown}
-                    onContentMouseUp={this.handleViewportMouseUp}
-                    onContentMouseMove={this.handleViewportMouseMove}
-                >
-                    <Wireframe
-                        theme={this.state.theme}
-                        x={-this.state.viewportOffset.x}
-                        y={-this.state.viewportOffset.y}
-                        wireframeCellSize={this.props.config.wireframeCellSize}
-                    />
-                    <Layer>
-                        {this.state.blocks.map(this.renderBlock)}
-                        {this.renderBlock(this.state.newBlock)}
-                        {this.state.wires.map(this.renderWire)}
-                        {this.renderWire(this.state.newWire)}
-                        {this.renderHoverZones()}
-                    </Layer>
-                </Stage>
             </div>
         );
     }
