@@ -25,7 +25,7 @@ export default class BlockButton extends React.Component {
                 height={54}
             >
                 <Layer>
-                    <this.props.component
+                    <this.props.component {...this.props.data}
                         theme={this.props.theme}
                         active="true"
                         ports={Block.DefaultPorts}

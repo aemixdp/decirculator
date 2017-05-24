@@ -67,6 +67,7 @@ export default class extends React.Component {
                 active: true,
                 gateLength: 50,
                 blockType,
+                ...blockType.data,
                 x: -100,
                 y: -100,
                 ports: Block.DefaultPorts,
@@ -325,8 +326,8 @@ export default class extends React.Component {
                     <div className="hbox block-buttons">{
                         blocks.map(blockType =>
                             <BlockButton {...blockType}
+                                key={blockType.name}
                                 theme={this.state.theme}
-                                key={blockType.label}
                                 onDragStart={this.handleNewBlockDragStart}
                                 onDragEnd={this.handleNewBlockDragEnd}
                                 onDragMove={this.handleBlockDrag}

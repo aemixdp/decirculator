@@ -7,8 +7,8 @@ export default class Port extends React.Component {
     static LocationInfo = {
         [Side.Right]: { x: 49, y: 23, width: 2, height: 6, side: Side.Right },
         [Side.Left]: { x: -1, y: 23, width: 2, height: 6, side: Side.Left },
-        [Side.Top]: { x: 23, y: -1, width: 6, height: 2, side: Side.Top },
-        [Side.Bottom]: { x: 23, y: 49, width: 6, height: 2, side: Side.Bottom },
+        [Side.Top]: { x: 22, y: -1, width: 6, height: 2, side: Side.Top },
+        [Side.Bottom]: { x: 22, y: 49, width: 6, height: 2, side: Side.Bottom },
     }
     static HoverZones = class extends React.Component {
         static defaultProps = {

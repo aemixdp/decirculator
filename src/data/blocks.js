@@ -5,53 +5,66 @@ import Block from '../components/Block';
 export default [
     {
         name: 'start',
-        label: 'Start',
+        data: {},
         component: (props) =>
             <Block label="S" {...props} />
     },
     {
-        name: 'pulse-relative',
-        label: 'Pulse (rel)',
+        name: 'clock-relative',
+        data: {
+            beats: 1,
+            noteFraction: 4,
+        },
         component: (props) =>
-            <Block label="P" {...props}>
-                <Text key={1} fill={props.theme.blockTextColor} text="1" x={25} y={11} />
-                <Text key={2} fill={props.theme.blockTextColor} text="4" x={25} y={27} />
+            <Block label="C" {...props}>
+                <Text key={1} text={props.beats} x={25} y={11} fill={props.theme.blockTextColor} />
+                <Text key={2} text={props.noteFraction} x={25} y={27} fill={props.theme.blockTextColor} />
             </Block>
     },
     {
-        name: 'pulse-absolute',
-        label: 'Pulse (abs)',
+        name: 'clock-absolute',
+        data: {
+            delayTime: 100,
+        },
         component: (props) =>
-            <Block label="P" {...props}>
-                <Text key={1} fill={props.theme.blockTextColor} text="ms" x={27} y={11} />
-                <Text key={2} fill={props.theme.blockTextColor} text="100" x={25} y={27} />
+            <Block label="C" {...props}>
+                <Text key={1} text="ms" x={27} y={11} fill={props.theme.blockTextColor} />
+                <Text key={2} text={props.delayTime} x={25} y={27} fill={props.theme.blockTextColor} />
             </Block>
     },
     {
         name: 'delay-relative',
-        label: 'Delay (rel)',
+        data: {
+            beats: 1,
+            noteFraction: 4,
+        },
         component: (props) =>
             <Block label="D" {...props}>
-                <Text key={1} fill={props.theme.blockTextColor} text="1" x={25} y={11} />
-                <Text key={2} fill={props.theme.blockTextColor} text="4" x={25} y={27} />
+                <Text key={1} text={props.beats} x={25} y={11} fill={props.theme.blockTextColor} />
+                <Text key={2} text={props.noteFraction} x={25} y={27} fill={props.theme.blockTextColor} />
             </Block>
     },
     {
         name: 'delay-absolute',
-        label: 'Delay (abs)',
+        data: {
+            delayTime: 100,
+        },
         component: (props) =>
             <Block label="D" {...props}>
-                <Text key={1} fill={props.theme.blockTextColor} text="ms" x={27} y={11} />
-                <Text key={2} fill={props.theme.blockTextColor} text="100" x={25} y={27} />
+                <Text key={1} text="ms" x={27} y={11} fill={props.theme.blockTextColor} />
+                <Text key={2} text={props.delayTime} x={25} y={27} fill={props.theme.blockTextColor} />
             </Block>
     },
     {
         name: 'midi-out',
-        label: 'Midi out',
+        data: {
+            channel: 1,
+            value: 64,
+        },
         component: (props) =>
             <Block label="M" {...props}>
-                <Text key={1} fill={props.theme.blockTextColor} text="1" x={28} y={11} />
-                <Text key={2} fill={props.theme.blockTextColor} text="64" x={28} y={27} />
+                <Text key={1} text={props.channel} x={27} y={11} fill={props.theme.blockTextColor} />
+                <Text key={2} text={props.value} x={27} y={27} fill={props.theme.blockTextColor} />
             </Block>
     },
 ];

@@ -90,7 +90,7 @@ export default class extends React.Component {
                         }
                     />
                     <Text
-                        x={4} y={11}
+                        x={3} y={11}
                         fontSize={30}
                         fill={this.props.theme.blockTextColor}
                         text={this.props.label}

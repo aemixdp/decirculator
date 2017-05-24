@@ -93,4 +93,6 @@ input[type="checkbox"]:focus {
 
 .object-properties input {
     height: 10px;
+    width: 30px;
+    text-align: center;
 }
