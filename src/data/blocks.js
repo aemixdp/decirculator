@@ -4,10 +4,10 @@ import Block from '../components/Block';
 
 export default [
     {
-        name: 'start',
+        name: 'play',
         data: {},
         component: (props) =>
-            <Block label="S" {...props} />
+            <Block label="P" {...props} />
     },
     {
         name: 'clock-relative',
@@ -66,5 +66,35 @@ export default [
                 <Text key={1} text={props.channel} x={27} y={11} fill={props.theme.blockTextColor} />
                 <Text key={2} text={props.value} x={27} y={27} fill={props.theme.blockTextColor} />
             </Block>
+    },
+    {
+        name: 'counter',
+        data: {
+            current: 1,
+            steps: 4,
+        },
+        component: (props) =>
+            <Block label="N" {...props}>
+                <Text key={1} text={props.current} x={25} y={11} fill={props.theme.blockTextColor} />
+                <Text key={2} text={props.steps} x={25} y={27} fill={props.theme.blockTextColor} />
+            </Block>
+    },
+    {
+        name: 'switch',
+        data: {
+            current: 1,
+            steps: 4,
+        },
+        component: (props) =>
+            <Block label="S" {...props}>
+                <Text key={1} text={props.current} x={25} y={11} fill={props.theme.blockTextColor} />
+                <Text key={2} text={props.steps} x={25} y={27} fill={props.theme.blockTextColor} />
+            </Block>
+    },
+    {
+        name: 'and',
+        data: {},
+        component: (props) =>
+            <Block label="&" {...props} />
     },
 ];
