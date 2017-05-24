@@ -1,13 +1,18 @@
 import React from 'react';
 
 const mangle = (str) => {
-    const lc = str.match(/[a-z]+/g);
-    const uc = str.match(/[A-Z]+/g);
-    const result = [lc[0]];
-    for (let i = 1; i < lc.length; ++i) {
-        result.push(uc[i - 1].toLowerCase() + lc[i]);
+    const words = [];
+    let word = '';
+    for (let i = 0; i < str.length; ++i) {
+        if (str[i] === str[i].toUpperCase()) {
+            if (word.length > 0) words.push(word);
+            word = str[i].toLowerCase();
+        } else {
+            word += str[i];
+        }
     }
-    return result.join('-');
+    if (word.length > 0) words.push(word);
+    return words.join('-');
 }
 
 export default class Props extends React.Component {
@@ -32,6 +37,9 @@ export default class Props extends React.Component {
         children: true,
         hoveringPort: true,
         theme: true,
+        labelX: true,
+        labelY: true,
+        labelFontSize: true,
     }
     handlePropertyChange = (e) => {
         this.props.onPropertyChange(e,
@@ -61,7 +69,7 @@ export default class Props extends React.Component {
                         onClick={this.handlePropertyClick}
                     />,
                     <span key="name">
-                        {this.props.kind === 'block' ? this.props.blockType.name : 'wire'}
+                        [{this.props.kind === 'block' ? this.props.blockType.name : 'wire'}]
                     </span>,
                 ]}
                 {filteredProps.map(([key, value]) =>

@@ -2,57 +2,81 @@ import React from 'react';
 import { Text } from 'react-konva';
 import Block from '../components/Block';
 
+const offset = (n, ...offsets) =>
+    offsets[Math.max(`${n}`.length - 1, 0)] ||
+    offsets[offsets.length - 1];
+
 export default [
     {
         name: 'play',
         data: {},
         component: (props) =>
-            <Block label="P" {...props} />
+            <Block {...props}
+                label="▶"
+                labelX={13}
+                labelY={11}
+            />
     },
     {
-        name: 'clock-relative',
+        name: 'clock',
         data: {
             beats: 1,
             noteFraction: 4,
         },
         component: (props) =>
-            <Block label="C" {...props}>
-                <Text key={1} text={props.beats} x={25} y={11} fill={props.theme.blockTextColor} />
-                <Text key={2} text={props.noteFraction} x={25} y={27} fill={props.theme.blockTextColor} />
+            <Block {...props}
+                label="◷"
+                labelX={12}
+                labelY={11}
+            >
+                <Text key={1}
+                    text={props.beats}
+                    x={offset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
+                <Text
+                    key={2}
+                    text={props.noteFraction}
+                    x={offset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
             </Block>
     },
     {
-        name: 'clock-absolute',
-        data: {
-            delayTime: 100,
-        },
-        component: (props) =>
-            <Block label="C" {...props}>
-                <Text key={1} text="ms" x={27} y={11} fill={props.theme.blockTextColor} />
-                <Text key={2} text={props.delayTime} x={25} y={27} fill={props.theme.blockTextColor} />
-            </Block>
-    },
-    {
-        name: 'delay-relative',
+        name: 'delay',
         data: {
             beats: 1,
             noteFraction: 4,
         },
         component: (props) =>
-            <Block label="D" {...props}>
-                <Text key={1} text={props.beats} x={25} y={11} fill={props.theme.blockTextColor} />
-                <Text key={2} text={props.noteFraction} x={25} y={27} fill={props.theme.blockTextColor} />
-            </Block>
-    },
-    {
-        name: 'delay-absolute',
-        data: {
-            delayTime: 100,
-        },
-        component: (props) =>
-            <Block label="D" {...props}>
-                <Text key={1} text="ms" x={27} y={11} fill={props.theme.blockTextColor} />
-                <Text key={2} text={props.delayTime} x={25} y={27} fill={props.theme.blockTextColor} />
+            <Block {...props}
+                label="⧖"
+                labelX={16}
+                labelY={7}
+                labelFontSize={34}
+            >
+                <Text key={1}
+                    text={props.beats}
+                    x={offset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
+                <Text key={2}
+                    text={props.noteFraction}
+                    x={offset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
             </Block>
     },
     {
@@ -62,9 +86,27 @@ export default [
             value: 64,
         },
         component: (props) =>
-            <Block label="M" {...props}>
-                <Text key={1} text={props.channel} x={27} y={11} fill={props.theme.blockTextColor} />
-                <Text key={2} text={props.value} x={27} y={27} fill={props.theme.blockTextColor} />
+            <Block {...props}
+                label="↑"
+                labelX={17}
+                labelY={7}
+            >
+                <Text key={1}
+                    text={props.channel}
+                    x={offset(props.channel, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
+                <Text key={2}
+                    text={props.value}
+                    x={offset(props.value, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
             </Block>
     },
     {
@@ -74,9 +116,27 @@ export default [
             steps: 4,
         },
         component: (props) =>
-            <Block label="N" {...props}>
-                <Text key={1} text={props.current} x={25} y={11} fill={props.theme.blockTextColor} />
-                <Text key={2} text={props.steps} x={25} y={27} fill={props.theme.blockTextColor} />
+            <Block  {...props}
+                label="⊕"
+                labelX={10}
+                labelY={9}
+            >
+                <Text key={1}
+                    text={props.current}
+                    x={offset(props.current, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
+                <Text key={2}
+                    text={props.steps}
+                    x={offset(props.steps, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
             </Block>
     },
     {
@@ -86,15 +146,38 @@ export default [
             steps: 4,
         },
         component: (props) =>
-            <Block label="S" {...props}>
-                <Text key={1} text={props.current} x={25} y={11} fill={props.theme.blockTextColor} />
-                <Text key={2} text={props.steps} x={25} y={27} fill={props.theme.blockTextColor} />
+            <Block  {...props}
+                label="⤬"
+                labelX={12}
+                labelY={7}
+                labelFontSize={37}
+            >
+                <Text key={1}
+                    text={props.current}
+                    x={offset(props.current, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
+                <Text key={2}
+                    text={props.steps}
+                    x={offset(props.steps, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily="Helvetica"
+                    fontSize={10}
+                />
             </Block>
     },
     {
         name: 'and',
         data: {},
         component: (props) =>
-            <Block label="&" {...props} />
+            <Block {...props}
+                label="&"
+                labelX={15}
+                labelY={11}
+            />
     },
 ];
