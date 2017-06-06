@@ -6,6 +6,7 @@ import Block from './Block';
 import BlockButton from './BlockButton';
 import Props from './Props';
 import Wireframe from './Wireframe';
+import Dropdown from './Dropdown';
 import blocks from '../data/blocks';
 import utils from '../utils';
 
@@ -26,6 +27,8 @@ export default class extends React.Component {
             newWire: null,
             viewportOffset: { x: 0, y: 0 },
             hoveringPortInfo: null,
+            circuitName: 'new circuit',
+            midiReceiver: '',
         };
     }
     componentWillMount() {
@@ -267,6 +270,12 @@ export default class extends React.Component {
             selectedObject: mapper(this.state.selectedObject),
         });
     }
+    handleCircuitChange = (e) => {
+        this.setState({ circuitName: e.target.value });
+    }
+    handleMidiReceiverChange = (e) => {
+        this.setState({ midiReceiver: e.target.value });
+    }
     renderBlock = (block) => {
         return block &&
             <block.blockType.component {...block}
@@ -322,9 +331,9 @@ export default class extends React.Component {
                 className="app-container"
                 onClick={this.handleOuterClick}
             >
-                <div className="vbox app">
-                    <div className="hbox block-buttons">{
-                        blocks.map(blockType =>
+                <div className="v-box app">
+                    <div className="h-box block-buttons">
+                        {blocks.map(blockType =>
                             <BlockButton {...blockType}
                                 key={blockType.name}
                                 theme={this.state.theme}
@@ -332,8 +341,40 @@ export default class extends React.Component {
                                 onDragEnd={this.handleNewBlockDragEnd}
                                 onDragMove={this.handleBlockDrag}
                             />
-                        )
-                    }
+                        )}
+                        <div style={{ flex: 1 }} />
+                        <div className="controls">
+                            <div className="row">
+                                <span className="label">
+                                    Circuit:
+                                </span>
+                                <Dropdown
+                                    className="entry"
+                                    value={this.state.circuitName}
+                                    variants={['a', 'bbb', 'cc']}
+                                    spellCheck="false"
+                                    onChange={this.handleCircuitChange}
+                                />
+                                <div className="button save">
+                                    💾&#xFE0E;
+                                </div>
+                            </div>
+                            <div className="row">
+                                <span className="label">
+                                    Send midi to:
+                                </span>
+                                <Dropdown
+                                    className="entry"
+                                    value={this.state.midiReceiver}
+                                    variants={['a', 'bbb', 'cc']}
+                                    spellCheck="false"
+                                    onChange={this.handleMidiReceiverChange}
+                                />
+                                <div className="button refresh">
+                                    ⟳&#xFE0E;
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {this.renderProps(this.state.selectedObject)}
                     <Stage ref="viewport"

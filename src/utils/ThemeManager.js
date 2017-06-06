@@ -10,7 +10,8 @@ export default class {
     }
     invalidateTheme = () => {
         const bodyComputedStyle = window.getComputedStyle(document.body);
-        const rootStyle = document.styleSheets[0].rules[0].style;
+        const sheet = document.styleSheets[0];
+        const rootStyle = (sheet.rules || sheet.cssRules)[0].style;
         let themeChanged = false;
         for (let i = 0; i < rootStyle.length; ++i) {
             const propertyName = rootStyle[i];

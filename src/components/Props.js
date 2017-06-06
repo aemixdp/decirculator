@@ -58,7 +58,7 @@ export default class Props extends React.Component {
                 !Props.ExcludedProps[key]
             );
         return (
-            <div className="hbox object-properties">
+            <div className="h-box object-properties">
                 {!this.props.hasOwnProperty('id') ? [] : [
                     <input type="checkbox"
                         key="active"
