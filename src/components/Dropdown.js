@@ -9,7 +9,7 @@ export default class extends React.Component {
                     spellCheck={this.props.spellCheck}
                     onChange={this.props.onValueSelect}
                 >
-                    <option disabled value="">Select circuit...</option>
+                    <option disabled value="">Select item...</option>
                     {this.props.variants.map(v =>
                         <option key={v} value={v}>{v}</option>
                     )}

@@ -17,6 +17,9 @@ export default class extends React.Component {
         this.themeManager = new utils.ThemeManager({
             onThemeChanged: this.handleThemeChanged,
         });
+        this.midiManager = new utils.MidiManager({
+            onDevicesChange: this.handleDevicesChange,
+        });
         this.state = {
             theme: this.themeManager.theme,
             idCounter: 0,
@@ -29,7 +32,8 @@ export default class extends React.Component {
             viewportOffset: { x: 0, y: 0 },
             hoveringPortInfo: null,
             circuitName: 'new circuit',
-            midiReceiver: '',
+            midiOutput: { name: '' },
+            midiOutputs: [],
             circuits: Object.keys(localStorage),
         };
     }
@@ -45,6 +49,11 @@ export default class extends React.Component {
     handleThemeChanged = () => {
         this.setState({
             theme: this.themeManager.theme,
+        });
+    }
+    handleDevicesChange = () => {
+        this.setState({
+            midiOutputs: Object.keys(this.midiManager.midiOutputs),
         });
     }
     handleKeyDown = (e) => {
@@ -275,8 +284,8 @@ export default class extends React.Component {
     handleCircuitNameChange = (e) => {
         this.setState({ circuitName: e.target.value });
     }
-    handleMidiReceiverChange = (e) => {
-        this.setState({ midiReceiver: e.target.value });
+    handleMidiOutputChange = (e) => {
+        this.setState({ midiOutput: this.midiManager.midiOutputs[e.target.value] });
     }
     renderBlock = (block) => {
         const blockType = block && blockTypes[block.blockTypeName];
@@ -380,10 +389,10 @@ export default class extends React.Component {
                                 </span>
                                 <Dropdown
                                     className="entry"
-                                    value={this.state.midiReceiver}
-                                    variants={['a', 'bbb', 'cc']}
+                                    value={this.state.midiOutput.name}
+                                    variants={this.state.midiOutputs}
                                     spellCheck="false"
-                                    onValueSelect={this.handleMidiReceiverChange}
+                                    onValueSelect={this.handleMidiOutputChange}
                                 />
                                 <div className="button refresh">
                                     ⟳&#xFE0E;
