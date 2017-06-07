@@ -5,10 +5,11 @@ export default class extends React.Component {
         return (
             <div className={`p-rel dropdown ${this.props.className}`}>
                 <select
-                    ref="select"
+                    defaultValue=""
                     spellCheck={this.props.spellCheck}
-                    onChange={this.props.onChange}
+                    onChange={this.props.onValueSelect}
                 >
+                    <option disabled value="">Select circuit...</option>
                     {this.props.variants.map(v =>
                         <option key={v} value={v}>{v}</option>
                     )}
@@ -16,7 +17,7 @@ export default class extends React.Component {
                 <input
                     value={this.props.value}
                     spellCheck={this.props.spellCheck}
-                    onChange={this.props.onChange}
+                    onChange={this.props.onTextChange}
                 />
             </div>
         );

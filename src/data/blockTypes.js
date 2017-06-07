@@ -6,8 +6,8 @@ const offset = (n, ...offsets) =>
     offsets[Math.max(`${n}`.length - 1, 0)] ||
     offsets[offsets.length - 1];
 
-export default [
-    {
+export default {
+    'play': {
         name: 'play',
         data: {},
         component: (props) =>
@@ -17,7 +17,7 @@ export default [
                 labelY={11}
             />
     },
-    {
+    'clock': {
         name: 'clock',
         data: {
             beats: 1,
@@ -48,7 +48,7 @@ export default [
                 />
             </Block>
     },
-    {
+    'delay': {
         name: 'delay',
         data: {
             beats: 1,
@@ -79,7 +79,7 @@ export default [
                 />
             </Block>
     },
-    {
+    'midi-out': {
         name: 'midi-out',
         data: {
             channel: 1,
@@ -109,7 +109,7 @@ export default [
                 />
             </Block>
     },
-    {
+    'counter': {
         name: 'counter',
         data: {
             current: 1,
@@ -139,7 +139,7 @@ export default [
                 />
             </Block>
     },
-    {
+    'switch': {
         name: 'switch',
         data: {
             current: 1,
@@ -170,7 +170,7 @@ export default [
                 />
             </Block>
     },
-    {
+    'and': {
         name: 'and',
         data: {},
         component: (props) =>
@@ -180,4 +180,4 @@ export default [
                 labelY={11}
             />
     },
-];
+};

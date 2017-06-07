@@ -7,7 +7,7 @@ import BlockButton from './BlockButton';
 import Props from './Props';
 import Wireframe from './Wireframe';
 import Dropdown from './Dropdown';
-import blocks from '../data/blocks';
+import blockTypes from '../data/blockTypes';
 import utils from '../utils';
 
 export default class extends React.Component {
@@ -25,10 +25,12 @@ export default class extends React.Component {
             wires: [],
             newBlock: null,
             newWire: null,
+            blockById: {},
             viewportOffset: { x: 0, y: 0 },
             hoveringPortInfo: null,
             circuitName: 'new circuit',
             midiReceiver: '',
+            circuits: Object.keys(localStorage),
         };
     }
     componentWillMount() {
@@ -52,8 +54,8 @@ export default class extends React.Component {
                 blocks: this.state.blocks.filter(b => b.id !== id),
                 wires: this.state.wires.filter(w =>
                     w.id !== id &&
-                    w.startPortInfo.block.id !== id &&
-                    w.endPortInfo.block.id !== id
+                    w.startPortInfo.blockId !== id &&
+                    w.endPortInfo.blockId !== id
                 ),
                 selectedObject: null,
             });
@@ -69,7 +71,7 @@ export default class extends React.Component {
                 kind: 'block',
                 active: true,
                 gateLength: 50,
-                blockType,
+                blockTypeName: blockType.name,
                 ...blockType.data,
                 x: -100,
                 y: -100,
@@ -81,6 +83,7 @@ export default class extends React.Component {
         if (this.refs.viewport.domNode.contains(e.evt.toElement)) {
             this.setState({
                 blocks: [...this.state.blocks, this.state.newBlock],
+                blockById: { ...this.state.blockById, [this.state.newBlock.id]: this.state.newBlock },
             });
         }
         this.setState({
@@ -93,54 +96,28 @@ export default class extends React.Component {
     handleBlockMouseLeave = () => {
         document.body.style.cursor = 'default';
     }
-    handleBlockDrag = (e, block) => {
+    handleBlockDrag = (e, blockComponent) => {
         if (this.refs.viewport.domNode.contains(e.evt.toElement)) {
-            const transformBlock = (block) => block && Object.assign({}, block,
+            const transform = (block) => block && Object.assign({}, block,
                 Wireframe.snapToWireframe(this.props.config.wireframeCellSize, {
                     x: e.evt.offsetX - this.state.viewportOffset.x - 25,
                     y: e.evt.offsetY - this.state.viewportOffset.y - 25,
                 })
             );
-            const transformedBlock = transformBlock(block);
-            this.setState({
-                blocks: this.state.blocks.map(b =>
-                    b.id === block.id ? transformedBlock : b),
-                newBlock: transformBlock(this.state.newBlock),
-                wires: this.state.wires.map(wire => {
-                    const spi = wire.startPortInfo;
-                    const epi = wire.endPortInfo;
-                    if (spi.block.id === block.id) {
-                        const transformedSpi = {
-                            ...spi,
-                            block: transformedBlock,
-                        };
-                        return {
-                            ...wire,
-                            startPortInfo: transformedSpi,
-                            startPosition: utils.shapes.center(
-                                transformedSpi.port,
-                                transformedSpi.block
-                            ),
-                        };
-                    } else if (epi.block.id === block.id) {
-                        const transformedEpi = {
-                            ...epi,
-                            block: transformedBlock,
-                        };
-                        return {
-                            ...wire,
-                            endPortInfo: transformedEpi,
-                            endPosition: utils.shapes.center(
-                                transformedEpi.port,
-                                transformedEpi.block
-                            ),
-                        };
-                    } else {
-                        return wire;
-                    }
-                }),
-            });
-
+            const transformedBlock = blockComponent.hasOwnProperty('id') &&
+                transform(this.state.blockById[blockComponent.id]);
+            if (transformedBlock) {
+                this.setState({
+                    blocks: this.state.blocks.map(b =>
+                        b.id === transformedBlock.id ? transformedBlock : b),
+                    blockById: {
+                        ...this.state.blockById,
+                        [transformedBlock.id]: transformedBlock
+                    },
+                });
+            } else {
+                this.setState({ newBlock: transform(this.state.newBlock) });
+            }
         }
     }
     handleViewportDrag = (e) => {
@@ -157,7 +134,7 @@ export default class extends React.Component {
     handleViewportMouseDown = (e) => {
         if (this.state.hoveringPortInfo) {
             const hpi = this.state.hoveringPortInfo;
-            const startPosition = utils.shapes.center(hpi.port, hpi.block);
+            const startPosition = utils.shapes.center(hpi.port, this.state.blockById[hpi.blockId]);
             this.setState({
                 idCounter: this.state.idCounter + 1,
                 newWire: {
@@ -177,14 +154,16 @@ export default class extends React.Component {
         if (
             newWire &&
             newWire.endPortInfo &&
-            newWire.endPortInfo.block.id !== newWire.startPortInfo.block.id
+            newWire.endPortInfo.blockId !== newWire.startPortInfo.blockId
         ) {
+            delete newWire.startPosition;
+            delete newWire.endPosition;
             this.setState({
                 wires: [...this.state.wires, newWire],
                 blocks: this.state.blocks.map(block => {
-                    if (block.id === newWire.startPortInfo.block.id)
+                    if (block.id === newWire.startPortInfo.blockId)
                         return update(block, { ports: { [newWire.startPortInfo.port.side]: { $set: 'out' } } });
-                    else if (block.id === newWire.endPortInfo.block.id)
+                    else if (block.id === newWire.endPortInfo.blockId)
                         return update(block, { ports: { [newWire.endPortInfo.port.side]: { $set: 'in' } } });
                     else
                         return block;
@@ -198,7 +177,7 @@ export default class extends React.Component {
     handleViewportMouseMove = (e) => {
         if (this.state.newWire) {
             const hpi = this.state.hoveringPortInfo;
-            const ep = hpi && utils.shapes.center(hpi.port, hpi.block);
+            const ep = hpi && utils.shapes.center(hpi.port, this.state.blockById[hpi.blockId]);
             this.setState({
                 newWire: {
                     ...this.state.newWire,
@@ -224,8 +203,8 @@ export default class extends React.Component {
     }
     handlePortClick = (e, block, port) => {
         const wire = this.state.wires.find(wire =>
-            (wire.startPortInfo.block.id === block.id && wire.startPortInfo.port.side === port.side) ||
-            (wire.endPortInfo.block.id === block.id && wire.endPortInfo.port.side === port.side)
+            (wire.startPortInfo.blockId === block.id && wire.startPortInfo.port.side === port.side) ||
+            (wire.endPortInfo.blockId === block.id && wire.endPortInfo.port.side === port.side)
         );
         const togglePort = (block, side) =>
             update(block, { ports: { [side]: { $set: block.ports[side] === 'in' ? 'out' : 'in' } } });
@@ -233,9 +212,9 @@ export default class extends React.Component {
             blocks: this.state.blocks.map(b => {
                 if (b.id === block.id)
                     return togglePort(b, port.side);
-                else if (wire && b.id === wire.startPortInfo.block.id)
+                else if (wire && b.id === wire.startPortInfo.blockId)
                     return togglePort(b, wire.startPortInfo.port.side);
-                else if (wire && b.id === wire.endPortInfo.block.id)
+                else if (wire && b.id === wire.endPortInfo.blockId)
                     return togglePort(b, wire.endPortInfo.port.side);
                 else return b;
             }),
@@ -244,7 +223,7 @@ export default class extends React.Component {
     }
     handlePortMouseEnter = (e, block, port) => {
         this.setState({
-            hoveringPortInfo: { block, port },
+            hoveringPortInfo: { blockId: block.id, port },
         });
         document.body.style.cursor = 'pointer';
     }
@@ -270,15 +249,39 @@ export default class extends React.Component {
             selectedObject: mapper(this.state.selectedObject),
         });
     }
-    handleCircuitChange = (e) => {
+    handleCircuitSave = () => {
+        const circuitData = {
+            blocks: this.state.blocks,
+            wires: this.state.wires,
+            idCounter: this.state.idCounter,
+        };
+        localStorage.setItem(this.state.circuitName, JSON.stringify(circuitData, null, 0));
+        this.setState({ circuits: Object.keys(localStorage) });
+    }
+    handleCircuitSelect = (e) => {
+        const circuitName = e.target.value;
+        const circuitData = JSON.parse(localStorage.getItem(circuitName));
+        if (circuitData) {
+            this.setState({
+                circuitName,
+                selectedObject: null,
+                blocks: circuitData.blocks,
+                wires: circuitData.wires,
+                idCounter: circuitData.idCounter,
+                blockById: circuitData.blocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
+            });
+        }
+    }
+    handleCircuitNameChange = (e) => {
         this.setState({ circuitName: e.target.value });
     }
     handleMidiReceiverChange = (e) => {
         this.setState({ midiReceiver: e.target.value });
     }
     renderBlock = (block) => {
-        return block &&
-            <block.blockType.component {...block}
+        const blockType = block && blockTypes[block.blockTypeName];
+        return blockType &&
+            <blockType.component {...block}
                 key={`block_${block.id}`}
                 theme={this.state.theme}
                 isSelected={this.state.selectedObject &&
@@ -286,7 +289,7 @@ export default class extends React.Component {
                 hoveringPort={
                     (
                         this.state.hoveringPortInfo &&
-                        block.id === this.state.hoveringPortInfo.block.id
+                        block.id === this.state.hoveringPortInfo.blockId
                     )
                         ? this.state.hoveringPortInfo.port
                         : null
@@ -298,14 +301,22 @@ export default class extends React.Component {
             />;
     }
     renderWire = (wire) => {
-        return wire &&
+        if (!wire) return;
+        const spi = wire.startPortInfo;
+        const epi = wire.endPortInfo;
+        const startPosition = wire.startPosition || utils.shapes.center(spi.port, this.state.blockById[spi.blockId]);
+        const endPosition = wire.endPosition || utils.shapes.center(epi.port, this.state.blockById[epi.blockId]);
+        return (
             <Wire {...wire}
                 key={`wire_${wire.id}`}
+                startPosition={startPosition}
+                endPosition={endPosition}
                 theme={this.state.theme}
                 isSelected={this.state.selectedObject &&
                     wire.id === this.state.selectedObject.id}
                 onClick={this.handleObjectClick}
-            />;
+            />
+        );
     }
     renderProps = (object) => {
         return (
@@ -333,7 +344,7 @@ export default class extends React.Component {
             >
                 <div className="v-box app">
                     <div className="h-box block-buttons">
-                        {blocks.map(blockType =>
+                        {Object.values(blockTypes).map(blockType =>
                             <BlockButton {...blockType}
                                 key={blockType.name}
                                 theme={this.state.theme}
@@ -351,11 +362,15 @@ export default class extends React.Component {
                                 <Dropdown
                                     className="entry"
                                     value={this.state.circuitName}
-                                    variants={['a', 'bbb', 'cc']}
+                                    variants={this.state.circuits}
                                     spellCheck="false"
-                                    onChange={this.handleCircuitChange}
+                                    onValueSelect={this.handleCircuitSelect}
+                                    onTextChange={this.handleCircuitNameChange}
                                 />
-                                <div className="button save">
+                                <div
+                                    className="button save"
+                                    onClick={this.handleCircuitSave}
+                                >
                                     💾&#xFE0E;
                                 </div>
                             </div>
@@ -368,7 +383,7 @@ export default class extends React.Component {
                                     value={this.state.midiReceiver}
                                     variants={['a', 'bbb', 'cc']}
                                     spellCheck="false"
-                                    onChange={this.handleMidiReceiverChange}
+                                    onValueSelect={this.handleMidiReceiverChange}
                                 />
                                 <div className="button refresh">
                                     ⟳&#xFE0E;

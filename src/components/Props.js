@@ -23,7 +23,7 @@ export default class Props extends React.Component {
     static ExcludedProps = {
         id: true,
         kind: true,
-        blockType: true,
+        blockTypeName: true,
         x: true,
         y: true,
         ports: true,
@@ -69,7 +69,7 @@ export default class Props extends React.Component {
                         onClick={this.handlePropertyClick}
                     />,
                     <span key="name">
-                        [{this.props.kind === 'block' ? this.props.blockType.name : 'wire'}]
+                        [{this.props.kind === 'block' ? this.props.blockTypeName : 'wire'}]
                     </span>,
                 ]}
                 {filteredProps.map(([key, value]) =>
