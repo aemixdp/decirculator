@@ -2,11 +2,13 @@ export default class {
     constructor({ onDevicesChange = () => { } }) {
         this.midiOutputs = {};
         this.onDevicesChange = onDevicesChange;
-        navigator.requestMIDIAccess().then((midiAccess) => {
-            this.midiAccess = midiAccess;
-            this.refreshDevices();
-            setInterval(this.refreshDevices, 2000);
-        });
+        if (navigator.requestMIDIAccess) {
+            navigator.requestMIDIAccess().then((midiAccess) => {
+                this.midiAccess = midiAccess;
+                this.refreshDevices();
+                setInterval(this.refreshDevices, 2000);
+            });
+        }
     }
     refreshDevices = () => {
         if (!this.midiAccess) return;

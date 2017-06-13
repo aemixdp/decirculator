@@ -81,7 +81,7 @@ export default class extends React.Component {
                 active: true,
                 gateLength: 50,
                 blockTypeName: blockType.name,
-                ...blockType.data,
+                ...blockType.initialData,
                 x: -100,
                 y: -100,
                 ports: Block.DefaultPorts,

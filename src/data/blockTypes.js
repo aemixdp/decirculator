@@ -6,10 +6,16 @@ const offset = (n, ...offsets) =>
     offsets[Math.max(`${n}`.length - 1, 0)] ||
     offsets[offsets.length - 1];
 
+const noteToMs = (beats, noteFraction, bpm) => 111;
+
 export default {
     'play': {
         name: 'play',
-        data: {},
+        initialData: {},
+        initialState: () => ({
+            gate: false,
+        }),
+        tick: () => { },
         component: (props) =>
             <Block {...props}
                 label="▶"
@@ -19,9 +25,29 @@ export default {
     },
     'clock': {
         name: 'clock',
-        data: {
+        initialData: {
             beats: 1,
             noteFraction: 4,
+        },
+        initialState: (state, data, config) => ({
+            gate: false,
+            timeUntilGateOn: 0,
+            timeUntilGateOff: 0,
+        }),
+        tick: (delta, state, data, config) => {
+            const newTimeUntilGateOn = state.timeUntilGateOn[data.id] - delta;
+            const newTimeUntilGateOff = state.timeUntilGateOff[data.id] - delta;
+            const oldGate = state.gate[data.id];
+            const newGate = oldGate
+                ? newTimeUntilGateOff > 0
+                : newTimeUntilGateOn <= 0;
+            state.gate[data.id] = newGate;
+            state.timeUntilGateOn[data.id] = (!newGate && oldGate)
+                ? noteToMs(data.beats, data.noteFraction, config.bpm)
+                : newTimeUntilGateOn;
+            state.timeUntilGateOff[data.id] = (newGate && !oldGate)
+                ? 50
+                : newTimeUntilGateOff;
         },
         component: (props) =>
             <Block {...props}
@@ -50,9 +76,12 @@ export default {
     },
     'delay': {
         name: 'delay',
-        data: {
+        initialData: () => ({
             beats: 1,
             noteFraction: 4,
+        }),
+        tick: (delta, state, data, config) => {
+
         },
         component: (props) =>
             <Block {...props}
@@ -81,7 +110,7 @@ export default {
     },
     'midi-out': {
         name: 'midi-out',
-        data: {
+        initialData: {
             channel: 1,
             value: 64,
         },
@@ -111,7 +140,7 @@ export default {
     },
     'counter': {
         name: 'counter',
-        data: {
+        initialData: {
             current: 1,
             steps: 4,
         },
@@ -141,7 +170,7 @@ export default {
     },
     'switch': {
         name: 'switch',
-        data: {
+        initialData: {
             current: 1,
             steps: 4,
         },
@@ -172,7 +201,7 @@ export default {
     },
     'and': {
         name: 'and',
-        data: {},
+        initialData: {},
         component: (props) =>
             <Block {...props}
                 label="&"
