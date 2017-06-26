@@ -31,7 +31,7 @@ export default class extends React.Component {
             blockById: {},
             viewportOffset: { x: 0, y: 0 },
             hoveringPortInfo: null,
-            circuitName: 'new circuit',
+            circuitName: 'New circuit',
             midiOutput: { name: '' },
             midiOutputs: [],
             circuits: Object.keys(localStorage),

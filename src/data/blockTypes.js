@@ -19,8 +19,8 @@ export default {
         component: (props) =>
             <Block {...props}
                 label="▶"
-                labelX={13}
-                labelY={11}
+                labelX={14}
+                labelY={8}
             />
     },
     'clock': {
@@ -53,14 +53,14 @@ export default {
             <Block {...props}
                 label="◷"
                 labelX={12}
-                labelY={11}
+                labelY={7}
             >
                 <Text key={1}
                     text={props.beats}
                     x={offset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
                     y={4}
                     fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
+                    fontFamily={props.theme.font}
                     fontSize={10}
                 />
                 <Text
@@ -69,25 +69,25 @@ export default {
                     x={offset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
                     y={37}
                     fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
+                    fontFamily={props.theme.font}
                     fontSize={10}
                 />
             </Block>
     },
     'delay': {
         name: 'delay',
-        initialData: () => ({
+        initialData: {
             beats: 1,
             noteFraction: 4,
-        }),
+        },
         tick: (delta, state, data, config) => {
 
         },
         component: (props) =>
             <Block {...props}
                 label="⧖"
-                labelX={16}
-                labelY={7}
+                labelX={13}
+                labelY={6}
                 labelFontSize={34}
             >
                 <Text key={1}
@@ -95,7 +95,7 @@ export default {
                     x={offset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
                     y={4}
                     fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
+                    fontFamily={props.theme.font}
                     fontSize={10}
                 />
                 <Text key={2}
@@ -103,37 +103,7 @@ export default {
                     x={offset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
                     y={37}
                     fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
-                    fontSize={10}
-                />
-            </Block>
-    },
-    'midi-out': {
-        name: 'midi-out',
-        initialData: {
-            channel: 1,
-            value: 64,
-        },
-        component: (props) =>
-            <Block {...props}
-                label="↑"
-                labelX={17}
-                labelY={7}
-            >
-                <Text key={1}
-                    text={props.channel}
-                    x={offset(props.channel, 40, 34, 30, 24, 18, 12, 6)}
-                    y={4}
-                    fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
-                    fontSize={10}
-                />
-                <Text key={2}
-                    text={props.value}
-                    x={offset(props.value, 40, 34, 30, 24, 18, 12, 6)}
-                    y={37}
-                    fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
+                    fontFamily={props.theme.font}
                     fontSize={10}
                 />
             </Block>
@@ -146,16 +116,16 @@ export default {
         },
         component: (props) =>
             <Block  {...props}
-                label="⊕"
-                labelX={10}
-                labelY={9}
+                label="Σ"
+                labelX={16}
+                labelY={10}
             >
                 <Text key={1}
                     text={props.current}
                     x={offset(props.current, 40, 34, 30, 24, 18, 12, 6)}
                     y={4}
                     fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
+                    fontFamily={props.theme.font}
                     fontSize={10}
                 />
                 <Text key={2}
@@ -163,7 +133,7 @@ export default {
                     x={offset(props.steps, 40, 34, 30, 24, 18, 12, 6)}
                     y={37}
                     fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
+                    fontFamily={props.theme.font}
                     fontSize={10}
                 />
             </Block>
@@ -176,17 +146,16 @@ export default {
         },
         component: (props) =>
             <Block  {...props}
-                label="⤬"
-                labelX={12}
-                labelY={7}
-                labelFontSize={37}
+                label="⭮"
+                labelX={13}
+                labelY={11}
             >
                 <Text key={1}
                     text={props.current}
                     x={offset(props.current, 40, 34, 30, 24, 18, 12, 6)}
                     y={4}
                     fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
+                    fontFamily={props.theme.font}
                     fontSize={10}
                 />
                 <Text key={2}
@@ -194,7 +163,7 @@ export default {
                     x={offset(props.steps, 40, 34, 30, 24, 18, 12, 6)}
                     y={37}
                     fill={props.theme.blockTextColor}
-                    fontFamily="Helvetica"
+                    fontFamily={props.theme.font}
                     fontSize={10}
                 />
             </Block>
@@ -206,7 +175,38 @@ export default {
             <Block {...props}
                 label="&"
                 labelX={15}
-                labelY={11}
+                labelY={10}
             />
+    },
+    'midi-out': {
+        name: 'midi-out',
+        initialData: {
+            channel: 1,
+            value: 64,
+        },
+        component: (props) =>
+            <Block {...props}
+                label="↑"
+                labelX={15}
+                labelY={2}
+                labelFontSize={38}
+            >
+                <Text key={1}
+                    text={props.channel}
+                    x={offset(props.channel, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+                <Text key={2}
+                    text={props.value}
+                    x={offset(props.value, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+            </Block>
     },
 };
