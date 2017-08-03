@@ -97,6 +97,7 @@ export default class extends React.Component {
     }
     handleKeyDown = (e) => {
         if (e.keyCode === 46 /* delete */) {
+            if (!this.state.selectedObject) return;
             const id = this.state.selectedObject.id;
             this.setState({
                 blocks: this.state.blocks.filter(b => b.id !== id),
