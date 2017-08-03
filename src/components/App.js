@@ -299,11 +299,13 @@ export default class extends React.Component {
             selectedObject: mapper(this.state.selectedObject),
         });
     }
-    handleBpmSelect = () => {
-
-    }
-    handleBpmChange = () => {
-
+    handleBpmChange = (e) => {
+        this.setState({
+            config: {
+                ...this.state.config,
+                bpm: parseInt(e.target.value, 10),
+            }
+        });
     }
     handlePlay = () => {
         this.circuit.start();
@@ -433,7 +435,7 @@ export default class extends React.Component {
                                     value={this.state.config.bpm}
                                     variants={[120, 125, 128, 130, 140, 170, 175]}
                                     spellCheck="false"
-                                    onValueSelect={this.handleBpmSelect}
+                                    onValueSelect={this.handleBpmChange}
                                     onTextChange={this.handleBpmChange}
                                 />
                             </div>
