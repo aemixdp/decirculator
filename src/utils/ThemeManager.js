@@ -1,4 +1,4 @@
-import textUtils from './text';
+import utils from './';
 
 export default class {
     constructor({ pollInterval = 500, onThemeChanged = () => { } }) {
@@ -16,7 +16,7 @@ export default class {
         for (let i = 0; i < rootStyle.length; ++i) {
             const propertyName = rootStyle[i];
             const propertyValue = bodyComputedStyle.getPropertyValue(propertyName);
-            const camelPropertyName = textUtils.snakeToCamel(propertyName.slice(2));
+            const camelPropertyName = utils.text.snakeToCamel(propertyName.slice(2));
             if (this.theme[camelPropertyName] !== propertyValue) {
                 this.theme[camelPropertyName] = propertyValue;
                 themeChanged = true;

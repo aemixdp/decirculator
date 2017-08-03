@@ -9,6 +9,7 @@
     --in-port-color: transparent;
     --out-port-color: #CDD3D7;
     --wire-color: #CDD3D7;
+    --gate-color: yellow;
     --selection-color: white;
     --inactive-color: #374558;
 }
@@ -70,7 +71,7 @@ html, body {
 
 html, body, input, textarea, select, button {
     font-size: 12px;
-    font-family: var(--font);
+    font-family: var(--font);    
 }
 
 #mount {
@@ -138,8 +139,7 @@ html, body, input, textarea, select, button {
 }
 
 .controls {
-    text-align: right;
-    margin-right: 9px;
+    text-align: right;    
     margin-top: 4px;
 }
 
@@ -152,20 +152,11 @@ html, body, input, textarea, select, button {
     margin-bottom: 6px;
 }
 
-.controls .row * {
-    height: 20px;
-}
-
 .controls .label {
-    width: 100px;
     margin-right: 4px;
     padding-top: 2px;
     box-sizing: border-box;
-}
-
-.controls .entry {
-    width: 220px;
-    margin-right: 4px;
+    font-weight: bold;
 }
 
 .controls .entry select {
@@ -179,12 +170,24 @@ html, body, input, textarea, select, button {
     padding-left: 6px;
     color: #374558;
     background-color: #CDD3D7;
+    font-weight: bold;
 }
 
 .controls .button {
     cursor: pointer;
 }
 
+.controls .button.save,
 .controls .button.refresh {
-    font-size: 17px;
+    font-size: 16px;
 }
+
+.simulation-controls .row { justify-content: center; }
+.simulation-controls .entry { width: 60px; }
+.simulation-controls .label { width: 40px; }
+.simulation-controls .button { margin-left: 3px; font-size: 22px; }
+
+.circuit-controls { margin-right: 10px; }
+.circuit-controls .entry { width: 220px; }
+.circuit-controls .label { width: 80px; }
+.circuit-controls .button { margin-left: 5px; }

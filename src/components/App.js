@@ -7,7 +7,8 @@ import BlockButton from './BlockButton';
 import Props from './Props';
 import Wireframe from './Wireframe';
 import Dropdown from './Dropdown';
-import blockTypes from '../data/blockTypes';
+import Circuit from '../circuitry/Circuit';
+import blocks from '../circuitry/blocks';
 import utils from '../utils';
 
 export default class extends React.Component {
@@ -35,7 +36,23 @@ export default class extends React.Component {
             midiOutput: { name: '' },
             midiOutputs: [],
             circuits: Object.keys(localStorage),
+            config: {
+                bpm: 130,
+                gateLength: 500,
+            },
         };
+        this.resetCircuit();
+    }
+    resetCircuit() {
+        if (this.circuit) {
+            this.circuit.stop();
+        }
+        this.circuit = new Circuit({
+            onVisibleChanges: this.handleCircuitVisibleChanges
+        });
+    }
+    invalidateCircuit() {
+        this.circuit.update(this.state.blocks, this.state.wires, this.state.config);
     }
     componentWillMount() {
         document.addEventListener('keydown', this.handleKeyDown);
@@ -45,6 +62,28 @@ export default class extends React.Component {
     }
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
+    }
+    componentDidUpdate(prevProps, prevState) {
+        if (
+            prevState.blocks.length !== this.state.blocks.length ||
+            prevState.wires.length !== this.state.wires.length
+        ) {
+            this.invalidateCircuit();
+        }
+    }
+    handleCircuitVisibleChanges = () => {
+        this.setState({
+            blocks: this.state.blocks.map(b =>
+                (this.circuit.changed[b.id] && b.name === 'Counter')
+                    ? { ...b, current: this.circuit.counterValue[b.id] }
+                    : b
+            ),
+            wires: this.state.wires.map(w =>
+                this.circuit.changed[w.id]
+                    ? { ...w, gate: this.circuit.gate[w.id] }
+                    : w
+            ),
+        });
     }
     handleThemeChanged = () => {
         this.setState({
@@ -78,13 +117,14 @@ export default class extends React.Component {
             newBlock: {
                 id: this.state.idCounter,
                 kind: 'block',
+                name: blockType.name,
                 active: true,
                 gateLength: 50,
-                blockTypeName: blockType.name,
                 ...blockType.initialData,
                 x: -100,
                 y: -100,
                 ports: Block.DefaultPorts,
+                tick: blockType.tick,
             },
         });
     }
@@ -143,7 +183,7 @@ export default class extends React.Component {
     handleViewportMouseDown = (e) => {
         if (this.state.hoveringPortInfo) {
             const hpi = this.state.hoveringPortInfo;
-            const startPosition = utils.shapes.center(hpi.port, this.state.blockById[hpi.blockId]);
+            const startPosition = utils.geometry.center(hpi.port, this.state.blockById[hpi.blockId]);
             this.setState({
                 idCounter: this.state.idCounter + 1,
                 newWire: {
@@ -186,7 +226,7 @@ export default class extends React.Component {
     handleViewportMouseMove = (e) => {
         if (this.state.newWire) {
             const hpi = this.state.hoveringPortInfo;
-            const ep = hpi && utils.shapes.center(hpi.port, this.state.blockById[hpi.blockId]);
+            const ep = hpi && utils.geometry.center(hpi.port, this.state.blockById[hpi.blockId]);
             this.setState({
                 newWire: {
                     ...this.state.newWire,
@@ -258,6 +298,22 @@ export default class extends React.Component {
             selectedObject: mapper(this.state.selectedObject),
         });
     }
+    handleBpmSelect = () => {
+
+    }
+    handleBpmChange = () => {
+
+    }
+    handlePlay = () => {
+        this.circuit.start();
+    }
+    handlePause = () => {
+        this.circuit.stop();
+    }
+    handleStop = () => {
+        this.resetCircuit();
+        this.invalidateCircuit();
+    }
     handleCircuitSave = () => {
         const circuitData = {
             blocks: this.state.blocks,
@@ -271,10 +327,14 @@ export default class extends React.Component {
         const circuitName = e.target.value;
         const circuitData = JSON.parse(localStorage.getItem(circuitName));
         if (circuitData) {
+            this.resetCircuit();
             this.setState({
                 circuitName,
                 selectedObject: null,
-                blocks: circuitData.blocks,
+                blocks: circuitData.blocks.map(b => ({
+                    ...b,
+                    tick: blocks[b.name].tick
+                })),
                 wires: circuitData.wires,
                 idCounter: circuitData.idCounter,
                 blockById: circuitData.blocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
@@ -288,7 +348,7 @@ export default class extends React.Component {
         this.setState({ midiOutput: this.midiManager.midiOutputs[e.target.value] });
     }
     renderBlock = (block) => {
-        const blockType = block && blockTypes[block.blockTypeName];
+        const blockType = block && blocks[block.name];
         return blockType &&
             <blockType.component {...block}
                 key={`block_${block.id}`}
@@ -313,8 +373,8 @@ export default class extends React.Component {
         if (!wire) return;
         const spi = wire.startPortInfo;
         const epi = wire.endPortInfo;
-        const startPosition = wire.startPosition || utils.shapes.center(spi.port, this.state.blockById[spi.blockId]);
-        const endPosition = wire.endPosition || utils.shapes.center(epi.port, this.state.blockById[epi.blockId]);
+        const startPosition = wire.startPosition || utils.geometry.center(spi.port, this.state.blockById[spi.blockId]);
+        const endPosition = wire.endPosition || utils.geometry.center(epi.port, this.state.blockById[epi.blockId]);
         return (
             <Wire {...wire}
                 key={`wire_${wire.id}`}
@@ -353,7 +413,7 @@ export default class extends React.Component {
             >
                 <div className="v-box app">
                     <div className="h-box block-buttons">
-                        {Object.values(blockTypes).map(blockType =>
+                        {Object.values(blocks).map(blockType =>
                             <BlockButton {...blockType}
                                 key={blockType.name}
                                 theme={this.state.theme}
@@ -362,8 +422,39 @@ export default class extends React.Component {
                                 onDragMove={this.handleBlockDrag}
                             />
                         )}
-                        <div style={{ flex: 1 }} />
-                        <div className="controls">
+                        <div className="controls simulation-controls" style={{ flex: 1 }}>
+                            <div className="row">
+                                <span className="label">
+                                    BPM:
+                                </span>
+                                <Dropdown
+                                    className="entry"
+                                    value={this.state.config.bpm}
+                                    variants={[120, 125, 128, 130, 140, 170, 175]}
+                                    spellCheck="false"
+                                    onValueSelect={this.handleBpmSelect}
+                                    onTextChange={this.handleBpmChange}
+                                />
+                            </div>
+                            <div className="row">
+                                <i
+                                    className="button fa fa-play-circle-o"
+                                    aria-hidden="true"
+                                    onClick={this.handlePlay}>
+                                </i>
+                                <i
+                                    className="button fa fa-pause-circle-o"
+                                    aria-hidden="true"
+                                    onClick={this.handlePause}>
+                                </i>
+                                <i
+                                    className="button fa fa-stop-circle-o"
+                                    aria-hidden="true"
+                                    onClick={this.handleStop}>
+                                </i>
+                            </div>
+                        </div>
+                        <div className="controls circuit-controls">
                             <div className="row">
                                 <span className="label">
                                     Circuit:
@@ -376,12 +467,11 @@ export default class extends React.Component {
                                     onValueSelect={this.handleCircuitSelect}
                                     onTextChange={this.handleCircuitNameChange}
                                 />
-                                <div
-                                    className="button save"
-                                    onClick={this.handleCircuitSave}
-                                >
-                                    💾&#xFE0E;
-                                </div>
+                                <i
+                                    className="button save fa fa-save"
+                                    aria-hidden="true"
+                                    onClick={this.handleCircuitSave}>
+                                </i>
                             </div>
                             <div className="row">
                                 <span className="label">
@@ -394,9 +484,7 @@ export default class extends React.Component {
                                     spellCheck="false"
                                     onValueSelect={this.handleMidiOutputChange}
                                 />
-                                <div className="button refresh">
-                                    ⟳&#xFE0E;
-                                </div>
+                                <i className="button refresh fa fa-refresh" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>

@@ -26,7 +26,7 @@ export default class Port extends React.Component {
             this.props.onMouseLeave(e, this.props);
         }
         render() {
-            const c = utils.shapes.center(this.props);
+            const c = utils.geometry.center(this.props);
             return (
                 <Circle
                     x={c.x}
@@ -40,7 +40,7 @@ export default class Port extends React.Component {
         }
     }
     render() {
-        const c = utils.shapes.center(this.props);
+        const c = utils.geometry.center(this.props);
         return (
             <Group>
                 <Rect
