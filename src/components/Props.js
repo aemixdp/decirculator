@@ -41,12 +41,19 @@ export default class Props extends React.Component {
         labelY: true,
         labelFontSize: true,
         tick: true,
+        gate: true,
+    }
+    static BooleanProps = {
+        skipFirstGate: true,
     }
     handlePropertyChange = (e) => {
         this.props.onPropertyChange(e,
             this.props,
             e.target.dataset.prop,
-            e.target[e.target.dataset.value || 'value']
+            e.target[({
+                text: 'value',
+                checkbox: 'checked',
+            })[e.target.type]]
         );
     }
     handlePropertyClick = (e) => {
@@ -76,8 +83,10 @@ export default class Props extends React.Component {
                 {filteredProps.map(([key, value]) =>
                     <div key={key}>
                         <span>{mangle(key)}:</span>
-                        <input data-prop={key}
+                        <input type={Props.BooleanProps[key] ? 'checkbox' : 'text'}
+                            data-prop={key}
                             value={value}
+                            checked={value}
                             onChange={this.handlePropertyChange}
                             onClick={this.handlePropertyClick}
                         />

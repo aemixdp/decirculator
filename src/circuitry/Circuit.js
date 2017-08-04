@@ -1,3 +1,6 @@
+/* eslint no-fallthrough: off */
+
+import utils from '../utils';
 import DelayList from '../utils/DelayList';
 
 const nop = () => { };
@@ -62,16 +65,21 @@ export default class {
         }
         for (let i = 0; i < blocks.length; i += 1) {
             const block = blocks[i];
-            this.blockTick[block.id] = block.tick;
-            this.removed[block.id] = false;
+            const id = block.id;
+            this.blockTick[id] = block.tick;
+            this.removed[id] = false;
             switch (block.name) {
                 case 'Counter':
-                    this.counterValue[block.id] = block.current;
-                    this.counterSteps[block.id] = block.steps;
+                    this.counterValue[id] = block.current;
+                    this.counterSteps[id] = block.steps;
                     break;
+                case 'Clock':
+                    if (block.skipFirstGate) {
+                        this.timeUntilGateOn[id] = utils.music.noteToMs(this.beats[id], this.noteFraction[id], config.bpm);
+                    }
                 case 'Delay':
-                    this.beats[block.id] = block.beats;
-                    this.noteFraction[block.id] = block.noteFraction;
+                    this.beats[id] = block.beats;
+                    this.noteFraction[id] = block.noteFraction;
                     break;
                 default:
                     break;

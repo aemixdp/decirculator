@@ -8,6 +8,7 @@ export default {
     initialData: {
         beats: 1,
         noteFraction: 4,
+        skipFirstGate: false,
     },
     tick: (circuit, blockId, delta, config) => {
         const timeUntilGateOn = circuit.timeUntilGateOn[blockId] -= delta;
