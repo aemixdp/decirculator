@@ -75,7 +75,7 @@ export default class {
                     break;
                 case 'Clock':
                     if (block.skipFirstGate) {
-                        this.timeUntilGateOn[id] = utils.music.noteToMs(this.beats[id], this.noteFraction[id], config.bpm);
+                        this.timeUntilGateOn[id] = utils.music.noteToMs(block.beats, block.noteFraction, config.bpm);
                     }
                 case 'Delay':
                     this.beats[id] = block.beats;
