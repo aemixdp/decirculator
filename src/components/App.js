@@ -293,10 +293,12 @@ export default class extends React.Component {
         const mapper = (o) =>
             o.id !== object.id ? o
                 : { ...o, [propName]: propValue };
+        const newBlocks = this.state.blocks.map(mapper);
         this.setState({
-            blocks: this.state.blocks.map(mapper),
+            blocks: newBlocks,
             wires: this.state.wires.map(mapper),
             selectedObject: mapper(this.state.selectedObject),
+            blockById: newBlocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
         });
     }
     handleBpmChange = (e) => {
