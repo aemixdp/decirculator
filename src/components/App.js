@@ -65,8 +65,8 @@ export default class extends React.Component {
     }
     componentDidUpdate(prevProps, prevState) {
         if (
-            prevState.blocks.length !== this.state.blocks.length ||
-            prevState.wires.length !== this.state.wires.length
+            this.state.blocks !== prevState.blocks ||
+            this.state.wires !== prevState.wires
         ) {
             this.invalidateCircuit();
         }
