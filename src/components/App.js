@@ -30,6 +30,7 @@ export default class extends React.Component {
             newBlock: null,
             newWire: null,
             blockById: {},
+            blocksBeforeSimulation: [],
             viewportOffset: { x: 0, y: 0 },
             hoveringPortInfo: null,
             circuitName: 'New circuit',
@@ -72,17 +73,19 @@ export default class extends React.Component {
         }
     }
     handleCircuitVisibleChanges = () => {
+        const newBlocks = this.state.blocks.map(b =>
+            (this.circuit.changed[b.id] && b.name === 'Counter')
+                ? { ...b, current: this.circuit.counterValue[b.id] }
+                : b
+        );
         this.setState({
-            blocks: this.state.blocks.map(b =>
-                (this.circuit.changed[b.id] && b.name === 'Counter')
-                    ? { ...b, current: this.circuit.counterValue[b.id] }
-                    : b
-            ),
+            blocks: newBlocks,
             wires: this.state.wires.map(w =>
                 this.circuit.changed[w.id]
                     ? { ...w, gate: this.circuit.gate[w.id] }
                     : w
             ),
+            blockById: newBlocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
         });
     }
     handleThemeChanged = () => {
@@ -310,6 +313,9 @@ export default class extends React.Component {
         });
     }
     handlePlay = () => {
+        this.setState({
+            blocksBeforeSimulation: this.state.blockById,
+        });
         this.circuit.start();
     }
     handlePause = () => {
@@ -318,6 +324,23 @@ export default class extends React.Component {
     handleStop = () => {
         this.resetCircuit();
         this.invalidateCircuit();
+        const blocks = this.state.blocks.map(block => {
+            let bbs = this.state.blocksBeforeSimulation[block.id];
+            if (bbs) {
+                bbs = Object.assign({}, bbs);
+                delete bbs.x;
+                delete bbs.y;
+                delete bbs.ports;
+                return Object.assign({}, block, bbs);
+            } else {
+                return block;
+            }
+        });
+        this.setState({
+            wires: this.state.wires.map(w => ({ ...w, gate: false })),
+            blocks,
+            blockById: blocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
+        });
     }
     handleCircuitSave = () => {
         const circuitData = {
