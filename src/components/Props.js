@@ -66,7 +66,7 @@ export default class Props extends React.Component {
                 !Props.ExcludedProps[key]
             );
         return (
-            <div className="h-box object-properties">
+            <div className="object-properties">
                 {!this.props.hasOwnProperty('id') ? [] : [
                     <input type="checkbox"
                         key="active"
@@ -81,9 +81,12 @@ export default class Props extends React.Component {
                     </span>,
                 ]}
                 {filteredProps.map(([key, value]) =>
-                    <div key={key}>
-                        <span>{mangle(key)}:</span>
-                        <input type={Props.BooleanProps[key] ? 'checkbox' : 'text'}
+                    <div className="h-box" key={key}>
+                        <span className="property-name">
+                            {mangle(key)}:
+                        </span>
+                        <input className="property-value"
+                            type={Props.BooleanProps[key] ? 'checkbox' : 'text'}
                             data-prop={key}
                             value={value}
                             checked={value}

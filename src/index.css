@@ -118,22 +118,30 @@ html, body, input, textarea, select, button {
 }
 
 .object-properties {
+    display: flex;
+    align-items: center;
     margin-top: 10px;
     padding: 4px;
     height: 20px;
+    font-weight: bold;
+    font-size: 12px;
     background-color: #CDD3D7;
-}
-
-.object-properties input[type="checkbox"] {
-    margin-top: 6px;
 }
 
 .object-properties > * {
     margin-right: 10px;
 }
 
-.object-properties input {
-    height: 10px;
+.object-properties span {
+    margin-bottom: 1px;
+}
+
+.object-properties .property-name {
+    margin-right: 2px;
+}
+
+.object-properties input[type="text"] {
+    height: 12px;
     width: 30px;
     text-align: center;
 }
