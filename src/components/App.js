@@ -4,6 +4,7 @@ import update from 'immutability-helper';
 import Wire from './Wire';
 import Block from './Block';
 import BlockButton from './BlockButton';
+import IconButton from './IconButton';
 import Props from './Props';
 import Wireframe from './Wireframe';
 import Dropdown from './Dropdown';
@@ -33,10 +34,11 @@ export default class extends React.Component {
             blocksBeforeSimulation: [],
             viewportOffset: { x: 0, y: 0 },
             hoveringPortInfo: null,
-            circuitName: 'New circuit',
             midiOutput: { name: '' },
             midiOutputs: [],
+            circuitName: 'New circuit',
             circuits: Object.keys(localStorage),
+            simulationState: 'stopped',
             config: {
                 bpm: 130,
                 gateLength: 500,
@@ -315,11 +317,18 @@ export default class extends React.Component {
     handlePlay = () => {
         this.setState({
             blocksBeforeSimulation: this.state.blockById,
+            simulationState: 'started',
+        }, () => {
+            this.circuit.start();
         });
-        this.circuit.start();
+
     }
     handlePause = () => {
-        this.circuit.stop();
+        this.setState({
+            simulationState: 'paused',
+        }, () => {
+            this.circuit.stop();
+        });
     }
     handleStop = () => {
         this.resetCircuit();
@@ -340,6 +349,7 @@ export default class extends React.Component {
             wires: this.state.wires.map(w => ({ ...w, gate: false })),
             blocks,
             blockById: blocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
+            simulationState: 'stopped',
         });
     }
     handleCircuitSave = () => {
@@ -465,21 +475,21 @@ export default class extends React.Component {
                                 />
                             </div>
                             <div className="row">
-                                <i
-                                    className="button fa fa-play-circle-o"
-                                    aria-hidden="true"
-                                    onClick={this.handlePlay}>
-                                </i>
-                                <i
-                                    className="button fa fa-pause-circle-o"
-                                    aria-hidden="true"
-                                    onClick={this.handlePause}>
-                                </i>
-                                <i
-                                    className="button fa fa-stop-circle-o"
-                                    aria-hidden="true"
-                                    onClick={this.handleStop}>
-                                </i>
+                                <IconButton
+                                    className="fa fa-play-circle-o"
+                                    enabled={this.state.simulationState !== 'started'}
+                                    onClick={this.handlePlay}
+                                />
+                                <IconButton
+                                    className="fa fa-pause-circle-o"
+                                    enabled={this.state.simulationState === 'started'}
+                                    onClick={this.handlePause}
+                                />
+                                <IconButton
+                                    className="fa fa-stop-circle-o"
+                                    enabled={this.state.simulationState !== 'stopped'}
+                                    onClick={this.handleStop}
+                                />
                             </div>
                         </div>
                         <div className="controls circuit-controls">
@@ -495,11 +505,11 @@ export default class extends React.Component {
                                     onValueSelect={this.handleCircuitSelect}
                                     onTextChange={this.handleCircuitNameChange}
                                 />
-                                <i
-                                    className="button save fa fa-save"
-                                    aria-hidden="true"
-                                    onClick={this.handleCircuitSave}>
-                                </i>
+                                <IconButton
+                                    className="save fa fa-save"
+                                    enabled={this.state.simulationState === 'stopped'}
+                                    onClick={this.handleCircuitSave}
+                                />
                             </div>
                             <div className="row">
                                 <span className="label">
@@ -512,7 +522,9 @@ export default class extends React.Component {
                                     spellCheck="false"
                                     onValueSelect={this.handleMidiOutputChange}
                                 />
-                                <i className="button refresh fa fa-refresh" aria-hidden="true"></i>
+                                <IconButton
+                                    className="refresh fa fa-refresh"
+                                />
                             </div>
                         </div>
                     </div>

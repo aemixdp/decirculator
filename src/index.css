@@ -185,6 +185,11 @@ html, body, input, textarea, select, button {
     cursor: pointer;
 }
 
+.controls .button.disabled {
+    color: #CDD3D7;
+    cursor: default;
+}
+
 .controls .button.save,
 .controls .button.refresh {
     font-size: 16px;
