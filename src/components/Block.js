@@ -92,8 +92,8 @@ export default class extends React.Component {
                     <Text
                         x={this.props.labelX}
                         y={this.props.labelY}
-                        fontFamily={this.props.theme.font}
-                        fontSize={this.props.labelFontSize || 30}
+                        fontFamily={this.props.theme.blockFont}
+                        fontSize={this.props.labelFontSize || 28}
                         fill={this.props.theme.blockTextColor}
                         text={this.props.label}
                     />

@@ -23,10 +23,10 @@ export default {
     },
     component: (props) =>
         <Block {...props}
-            label="↑"
-            labelX={15}
-            labelY={2}
-            labelFontSize={38}
+            label={'\uf176'}
+            labelX={18}
+            labelY={9}
+            labelFontSize={30}
         >
             <Text key={1}
                 text={props.channel}

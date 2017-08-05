@@ -19,7 +19,8 @@ const PlayBlock = {
         <Block {...props}
             label="▶"
             labelX={14}
-            labelY={8}
+            labelY={10}
+            labelFontSize={32}
         />
 };
 

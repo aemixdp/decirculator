@@ -30,10 +30,10 @@ export default {
     },
     component: (props) =>
         <Block {...props}
-            label="⧖"
-            labelX={13}
-            labelY={6}
-            labelFontSize={34}
+            label={'\uf250'}
+            labelX={14}
+            labelY={12}
+            labelFontSize={26}
         >
             <Text key={1}
                 text={props.beats}

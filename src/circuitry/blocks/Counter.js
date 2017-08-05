@@ -30,9 +30,10 @@ export default {
     },
     component: (props) =>
         <Block  {...props}
-            label="Σ"
-            labelX={16}
-            labelY={10}
+            label={'\uf055'}
+            labelX={13}
+            labelY={11}
+
         >
             <Text key={1}
                 text={props.current != null && `${props.current}`}

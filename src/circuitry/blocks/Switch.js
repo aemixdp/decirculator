@@ -29,7 +29,7 @@ export default {
     },
     component: (props) =>
         <Block  {...props}
-            label="⭮"
+            label={'\uf021'}
             labelX={13}
             labelY={11}
         >

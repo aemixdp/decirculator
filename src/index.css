@@ -1,8 +1,8 @@
 :root {
-    --font: Open Sans;
     --page-background-color: #141D25;
     --app-background-color: #8896A6;
     --wireframe-color: #141D25;
+    --block-font: FontAwesome;
     --block-outline-color: #374558;
     --block-text-color: #374558;
     --block-fill-color: #CDD3D7;
@@ -71,7 +71,7 @@ html, body {
 
 html, body, input, textarea, select, button {
     font-size: 12px;
-    font-family: var(--font);    
+    font-family: Open Sans;    
 }
 
 #mount {

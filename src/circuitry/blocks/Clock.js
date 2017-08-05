@@ -25,9 +25,9 @@ export default {
     },
     component: (props) =>
         <Block {...props}
-            label="◷"
-            labelX={12}
-            labelY={7}
+            label={'\uf017'}
+            labelX={13}
+            labelY={11}
         >
             <Text key={1}
                 text={props.beats}

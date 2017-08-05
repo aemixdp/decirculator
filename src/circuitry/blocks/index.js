@@ -8,8 +8,8 @@ import MidiOut from './MidiOut';
 
 export default {
     Play,
-    Clock,
     Delay,
+    Clock,
     Counter,
     Switch,
     And,
