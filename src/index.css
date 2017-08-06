@@ -186,7 +186,7 @@ html, body, input, textarea, select, button {
 }
 
 .controls .button.disabled {
-    color: #CDD3D7;
+    opacity: 0.3;
     cursor: default;
 }
 
