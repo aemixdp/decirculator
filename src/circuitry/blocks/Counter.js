@@ -15,7 +15,7 @@ export default {
             const inputId = circuit.input[offset + i];
             if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
                 const newCurrent = circuit.counterValue[blockId] += 1;
-                if (newCurrent === circuit.counterSteps[blockId]) {
+                if (newCurrent >= circuit.counterSteps[blockId]) {
                     for (let i = 0; i < 4; i += 1) {
                         if (circuit.input[offset + i] === -1) {
                             circuit.outputGate[offset + i] = true;
