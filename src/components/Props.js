@@ -47,14 +47,17 @@ export default class Props extends React.Component {
         skipFirstGate: true,
     }
     handlePropertyChange = (e) => {
-        this.props.onPropertyChange(e,
-            this.props,
-            e.target.dataset.prop,
-            e.target[({
-                text: 'value',
-                checkbox: 'checked',
-            })[e.target.type]]
-        );
+        const propName = e.target.dataset.prop;
+        let propValue;
+        if (e.target.type === 'text') {
+            propValue = parseInt(e.target.value, 10);
+            if (isNaN(propValue)) {
+                return;
+            }
+        } else if (e.target.type === 'checkbox') {
+            propValue = e.target.checked;
+        }
+        this.props.onPropertyChange(e, this.props, propName, propValue);
     }
     handlePropertyClick = (e) => {
         this.props.onPropertyClick(e);
