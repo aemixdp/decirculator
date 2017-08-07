@@ -7,24 +7,43 @@ const nop = () => { };
 
 export default class {
     constructor({ onVisibleChanges }) {
+        // length {blocks, wires} = total number of objects (blocks and wires) in circuit
         this.length = 0;
+        // isWire[i] {blocks, wires} = true if i-th object is a wire, false otherwise
         this.isWire = [];
+        // startPortInfo[i] {wires} = PortInfo of i-th object if it's a wire, null otherwise (yes, isWire is redundant, but more readable)
         this.startPortInfo = [];
+        // blockTick[i] {blocks} = tick function for i-th block
         this.blockTick = [];
+        // gate[i] {wires, MidiOut} = gate state of i-th object
         this.gate = [];
+        // outputGate[i*4+s] {blocks} = gate state at Side s of i-th object
         this.outputGate = [];
+        // cooldown[i] {wires, MidiOut} = cooldown of i-th object in milliseconds
         this.cooldown = [];
+        // input[i*4+s] {blocks} = id of a wire, which is connected to Side s of i-th block
         this.input = [];
+        // timeUntilGateOn[i] {blocks} = time in milliseconds until i-th block should turn gate on
         this.timeUntilGateOn = [];
+        // timeUntilGateOff[i] {blocks} = time in milliseconds until i-th block should turn gate off
         this.timeUntilGateOff = [];
+        // switchTargetSide[i] {Switch} = currently selected i-th block side
         this.switchTargetSide = [];
+        // delayList[i] {Delay} = DelayList object of i-th block
         this.delayList = [];
+        // counterValue[i] {Counter} = current counter value of i-th block
         this.counterValue = [];
+        // counterValue[i] {Counter} = counter steps of i-th block
         this.counterSteps = [];
+        // beats[i] {Delay, Clock} = number of beats to delay for i-th block
         this.beats = [];
+        // noteFraction[i] {Delay, Clock} = note fraction used with beats to calcute delay for i-th block
         this.noteFraction = [];
+        // playFired[i] {Play} = true if i-th block was already in 'gate on' state during current simulation run
         this.playFired = [];
+        // removed[i] {blocks, wires} = true if i-th block was removed
         this.removed = [];
+        // changed[i] {blocks, wires} = true if i-th block had state changes during last circuit tick
         this.changed = [];
         this.onVisibleChanges = onVisibleChanges;
     }
