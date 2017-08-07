@@ -105,12 +105,10 @@ export default class {
         for (let i = 0; i < this.length; i += 1) {
             if (this.isWire[i]) {
                 const spi = this.startPortInfo[i];
-                // console.log(`${i}#{blockId=${spi.blockId},side=${spi.port.side.index}}`);
                 const outputGateIndex = spi.blockId * 4 + spi.port.side.index;
                 if (this.outputGate[outputGateIndex]) {
                     this.gate[i] = true;
                     this.changed[i] = true;
-                    // console.log(123);
                 }
             }
         }
