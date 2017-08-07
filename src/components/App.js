@@ -51,7 +51,8 @@ export default class extends React.Component {
             this.circuit.stop();
         }
         this.circuit = new Circuit({
-            onVisibleChanges: this.handleCircuitVisibleChanges
+            onVisibleChanges: this.handleCircuitVisibleChanges,
+            onMidiOut: this.handleMidiOut,
         });
     }
     invalidateCircuit() {
@@ -89,6 +90,9 @@ export default class extends React.Component {
             ),
             blockById: newBlocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
         });
+    }
+    handleMidiOut = (toggleState, channel, note, velocity) => {
+        this.midiManager.note(this.state.midiOutput.name, toggleState, channel, note, velocity);
     }
     handleThemeChanged = () => {
         this.setState({

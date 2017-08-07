@@ -1,3 +1,6 @@
+const NOTE_ON = 0x90;
+const NOTE_OFF = 0x80;
+
 export default class {
     constructor({ onDevicesChange = () => { } }) {
         this.midiOutputs = {};
@@ -29,5 +32,9 @@ export default class {
         if (outputsChanged) {
             this.onDevicesChange();
         }
+    }
+    note(outputName, toggleState, channel, note, velocity) {
+        const statusPrefix = toggleState ? NOTE_ON : NOTE_OFF;
+        this.midiOutputs[outputName].send([statusPrefix + channel - 1, note, velocity]);
     }
 }

@@ -11,15 +11,15 @@ export default {
         skipFirstGate: false,
     },
     tick: (circuit, blockId, delta, config) => {
-        const timeUntilGateOn = circuit.timeUntilGateOn[blockId] -= delta;
-        if (timeUntilGateOn <= 0) {
+        const timeUntilTurnOn = circuit.timeUntilTurnOn[blockId] -= delta;
+        if (timeUntilTurnOn <= 0) {
             const offset = blockId * 4;
             for (let i = 0; i < 4; i += 1) {
                 if (circuit.input[offset + i] === -1) {
                     circuit.outputGate[offset + i] = true;
                 }
             }
-            circuit.timeUntilGateOn[blockId] =
+            circuit.timeUntilTurnOn[blockId] =
                 utils.music.noteToMs(circuit.beats[blockId], circuit.noteFraction[blockId], config.bpm);
         }
     },

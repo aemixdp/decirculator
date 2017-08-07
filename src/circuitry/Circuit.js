@@ -6,7 +6,7 @@ import DelayList from '../utils/DelayList';
 const nop = () => { };
 
 export default class {
-    constructor({ onVisibleChanges }) {
+    constructor({ onVisibleChanges, onMidiOut }) {
         // length {blocks, wires} = total number of objects (blocks and wires) in circuit
         this.length = 0;
         // isWire[i] {blocks, wires} = true if i-th object is a wire, false otherwise
@@ -15,7 +15,7 @@ export default class {
         this.startPortInfo = [];
         // blockTick[i] {blocks} = tick function for i-th block
         this.blockTick = [];
-        // gate[i] {wires, MidiOut} = gate state of i-th object
+        // gate[i] {wires} = gate state of i-th object
         this.gate = [];
         // outputGate[i*4+s] {blocks} = gate state at Side s of i-th object
         this.outputGate = [];
@@ -23,10 +23,10 @@ export default class {
         this.cooldown = [];
         // input[i*4+s] {blocks} = id of a wire, which is connected to Side s of i-th block
         this.input = [];
-        // timeUntilGateOn[i] {blocks} = time in milliseconds until i-th block should turn gate on
-        this.timeUntilGateOn = [];
-        // timeUntilGateOff[i] {blocks} = time in milliseconds until i-th block should turn gate off
-        this.timeUntilGateOff = [];
+        // timeUntilTurnOn[i] {Clock} = time in milliseconds until i-th object should turn on
+        this.timeUntilTurnOn = [];
+        // timeUntilTurnOff[i] {wires} = time in milliseconds until i-th object should turn off
+        this.timeUntilTurnOff = [];
         // switchTargetSide[i] {Switch} = currently selected i-th block side
         this.switchTargetSide = [];
         // delayList[i] {Delay} = DelayList object of i-th block
@@ -39,6 +39,12 @@ export default class {
         this.beats = [];
         // noteFraction[i] {Delay, Clock} = note fraction used with beats to calcute delay for i-th block
         this.noteFraction = [];
+        // channel[i] {MidiOut} = i-th block channel to send midi messages
+        this.channel = [];
+        // note[i] {MidiOut} = midi note to send for i-th block
+        this.note = [];
+        // velocity[i] {MidiOut} = velocity of midi note to send for i-th block
+        this.velocity = [];
         // playFired[i] {Play} = true if i-th block was already in 'gate on' state during current simulation run
         this.playFired = [];
         // removed[i] {blocks, wires} = true if i-th block was removed
@@ -46,6 +52,7 @@ export default class {
         // changed[i] {blocks, wires} = true if i-th block had state changes during last circuit tick
         this.changed = [];
         this.onVisibleChanges = onVisibleChanges;
+        this.onMidiOut = onMidiOut;
     }
     update(blocks, wires, config) {
         this.config = Object.assign({}, config);
@@ -65,12 +72,17 @@ export default class {
             this.outputGate.push(false, false, false, false);
             this.cooldown.push(false);
             this.input.push(-1, -1, -1, -1);
-            this.timeUntilGateOn.push(0);
-            this.timeUntilGateOff.push(0);
+            this.timeUntilTurnOn.push(0);
+            this.timeUntilTurnOff.push(0);
             this.switchTargetSide.push(0);
             this.delayList.push(new DelayList());
             this.counterValue.push(0);
             this.counterSteps.push(0);
+            this.beats.push(0);
+            this.noteFraction.push(0);
+            this.channel.push(0);
+            this.note.push(0);
+            this.velocity.push(0);
             this.playFired.push(false);
             this.removed.push(false);
             this.changed.push(false);
@@ -94,12 +106,16 @@ export default class {
                     break;
                 case 'Clock':
                     if (block.skipFirstGate) {
-                        this.timeUntilGateOn[id] = utils.music.noteToMs(block.beats, block.noteFraction, config.bpm);
+                        this.timeUntilTurnOn[id] = utils.music.noteToMs(block.beats, block.noteFraction, config.bpm);
                     }
                 case 'Delay':
                     this.beats[id] = block.beats;
                     this.noteFraction[id] = block.noteFraction;
                     break;
+                case 'MidiOut':
+                    this.channel[id] = block.channel;
+                    this.note[id] = block.note;
+                    this.velocity[id] = block.velocity;
                 default:
                     break;
             }
@@ -136,11 +152,11 @@ export default class {
         }
         for (let i = 0; i < this.length; i += 1) {
             if (!this.removed[i] && this.gate[i]) {
-                if (this.timeUntilGateOff[i] <= 0) {
-                    this.timeUntilGateOff[i] = this.config.gateLength;
+                if (this.timeUntilTurnOff[i] <= 0) {
+                    this.timeUntilTurnOff[i] = this.config.gateLength;
                 } else {
-                    const timeUntilGateOff = this.timeUntilGateOff[i] -= delta;
-                    if (timeUntilGateOff <= 0) {
+                    const timeUntilTurnOff = this.timeUntilTurnOff[i] -= delta;
+                    if (timeUntilTurnOff <= 0) {
                         this.changed[i] = this.changed[i] || this.gate[i];
                         this.gate[i] = false;
                         this.cooldown[i] = false;
