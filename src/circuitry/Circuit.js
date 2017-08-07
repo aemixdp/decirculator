@@ -131,7 +131,7 @@ export default class {
                 }
             }
         }
-        if (this.changed.reduce((a, b) => a || b)) {
+        if (this.changed.reduce((a, b) => a || b, false)) {
             this.onVisibleChanges();
         }
         for (let i = 0; i < this.length; i += 1) {
