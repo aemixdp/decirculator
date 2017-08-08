@@ -382,6 +382,7 @@ export default class extends React.Component {
                 wires: circuitData.wires,
                 idCounter: circuitData.idCounter,
                 blockById: circuitData.blocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
+                simulationState: 'stopped',
             });
         }
     }
