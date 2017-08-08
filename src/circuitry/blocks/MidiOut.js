@@ -47,8 +47,8 @@ export default {
                 fontSize={10}
             />
             <Text key={2}
-                text={props.value}
-                x={utils.text.offset(props.value, 40, 34, 30, 24, 18, 12, 6)}
+                text={props.note}
+                x={utils.text.offset(props.note, 40, 34, 30, 24, 18, 12, 6)}
                 y={37}
                 fill={props.theme.blockTextColor}
                 fontFamily={props.theme.font}
