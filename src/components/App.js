@@ -92,7 +92,9 @@ export default class extends React.Component {
         });
     }
     handleMidiOut = (toggleState, channel, note, velocity) => {
-        this.midiManager.note(this.state.midiOutput.name, toggleState, channel, note, velocity);
+        if (this.state.midiOutput.name) {
+            this.midiManager.note(this.state.midiOutput.name, toggleState, channel, note, velocity);
+        }
     }
     handleThemeChanged = () => {
         this.setState({
