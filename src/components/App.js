@@ -520,7 +520,7 @@ export default class extends React.Component {
                             </div>
                             <div className="row">
                                 <span className="label">
-                                    Send midi to:
+                                    Midi to:
                                 </span>
                                 <Dropdown
                                     className="entry"

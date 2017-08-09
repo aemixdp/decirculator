@@ -202,5 +202,5 @@ html, body, input, textarea, select, button {
 
 .circuit-controls { margin-right: 10px; }
 .circuit-controls .entry { width: 220px; }
-.circuit-controls .label { width: 80px; }
+.circuit-controls .label { width: 50px; }
 .circuit-controls .button { margin-left: 5px; }
