@@ -2,6 +2,7 @@
 
 import utils from '../utils';
 import DelayList from '../utils/DelayList';
+import Side from '../data/Side';
 
 const nop = () => { };
 
@@ -11,6 +12,8 @@ export default class {
         this.length = 0;
         // isWire[i] {blocks, wires} = true if i-th object is a wire, false otherwise
         this.isWire = [];
+        // isOutputPort[i*4+s] {blocks} = true if port at Side s of i-th object is output port, false if it's an input port
+        this.isOutputPort = [];
         // startPortInfo[i] {wires} = PortInfo of i-th object if it's a wire, null otherwise (yes, isWire is redundant, but more readable)
         this.startPortInfo = [];
         // blockTick[i] {blocks} = tick function for i-th block
@@ -66,6 +69,7 @@ export default class {
         for (let i = this.length; i <= maxId; i += 1) {
             this.length += 1;
             this.isWire.push(false);
+            this.isOutputPort.push(false);
             this.startPortInfo.push(null);
             this.blockTick.push(nop);
             this.gate.push(false);
@@ -99,6 +103,9 @@ export default class {
             const id = block.id;
             this.blockTick[id] = block.tick;
             this.removed[id] = false;
+            for (let s in block.ports) {
+                this.isOutputPort[id * 4 + Side[s].index] = (block.ports[s] === 'out');
+            }
             switch (block.name) {
                 case 'Counter':
                     this.counterValue[id] = block.current;

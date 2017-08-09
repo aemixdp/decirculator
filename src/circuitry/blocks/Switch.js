@@ -18,7 +18,7 @@ export default {
                 const oldSwitchTargetSide = circuit.switchTargetSide[blockId];
                 for (let i = 1; i <= 4; ++i) {
                     const newSwitchTargetSide = (oldSwitchTargetSide + i) % 4;
-                    if (circuit.input[offset + newSwitchTargetSide] === -1) {
+                    if (circuit.isOutputPort[offset + newSwitchTargetSide]) {
                         circuit.outputGate[offset + newSwitchTargetSide] = true;
                         circuit.switchTargetSide[blockId] = newSwitchTargetSide;
                         return;
