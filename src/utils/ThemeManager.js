@@ -1,16 +1,25 @@
+// @flow
+
 import utils from './';
 
+type ThemeManagerOptions = {
+    pollInterval: number;
+    onThemeChanged: () => void;
+};
+
 export default class {
-    constructor({ pollInterval = 500, onThemeChanged = () => { } }) {
-        this.eventHandlers = Object.create(null);
+    theme: Object;
+    pollInterval: number;
+    onThemeChanged: () => void;
+    constructor(options: ThemeManagerOptions) {
         this.theme = Object.create(null);
         this.invalidateTheme();
-        this.onThemeChanged = onThemeChanged;
-        setInterval(this.invalidateTheme, pollInterval);
+        this.onThemeChanged = options.onThemeChanged;
+        setInterval(this.invalidateTheme, options.pollInterval);
     }
     invalidateTheme = () => {
         const bodyComputedStyle = window.getComputedStyle(document.body);
-        const sheet = document.styleSheets[0];
+        const sheet = (document.styleSheets[0]: any);
         const rootStyle = (sheet.rules || sheet.cssRules)[0].style;
         let themeChanged = false;
         for (let i = 0; i < rootStyle.length; ++i) {
@@ -22,7 +31,7 @@ export default class {
                 themeChanged = true;
             }
         }
-        if (themeChanged && this.onThemeChanged) {
+        if (themeChanged) {
             this.onThemeChanged();
         }
     }
