@@ -1,18 +1,23 @@
-class Cons {
-    constructor(head, tail) {
+// @flow
+
+class Cons<T> {
+    head: T;
+    tail: Cons<T> | null;
+    constructor(head: T, tail: Cons<T> | null) {
         this.head = head;
         this.tail = tail;
     }
 }
 
-export default class {
+export default class DelayList {
+    root: Cons<number> | null;
     constructor() {
         this.root = null;
     }
-    add(delay) {
+    add(delay: number): void {
         this.root = new Cons(delay, this.root);
     }
-    tick(delta) {
+    tick(delta: number): boolean {
         let prevNode = null;
         let currNode = this.root;
         while (currNode) {
