@@ -1,9 +1,23 @@
+// @flow
+
 const NOTE_ON = 0x90;
 const NOTE_OFF = 0x80;
 
-export default class {
-    constructor({ onDevicesChange = () => { } }) {
-        this.midiOutputs = {};
+type MidiOutput = {
+    name: string;
+    send(...args: any): void;
+};
+
+type MidiManagerOptions = {
+    onDevicesChange: () => void;
+};
+
+export default class MidiManager {
+    midiOutputs: Map<string, MidiOutput>;
+    midiAccess: Object;
+    onDevicesChange: () => void;
+    constructor({ onDevicesChange = () => { } }: MidiManagerOptions) {
+        this.midiOutputs = new Map();
         this.onDevicesChange = onDevicesChange;
         if (navigator.requestMIDIAccess) {
             navigator.requestMIDIAccess().then((midiAccess) => {
@@ -15,16 +29,16 @@ export default class {
     }
     refreshDevices = () => {
         if (!this.midiAccess) return;
-        const outputs = {};
+        const outputs: Map<string, MidiOutput> = new Map();
         let outputsChanged = false;
         for (const output of this.midiAccess.outputs.values()) {
-            outputs[output.name] = output;
-            if (!this.midiOutputs[output.name]) {
+            outputs.set(output.name, output);
+            if (!this.midiOutputs.has(output.name)) {
                 outputsChanged = true;
             }
         }
-        for (const output of Object.values(this.midiOutputs)) {
-            if (!outputs[output.name]) {
+        for (const output of this.midiOutputs.values()) {
+            if (!outputs.has(output.name)) {
                 outputsChanged = true;
             }
         }
@@ -33,8 +47,11 @@ export default class {
             this.onDevicesChange();
         }
     }
-    note(outputName, toggleState, channel, note, velocity) {
+    note(outputName: string, toggleState: boolean, channel: number, note: number, velocity: number): void {
         const statusPrefix = toggleState ? NOTE_ON : NOTE_OFF;
-        this.midiOutputs[outputName].send([statusPrefix + channel - 1, note, velocity]);
+        const midiOutput = this.midiOutputs.get(outputName);
+        if (midiOutput) {
+            midiOutput.send([statusPrefix + channel - 1, note, velocity]);
+        }
     }
 }
