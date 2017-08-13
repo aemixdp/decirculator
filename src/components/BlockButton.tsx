@@ -11,7 +11,7 @@ type EventListeners = {
     onDragStart: BlockButtonEventListener;
     onDragEnd: BlockButtonEventListener;
     onDragMove: BlockButtonEventListener;
-}
+};
 
 type DefaultProps = EventListeners;
 type Props = EventListeners & BlockDescriptor & CircuitObjectVisuals;
@@ -21,7 +21,7 @@ export class BlockButton extends React.Component<Props, any> {
         onDragStart: () => { },
         onDragEnd: () => { },
         onDragMove: () => { },
-    }
+    };
     handleDragStart = (e: Event) => {
         this.props.onDragStart(e, this.props);
     }

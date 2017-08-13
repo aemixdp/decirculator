@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layer, Line } from 'react-konva';
-import { Point } from "../data/Point";
+import { Point } from '../data/Point';
 
 type Props = {
     x: number;
@@ -23,14 +23,16 @@ export class Wireframe extends React.Component<Props, any> {
         return (
             <Layer {...this.props}>
                 {Array.from({ length: Math.floor(980 / c) }, (_, n) =>
-                    <Line key={+n}
+                    <Line
+                        key={+n}
                         stroke={this.props.theme.wireframeColor}
                         strokeWidth={0.1}
                         points={[c * n - 1, 0, c * n - 1, 600]}
                     />
                 )}
                 {Array.from({ length: Math.floor(610 / c) }, (_, n) =>
-                    <Line key={-n}
+                    <Line
+                        key={-n}
                         stroke={this.props.theme.wireframeColor}
                         strokeWidth={0.1}
                         points={[0, c * n - 1, 960, c * n - 1]}

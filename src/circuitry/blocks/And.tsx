@@ -19,9 +19,10 @@ export const And: BlockDescriptor<{}> = {
         }
     },
     component: (props) =>
-        <Block {...props}
+        <Block
+            {...props}
             label="&"
             labelX={15}
             labelY={10}
         />
-}
+};

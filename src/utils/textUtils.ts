@@ -2,7 +2,7 @@ export function snakeToCamel(s: string): string {
     return s.replace(/(-.)/g, (m) => m[1].toUpperCase());
 }
 
-export function offset(n: number, ...offsets: number[]): number {
+export function textOffset(n: number, ...offsets: number[]): number {
     return offsets[Math.max(`${n}`.length - 1, 0)] || offsets[offsets.length - 1];
 }
 

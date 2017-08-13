@@ -25,7 +25,7 @@ export class Circuit {
      */
     isOutputPort: Array<boolean>;
     /**
-     * startPortInfo[i] {wires} = PortInfo of i-th object if it's a wire, null otherwise (yes, isWire is redundant, but more readable).
+     * startPortInfo[i] {wires} = PortInfo of i-th object if it's a wire (isWire is redundant, but more readable).
      */
     startPortInfo: Array<PortInfo | null>;
     /**
@@ -49,8 +49,8 @@ export class Circuit {
      */
     input: Array<number>;
     /**
-    * timeUntilTurnOn[i] {Clock} = time in milliseconds until i-th object should turn on.
-    */
+     * timeUntilTurnOn[i] {Clock} = time in milliseconds until i-th object should turn on.
+     */
     timeUntilTurnOn: Array<number>;
     /**
      * timeUntilTurnOff[i] {wires} = time in milliseconds until i-th object should turn off.

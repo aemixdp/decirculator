@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import ReactKonva from 'react-konva';
 import { Port } from './Port';
 import { portLocationInfos } from '../data/PortLocationInfo';
@@ -17,7 +17,7 @@ type EventListeners = {
     onClick: BlockEventListener;
     onMouseEnter: (e: Event) => void;
     onMouseLeave: (e: Event) => void;
-}
+};
 
 type Props = Partial<EventListeners> & BlockCircuitObject & CircuitObjectVisuals;
 
@@ -81,7 +81,8 @@ export class Block extends React.Component<Props, any> {
                     {this.props.children}
                 </Group>
                 {portLocationInfos.map(pli =>
-                    <Port {...pli}
+                    <Port
+                        {...pli}
                         key={pli.side.name}
                         theme={this.props.theme}
                         direction={this.props.ports[pli.side.name]}

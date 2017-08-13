@@ -18,7 +18,7 @@ type EventListeners = {
     onClick: PortHoverZoneEventListener;
     onMouseEnter: PortHoverZoneEventListener;
     onMouseLeave: PortHoverZoneEventListener;
-}
+};
 
 type DefaultProps = EventListeners;
 type Props = EventListeners & PortLocationInfo;

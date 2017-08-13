@@ -7,7 +7,7 @@ type Props = PortLocationInfo & {
     theme: any;
     direction: 'in' | 'out';
     isHovering: boolean;
-}
+};
 
 export class Port extends React.Component<Props, any> {
     render() {
@@ -33,5 +33,5 @@ export class Port extends React.Component<Props, any> {
                 }
             </Group>
         );
-    };
+    }
 }

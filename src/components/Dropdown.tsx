@@ -7,7 +7,7 @@ type Props = {
     className: string;
     onValueSelect?: React.ChangeEventHandler<any>;
     onTextChange?: React.ChangeEventHandler<any>;
-}
+};
 
 export class Dropdown extends React.Component<Props, any> {
     render() {
@@ -18,7 +18,7 @@ export class Dropdown extends React.Component<Props, any> {
                     spellCheck={this.props.spellCheck}
                     onChange={this.props.onValueSelect}
                 >
-                    <option disabled value="">Select item...</option>
+                    <option disabled={true} value="">Select item...</option>
                     {this.props.variants.map(v =>
                         <option key={v} value={v}>{v}</option>
                     )}

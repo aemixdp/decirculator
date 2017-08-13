@@ -2,7 +2,7 @@ import React from 'react';
 import { Text } from 'react-konva';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
-import { offset } from '../../utils/textUtils';
+import { textOffset } from '../../utils/textUtils';
 import { noteToMs } from '../../utils/musicUtils';
 
 type State = {
@@ -32,14 +32,16 @@ export const Clock: BlockDescriptor<State> = {
         }
     },
     component: (props) =>
-        <Block {...props }
+        <Block
+            {...props }
             label={'\uf017'}
             labelX={13}
             labelY={11}
         >
-            <Text key={1}
+            <Text
+                key={1}
                 text={`${props.beats || ''}`}
-                x={offset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
+                x={textOffset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
                 y={4}
                 fill={props.theme.blockTextColor}
                 fontFamily={props.theme.font}
@@ -48,11 +50,11 @@ export const Clock: BlockDescriptor<State> = {
             <Text
                 key={2}
                 text={`${props.noteFraction || ''}`}
-                x={offset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
+                x={textOffset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
                 y={37}
                 fill={props.theme.blockTextColor}
                 fontFamily={props.theme.font}
                 fontSize={10}
             />
         </Block>
-}
+};

@@ -13,17 +13,17 @@ import { MidiManager } from '../utils/MidiManager';
 import { propagationStopper } from '../utils/eventUtils';
 import { defaultPortDirections } from '../data/PortDirection';
 import { Circuit } from '../circuitry/Circuit';
-import { shapeCenter } from "../utils/geometryUtils";
-import { objectValues } from "../utils/objectUtils";
-import { CircuitObject } from "../data/CircuitObject";
-import { BlockCircuitObject } from "../data/CircuitObject/BlockCircuitObject";
-import { WireCircuitObject } from "../data/CircuitObject/WireCircuitObject";
-import { Point } from "../data/Point";
-import { PortInfo } from "../data/PortInfo";
-import { BlockDescriptor } from "../data/BlockDescriptor";
-import blocks from '../circuitry/blocks';
-import { PortLocationInfo } from "../data/PortLocationInfo";
-import { AnyCircuitObject } from "../data/CircuitObject/AnyCircuitObject";
+import { shapeCenter } from '../utils/geometryUtils';
+import { objectValues } from '../utils/objectUtils';
+import { CircuitObject } from '../data/CircuitObject';
+import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
+import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
+import { Point } from '../data/Point';
+import { PortInfo } from '../data/PortInfo';
+import { BlockDescriptor } from '../data/BlockDescriptor';
+import blockDescriptors from '../circuitry/blocks';
+import { PortLocationInfo } from '../data/PortLocationInfo';
+import { AnyCircuitObject } from '../data/CircuitObject/AnyCircuitObject';
 
 const { Stage, Layer }: any = ReactKonva;
 
@@ -209,7 +209,7 @@ export class App extends React.Component<Props, State> {
     }
     handleBlockDrag = (event: any, block: any) => {
         if (this.refs.viewport.domNode.contains(event.evt.toElement)) {
-            const transform = (block: BlockCircuitObject) => block && Object.assign({}, block,
+            const transform = (blk: BlockCircuitObject) => blk && Object.assign({}, blk,
                 snapToWireframe(this.props.wireframeCellSize, {
                     x: event.evt.offsetX - this.state.viewportOffset.x - 25,
                     y: event.evt.offsetY - this.state.viewportOffset.y - 25,
@@ -322,12 +322,12 @@ export class App extends React.Component<Props, State> {
         this.setState({ selectedObject: undefined });
     }
     handlePortClick = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
-        const wire = this.state.wires.find(wire =>
-            (wire.startPortInfo.blockId === block.id && wire.startPortInfo.port.side === port.side) ||
-            (wire.endPortInfo !== undefined && wire.endPortInfo.blockId === block.id && wire.endPortInfo.port.side === port.side)
+        const wire = this.state.wires.find(w =>
+            (w.startPortInfo.blockId === block.id && w.startPortInfo.port.side === port.side) ||
+            (w.endPortInfo !== undefined && w.endPortInfo.blockId === block.id && w.endPortInfo.port.side === port.side)
         );
-        const togglePort = (block: BlockCircuitObject, sideName: string) =>
-            update(block, { ports: { [sideName]: { $set: block.ports[sideName] === 'in' ? 'out' : 'in' } } });
+        const togglePort = (blk: BlockCircuitObject, sideName: string) =>
+            update(blk, { ports: { [sideName]: { $set: blk.ports[sideName] === 'in' ? 'out' : 'in' } } });
         this.setState({
             blocks: this.state.blocks.map(b => {
                 if (b.id === block.id) {
@@ -457,9 +457,10 @@ export class App extends React.Component<Props, State> {
         this.setState({ midiOutput: this.midiManager.midiOutputs[event.target.value] });
     }
     renderBlock = (block: BlockCircuitObject) => {
-        const blockDescriptor = blocks[block.name];
+        const blockDescriptor = blockDescriptors[block.name];
         return (
-            <blockDescriptor.component {...block}
+            <blockDescriptor.component
+                {...block}
                 key={`block_${block.id}`}
                 theme={this.state.theme}
                 isSelected={this.state.selectedObject
@@ -487,7 +488,8 @@ export class App extends React.Component<Props, State> {
         const startPosition = wire.startPosition || shapeCenter(spi.port, this.state.blockById[spi.blockId]);
         const endPosition = wire.endPosition || epi && shapeCenter(epi.port, this.state.blockById[epi.blockId]);
         return (
-            <Wire {...wire}
+            <Wire
+                {...wire}
                 key={`wire_${wire.id}`}
                 startPosition={startPosition}
                 endPosition={endPosition}
@@ -500,7 +502,8 @@ export class App extends React.Component<Props, State> {
     }
     renderProps = (object: any) => {
         return (
-            <Properties {...(object || {}) }
+            <Properties
+                {...(object || {}) }
                 onPropertyChange={this.handlePropertyChange}
                 onPropertyClick={propagationStopper}
             />
@@ -508,7 +511,8 @@ export class App extends React.Component<Props, State> {
     }
     renderHoverZones = () => {
         return this.state.blocks.map(block =>
-            <BlockHoverZone {...block}
+            <BlockHoverZone
+                {...block}
                 key={`hover_zones_${block.id}`}
                 x={block.x}
                 y={block.y}
@@ -526,8 +530,9 @@ export class App extends React.Component<Props, State> {
             >
                 <div className="v-box app">
                     <div className="h-box block-buttons">
-                        {objectValues(blocks).map(blockDescriptor =>
-                            <BlockButton {...blockDescriptor}
+                        {objectValues(blockDescriptors).map(blockDescriptor =>
+                            <BlockButton
+                                {...blockDescriptor}
                                 key={blockDescriptor.name}
                                 theme={this.state.theme}
                                 onDragStart={this.handleNewBlockDragStart}
@@ -606,7 +611,8 @@ export class App extends React.Component<Props, State> {
                         </div>
                     </div>
                     {this.renderProps(this.state.selectedObject)}
-                    <Stage ref="viewport"
+                    <Stage
+                        ref="viewport"
                         x={this.state.viewportOffset.x}
                         y={this.state.viewportOffset.y}
                         width={952}

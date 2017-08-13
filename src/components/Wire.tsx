@@ -5,14 +5,14 @@ import { CircuitObjectVisuals } from '../data/CircuitObjectVisuals';
 
 type EventListeners = {
     onClick: (event: Event, wire: WireCircuitObject) => void;
-}
+};
 
 type Props = EventListeners & WireCircuitObject & CircuitObjectVisuals;
 
 export class Wire extends React.Component<Props, any> {
     static defaultProps = {
         onClick: () => { },
-    }
+    };
     handleClick = (e: Event) => {
         this.props.onClick(e, this.props);
     }

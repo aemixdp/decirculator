@@ -19,9 +19,10 @@ export const Or: BlockDescriptor<{}> = {
         }
     },
     component: (props) =>
-        <Block {...props}
+        <Block
+            {...props}
             label={'\uf047'}
             labelX={11}
             labelY={11}
         />
-}
+};

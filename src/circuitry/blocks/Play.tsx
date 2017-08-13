@@ -17,7 +17,8 @@ export const Play: BlockDescriptor<{}> = {
         }
     },
     component: (props) =>
-        <Block {...props}
+        <Block
+            {...props}
             label="▶"
             labelX={14}
             labelY={10}

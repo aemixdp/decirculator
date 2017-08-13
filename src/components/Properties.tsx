@@ -34,7 +34,7 @@ const booleanProps = {
 type EventListeners = {
     onPropertyClick: (event: React.MouseEvent<any>) => void,
     onPropertyChange: (event: React.ChangeEvent<any>, block: CircuitObject, propName: string, propValue: any) => void,
-}
+};
 
 type Props = EventListeners & CircuitObject;
 
@@ -42,7 +42,7 @@ export class Properties extends React.Component<Props, any> {
     static defaultProps: EventListeners = {
         onPropertyChange: () => { },
         onPropertyClick: () => { },
-    }
+    };
     handlePropertyChange = (event: React.ChangeEvent<any>) => {
         const propName = event.target.dataset.prop;
         let propValue;
@@ -68,8 +68,9 @@ export class Properties extends React.Component<Props, any> {
         return (
             <div className="object-properties">
                 {!this.props.hasOwnProperty('id') ? [] : [
-                    <input type="checkbox"
+                    <input
                         key="active"
+                        type="checkbox"
                         data-prop="active"
                         data-value="checked"
                         checked={this.props.active}
@@ -85,8 +86,9 @@ export class Properties extends React.Component<Props, any> {
                         <span className="property-name">
                             {mangle(key)}:
                         </span>
-                        <input className="property-value"
+                        <input
                             type={booleanProps[key] ? 'checkbox' : 'text'}
+                            className="property-value"
                             data-prop={key}
                             value={value}
                             checked={value}

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactKonva from 'react-konva';
 import { PortHoverZone } from './PortHoverZone';
 import { PortLocationInfo, portLocationInfos } from '../data/PortLocationInfo';
-import { BlockCircuitObject } from "../data/CircuitObject/BlockCircuitObject";
+import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 
 const { Group }: any = ReactKonva;
 
@@ -13,9 +13,9 @@ type EventListeners = {
     onPortMouseEnter: BlockHoverZoneEventListener;
     onPortMouseLeave: BlockHoverZoneEventListener;
     onPortClick: BlockHoverZoneEventListener;
-}
+};
 
-type DefaultProps = EventListeners
+type DefaultProps = EventListeners;
 type Props = EventListeners & BlockCircuitObject;
 
 export class BlockHoverZone extends React.Component<Props, any> {
@@ -23,7 +23,7 @@ export class BlockHoverZone extends React.Component<Props, any> {
         onPortMouseEnter: () => { },
         onPortMouseLeave: () => { },
         onPortClick: () => { },
-    }
+    };
     handlePortMouseEnter = (e: Event, port: PortLocationInfo) => {
         this.props.onPortMouseEnter(e, this.props, port);
     }
@@ -40,7 +40,8 @@ export class BlockHoverZone extends React.Component<Props, any> {
                 y={this.props.y}
             >
                 {portLocationInfos.map(pli =>
-                    <PortHoverZone {...pli}
+                    <PortHoverZone
+                        {...pli}
                         key={pli.side.name}
                         onClick={this.handlePortClick}
                         onMouseEnter={this.handlePortMouseEnter}

@@ -2,13 +2,13 @@ import React from 'react';
 import { Text } from 'react-konva';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
-import { offset } from '../../utils/textUtils';
+import { textOffset } from '../../utils/textUtils';
 import { noteToMs } from '../../utils/musicUtils';
 
 type State = {
     beats: number;
     noteFraction: number;
-}
+};
 
 export const Delay: BlockDescriptor<State> = {
     name: 'Delay',
@@ -36,27 +36,30 @@ export const Delay: BlockDescriptor<State> = {
         }
     },
     component: (props) =>
-        <Block {...props}
+        <Block
+            {...props}
             label={'\uf250'}
             labelX={14}
             labelY={12}
             labelFontSize={26}
         >
-            <Text key={1}
+            <Text
+                key={1}
                 text={`${props.beats || ''}`}
-                x={offset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
+                x={textOffset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
                 y={4}
                 fill={props.theme.blockTextColor}
                 fontFamily={props.theme.font}
                 fontSize={10}
             />
-            <Text key={2}
+            <Text
+                key={2}
                 text={`${props.noteFraction || ''}`}
-                x={offset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
+                x={textOffset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
                 y={37}
                 fill={props.theme.blockTextColor}
                 fontFamily={props.theme.font}
                 fontSize={10}
             />
         </Block>
-}
+};

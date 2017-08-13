@@ -2,13 +2,13 @@ import React from 'react';
 import { Text } from 'react-konva';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
-import { offset } from '../../utils/textUtils';
+import { textOffset } from '../../utils/textUtils';
 
 type State = {
     channel: number;
     note: number;
     velocity: number;
-}
+};
 
 export const MidiOut: BlockDescriptor<State> = {
     name: 'MidiOut',
@@ -39,27 +39,30 @@ export const MidiOut: BlockDescriptor<State> = {
         }
     },
     component: (props) =>
-        <Block {...props}
+        <Block
+            {...props}
             label={'\uf176'}
             labelX={18}
             labelY={9}
             labelFontSize={30}
         >
-            <Text key={1}
+            <Text
+                key={1}
                 text={`${props.channel || ''}`}
-                x={offset(props.channel, 40, 34, 30, 24, 18, 12, 6)}
+                x={textOffset(props.channel, 40, 34, 30, 24, 18, 12, 6)}
                 y={4}
                 fill={props.theme.blockTextColor}
                 fontFamily={props.theme.font}
                 fontSize={10}
             />
-            <Text key={2}
+            <Text
+                key={2}
                 text={`${props.note || ''}`}
-                x={offset(props.note, 40, 34, 30, 24, 18, 12, 6)}
+                x={textOffset(props.note, 40, 34, 30, 24, 18, 12, 6)}
                 y={37}
                 fill={props.theme.blockTextColor}
                 fontFamily={props.theme.font}
                 fontSize={10}
             />
         </Block>
-}
+};
