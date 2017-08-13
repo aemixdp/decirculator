@@ -611,7 +611,7 @@ export class App extends React.Component<Props, State> {
                         y={this.state.viewportOffset.y}
                         width={952}
                         height={600}
-                        draggable={this.state.hoveringPortInfo === null}
+                        draggable={!this.state.hoveringPortInfo}
                         onDragMove={this.handleViewportDrag}
                         onContentMouseDown={this.handleViewportMouseDown}
                         onContentMouseUp={this.handleViewportMouseUp}
