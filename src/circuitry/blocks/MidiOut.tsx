@@ -48,7 +48,7 @@ export const MidiOut: BlockDescriptor<State> = {
         >
             <Text
                 key={1}
-                text={`${props.channel || ''}`}
+                text={`${props.channel !== undefined ? props.channel : ''}`}
                 x={textOffset(props.channel, 40, 34, 30, 24, 18, 12, 6)}
                 y={4}
                 fill={props.theme.blockTextColor}
@@ -57,7 +57,7 @@ export const MidiOut: BlockDescriptor<State> = {
             />
             <Text
                 key={2}
-                text={`${props.note || ''}`}
+                text={`${props.note !== undefined ? props.note : ''}`}
                 x={textOffset(props.note, 40, 34, 30, 24, 18, 12, 6)}
                 y={37}
                 fill={props.theme.blockTextColor}

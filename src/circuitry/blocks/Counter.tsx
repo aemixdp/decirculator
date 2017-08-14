@@ -43,7 +43,7 @@ export const Counter: BlockDescriptor<State> = {
         >
             <Text
                 key={1}
-                text={`${props.current || ''}`}
+                text={`${props.current !== undefined ? props.current : ''}`}
                 x={textOffset(props.current, 40, 34, 30, 24, 18, 12, 6)}
                 y={4}
                 fill={props.theme.blockTextColor}
@@ -52,7 +52,7 @@ export const Counter: BlockDescriptor<State> = {
             />
             <Text
                 key={2}
-                text={`${props.steps || ''}`}
+                text={`${props.steps !== undefined ? props.steps : ''}`}
                 x={textOffset(props.steps, 40, 34, 30, 24, 18, 12, 6)}
                 y={37}
                 fill={props.theme.blockTextColor}

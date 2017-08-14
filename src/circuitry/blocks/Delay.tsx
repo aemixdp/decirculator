@@ -45,7 +45,7 @@ export const Delay: BlockDescriptor<State> = {
         >
             <Text
                 key={1}
-                text={`${props.beats || ''}`}
+                text={`${props.beats !== undefined ? props.beats : ''}`}
                 x={textOffset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
                 y={4}
                 fill={props.theme.blockTextColor}
@@ -54,7 +54,7 @@ export const Delay: BlockDescriptor<State> = {
             />
             <Text
                 key={2}
-                text={`${props.noteFraction || ''}`}
+                text={`${props.noteFraction !== undefined ? props.noteFraction : ''}`}
                 x={textOffset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
                 y={37}
                 fill={props.theme.blockTextColor}
