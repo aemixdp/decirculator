@@ -1,20 +1,10 @@
 import React from 'react';
-import { Text } from 'react-konva';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
-import { textOffset } from '../../utils/textUtils';
 
-type State = {
-    current: number;
-    steps: number;
-};
-
-export const Switch: BlockDescriptor<State> = {
+export const Switch: BlockDescriptor = {
     name: 'Switch',
-    initialState: {
-        current: 1,
-        steps: 4,
-    },
+    initialState: {},
     tick: (circuit, blockId) => {
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {
@@ -39,24 +29,5 @@ export const Switch: BlockDescriptor<State> = {
             label={'\uf021'}
             labelX={13}
             labelY={11}
-        >
-            <Text
-                key={1}
-                text={`${props.current || ''}`}
-                x={textOffset(props.current, 40, 34, 30, 24, 18, 12, 6)}
-                y={4}
-                fill={props.theme.blockTextColor}
-                fontFamily={props.theme.font}
-                fontSize={10}
-            />
-            <Text
-                key={2}
-                text={`${props.steps || ''}`}
-                x={textOffset(props.steps, 40, 34, 30, 24, 18, 12, 6)}
-                y={37}
-                fill={props.theme.blockTextColor}
-                fontFamily={props.theme.font}
-                fontSize={10}
-            />
-        </Block>
+        />
 };
