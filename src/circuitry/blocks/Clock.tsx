@@ -18,6 +18,7 @@ export const Clock: BlockDescriptor<State> = {
         noteFraction: 4,
         skipFirstGate: false,
     },
+    dynamicStateKeys: [],
     tick: (circuit, blockId, delta, config) => {
         const timeUntilTurnOn = circuit.timeUntilTurnOn[blockId] -= delta;
         if (timeUntilTurnOn <= 0) {

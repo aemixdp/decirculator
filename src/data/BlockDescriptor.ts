@@ -14,9 +14,10 @@ type EventListeners = {
 
 type Props = EventListeners & BlockCircuitObject & CircuitObjectVisuals;
 
-export interface BlockDescriptor<S = {}> {
+export interface BlockDescriptor<S = any> {
     name: string;
     initialState: S;
+    dynamicStateKeys: (keyof S)[];
     tick: TickProcessor;
     component: (props: Props & S) => React.ReactElement<any>;
 }

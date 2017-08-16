@@ -5,6 +5,7 @@ import { BlockDescriptor } from '../../data/BlockDescriptor';
 export const Or: BlockDescriptor<{}> = {
     name: 'Or',
     initialState: {},
+    dynamicStateKeys: [],
     tick: (circuit, blockId) => {
         const offset = blockId * 4;
         let disjunction = false;

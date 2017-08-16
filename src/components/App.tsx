@@ -402,16 +402,15 @@ export class App extends React.Component<Props, State> {
         this.resetCircuit();
         this.invalidateCircuit();
         const blocks = this.state.blocks.map(block => {
-            let bbs = this.state.blocksBeforeSimulation[block.id];
-            if (bbs) {
-                bbs = Object.assign({}, bbs);
-                delete bbs.x;
-                delete bbs.y;
-                delete bbs.ports;
-                return Object.assign({}, block, bbs);
-            } else {
-                return block;
+            let blockBeforeSimulation = this.state.blocksBeforeSimulation[block.id];
+            let blockAfterSimulation = { ...block };
+            if (blockBeforeSimulation) {
+                const blockDescriptor = blockDescriptors[blockBeforeSimulation.name];
+                for (const key of blockDescriptor.dynamicStateKeys) {
+                    blockAfterSimulation[key] = blockBeforeSimulation[key];
+                }
             }
+            return blockAfterSimulation;
         });
         this.setState({
             wires: this.state.wires.map(w => ({ ...w, gate: false })),
