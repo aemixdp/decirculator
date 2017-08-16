@@ -2,7 +2,7 @@ import React from 'react';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
 
-export const Switch: BlockDescriptor = {
+export const Switch: BlockDescriptor<{}> = {
     name: 'Switch',
     initialState: {},
     dynamicStateKeys: [],
