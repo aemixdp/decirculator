@@ -13,7 +13,7 @@ type UiState = {
     newWire?: WireCircuitObject;
 };
 
-export function simulationState(state: UiState, action: UiAction): UiState {
+export function uiState(state: UiState, action: UiAction): UiState {
     switch (action.type) {
         case 'DRAG_VIEWPORT':
             return {
