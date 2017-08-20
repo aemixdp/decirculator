@@ -1,5 +1,4 @@
-import { combineReducers } from 'redux';
-import reduceReducers from 'reduce-reducers';
+import { AnyAction } from 'redux';
 import { simulationState, SimulationState } from './simulationState';
 import { circuitObjects, CircuitObjectsState } from './circuitObjects';
 import { ui, UiState } from './ui';
@@ -10,13 +9,10 @@ type AppState = {
     ui: UiState;
 };
 
-export const rootReducer = reduceReducers<AppState>(
-    combineReducers({
-        simulationState,
-        circuitObjects,
-    }),
-    (state, action) => ({
-        ...state,
+export function rootReducer(state: AppState, action: AnyAction) {
+    return {
+        simulationState: simulationState(state.simulationState, action),
+        circuitObjects: circuitObjects(state.circuitObjects, action),
         ui: ui(state.ui, state.circuitObjects, action),
-    }),
-);
+    };
+}
