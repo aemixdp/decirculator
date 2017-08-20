@@ -4,8 +4,9 @@ import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { arrayToIdMap } from '../utils/objectUtils';
 import blockDescriptors from '../circuitry/blocks';
+import { DragBlock } from '../actions/UiAction';
 
-type State = {
+export type CircuitObjectsState = {
     idCounter: number;
     wires: WireCircuitObject[];
     blocks: BlockCircuitObject[];
@@ -13,10 +14,40 @@ type State = {
     blocksBeforeSimulation: { [id: number]: BlockCircuitObject };
 };
 
-type Action = SimulationAction | CircuitObjectsAction;
+type Action = CircuitObjectsAction | SimulationAction | DragBlock;
 
-export function circuitObjects(state: State, action: Action): State {
+export function circuitObjects(state: CircuitObjectsState, action: Action): CircuitObjectsState {
     switch (action.type) {
+        case 'CREATE_BLOCK':
+            const newBlock = { ...action.blockData, id: state.idCounter };
+            return {
+                ...state,
+                idCounter: state.idCounter + 1,
+                blocks: [...state.blocks, newBlock],
+                blockById: { ...state.blockById, [state.idCounter]: newBlock },
+            };
+        case 'CREATE_WIRE':
+            return {
+                ...state,
+                idCounter: state.idCounter + 1,
+                wires: [
+                    ...state.wires,
+                    { ...action.wireData, id: state.idCounter },
+                ],
+            };
+        case 'DELETE_OBJECT':
+            const blocksAfterDelete = state.blocks.filter(b => b.id !== action.id);
+            return {
+                ...state,
+                wires: state.wires.filter(w =>
+                    w.id !== action.id &&
+                    w.startPortInfo.blockId !== action.id &&
+                    w.endPortInfo &&
+                    w.endPortInfo.blockId !== action.id
+                ),
+                blocks: blocksAfterDelete,
+                blockById: arrayToIdMap(blocksAfterDelete),
+            };
         case 'START_SIMULATION':
             return {
                 ...state,
@@ -36,40 +67,31 @@ export function circuitObjects(state: State, action: Action): State {
             });
             return {
                 ...state,
-                wires: state.wires.map(w => ({ ...w, gate: false })),
+                wires: state.wires.map(wire => ({ ...wire, gate: false })),
                 blocks: blocksAfterSimulation,
                 blockById: arrayToIdMap(blocksAfterSimulation),
             };
-        case 'CREATE_BLOCK':
-            const newBlock = { id: state.idCounter, ...action.blockData };
-            return {
-                ...state,
-                idCounter: state.idCounter + 1,
-                blocks: [...state.blocks, newBlock],
-                blockById: { ...state.blockById, [state.idCounter]: newBlock },
-            };
-        case 'CREATE_WIRE':
-            return {
-                ...state,
-                idCounter: state.idCounter + 1,
-                wires: [
-                    ...state.wires,
-                    { id: state.idCounter, ...action.wireData },
-                ],
-            };
-        case 'DELETE_OBJECT':
-            const blocksAfterDelete = state.blocks.filter(b => b.id !== action.id);
-            return {
-                ...state,
-                wires: state.wires.filter(w =>
-                    w.id !== action.id &&
-                    w.startPortInfo.blockId !== action.id &&
-                    w.endPortInfo &&
-                    w.endPortInfo.blockId !== action.id
-                ),
-                blocks: blocksAfterDelete,
-                blockById: arrayToIdMap(blocksAfterDelete),
-            };
+        case 'DRAG_BLOCK':
+            if (action.blockId !== NaN) {
+                const transformedBlock = {
+                    ...state.blockById[action.blockId],
+                    ...action.newPosition,
+                };
+                return {
+                    ...state,
+                    blocks: state.blocks.map(block =>
+                        block.id === action.blockId
+                            ? transformedBlock
+                            : block
+                    ),
+                    blockById: {
+                        ...state.blockById,
+                        [action.blockId]: transformedBlock,
+                    },
+                };
+            } else {
+                return state;
+            }
         default:
             return state;
     }
