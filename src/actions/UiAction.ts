@@ -1,19 +1,24 @@
 import { CircuitObject } from '../data/CircuitObject';
 import { PortLocationInfo } from '../data/PortLocationInfo';
-import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
-import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
+import { BlockDescriptor } from '../data/BlockDescriptor';
+import { Point } from '../data/Point';
 
-export type UiAction = DragViewport | SelectObject | HoverPort | DrawBlock | DrawWire;
+export type UiAction = DragViewport | DragBlock | SelectObject | HoverPort | DrawBlock | DrawWire;
 
 export type DragViewport = {
     type: 'DRAG_VIEWPORT';
-    x: number;
-    y: number;
+    newOffset: Point;
+};
+
+export type DragBlock = {
+    type: 'DRAG_BLOCK';
+    blockId: number;
+    newPosition: Point;
 };
 
 export type SelectObject = {
     type: 'SELECT_OBJECT';
-    object: CircuitObject;
+    object?: CircuitObject;
 };
 
 export type HoverPort = {
@@ -24,27 +29,37 @@ export type HoverPort = {
 
 export type DrawBlock = {
     type: 'DRAW_BLOCK';
-    blockData: BlockCircuitObject;
+    blockDescriptor: BlockDescriptor<{}>;
 };
 
 export type DrawWire = {
     type: 'DRAW_WIRE';
-    wireData: WireCircuitObject;
 };
 
-export function drawViewport(x: number, y: number): DragViewport {
+export function dragViewport(newOffset: Point): DragViewport {
     return {
         type: 'DRAG_VIEWPORT',
-        x,
-        y,
+        newOffset,
     };
 }
 
-export function selectObject(object: CircuitObject): SelectObject {
+export function dragBlock(blockId: number, newPosition: Point): DragBlock {
+    return {
+        type: 'DRAG_BLOCK',
+        blockId,
+        newPosition,
+    };
+}
+
+export function selectObject(object?: CircuitObject): SelectObject {
     return {
         type: 'SELECT_OBJECT',
         object,
     };
+}
+
+export function deselectObject(): SelectObject {
+    return selectObject(undefined);
 }
 
 export function hoverPort(blockId: number, portLocationInfo: PortLocationInfo): HoverPort {
@@ -55,16 +70,15 @@ export function hoverPort(blockId: number, portLocationInfo: PortLocationInfo): 
     };
 }
 
-export function drawBlock(blockData: BlockCircuitObject): DrawBlock {
+export function drawBlock(blockDescriptor: BlockDescriptor): DrawBlock {
     return {
         type: 'DRAW_BLOCK',
-        blockData,
+        blockDescriptor,
     };
 }
 
-export function drawWire(wireData: WireCircuitObject): DrawWire {
+export function drawWire(): DrawWire {
     return {
         type: 'DRAW_WIRE',
-        wireData,
     };
 }
