@@ -5,6 +5,7 @@ import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { arrayToIdMap } from '../utils/objectUtils';
 import blockDescriptors from '../circuitry/blocks';
 import { DragBlock } from '../actions/UiAction';
+import { portDirections } from '../data/PortDirection';
 
 export type CircuitObjectsState = {
     idCounter: number;
@@ -27,13 +28,36 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
                 blockById: { ...state.blockById, [state.idCounter]: newBlock },
             };
         case 'CREATE_WIRE':
+            const newWire = { ...action.wireData, id: state.idCounter };
+            const spi = newWire.startPortInfo;
+            const epi = newWire.endPortInfo;
+            const blocksAfterCreatingWire = state.blocks.map(block => {
+                if (block.id === spi.blockId) {
+                    return { ...block, ports: { ...block.ports, [spi.port.side.name]: portDirections.out } };
+                } else if (epi && block.id === epi.blockId) {
+                    return { ...block, ports: { ...block.ports, [epi.port.side.name]: portDirections.in } };
+                } else {
+                    return block;
+                }
+            });
             return {
                 ...state,
                 idCounter: state.idCounter + 1,
-                wires: [
-                    ...state.wires,
-                    { ...action.wireData, id: state.idCounter },
-                ],
+                wires: [...state.wires, newWire],
+                blocks: blocksAfterCreatingWire,
+                blockById: arrayToIdMap(blocksAfterCreatingWire),
+            };
+        case 'EDIT_OBJECT':
+            const mapper = (obj: any) =>
+                obj.id === action.id
+                    ? { ...obj, [action.propertyName]: action.propertyValue }
+                    : obj;
+            const blocksAfterEdit = state.blocks.map(mapper);
+            return {
+                ...state,
+                wires: state.wires.map(mapper),
+                blocks: blocksAfterEdit,
+                blockById: arrayToIdMap(blocksAfterEdit),
             };
         case 'DELETE_OBJECT':
             const blocksAfterDelete = state.blocks.filter(b => b.id !== action.id);

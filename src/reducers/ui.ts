@@ -7,6 +7,7 @@ import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { defaultPortDirections } from '../data/PortDirection';
 import { CircuitObjectsState } from './circuitObjects';
 import { shapeCenter } from '../utils/geometryUtils';
+import { CreateBlock, CreateWire, EditObject } from '../actions/CircuitObjectsAction';
 
 export interface UiState {
     viewportOffset: Point;
@@ -16,7 +17,9 @@ export interface UiState {
     newWire?: WireCircuitObject;
 }
 
-export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, action: UiAction): UiState {
+type Action = UiAction | CreateBlock | CreateWire | EditObject;
+
+export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, action: Action): UiState {
     switch (action.type) {
         case 'DRAG_VIEWPORT':
             return {
@@ -43,10 +46,7 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
         case 'HOVER_PORT':
             return {
                 ...uiState,
-                hoveringPortInfo: {
-                    blockId: action.blockId,
-                    port: action.portLocationInfo,
-                },
+                hoveringPortInfo: action.portInfo,
             };
         case 'DRAW_BLOCK':
             return {
@@ -63,8 +63,19 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
                 },
             };
         case 'DRAW_WIRE':
-            if (uiState.hoveringPortInfo) {
-                const hpi = uiState.hoveringPortInfo;
+            const hpi = uiState.hoveringPortInfo;
+            if (uiState.newWire) {
+                return {
+                    ...uiState,
+                    newWire: {
+                        ...uiState.newWire,
+                        endPosition: hpi
+                            ? shapeCenter(hpi.port, circuitObjectsState.blockById[hpi.blockId])
+                            : action.endPosition || uiState.newWire.startPosition,
+                        endPortInfo: hpi,
+                    },
+                };
+            } else if (hpi) {
                 const startPosition = shapeCenter(hpi.port, circuitObjectsState.blockById[hpi.blockId]);
                 return {
                     ...uiState,
@@ -78,6 +89,25 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
                         endPortInfo: undefined,
                         gate: false,
                     },
+                };
+            } else {
+                return uiState;
+            }
+        case 'CREATE_BLOCK':
+            return {
+                ...uiState,
+                newBlock: undefined,
+            };
+        case 'CREATE_WIRE':
+            return {
+                ...uiState,
+                newWire: undefined,
+            };
+        case 'EDIT_OBJECT':
+            if (uiState.selectedObject && action.id === uiState.selectedObject.id) {
+                return {
+                    ...uiState,
+                    selectedObject: circuitObjectsState.blockById[action.id],
                 };
             } else {
                 return uiState;

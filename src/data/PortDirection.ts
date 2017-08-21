@@ -1,10 +1,13 @@
 export type PortDirection = 'in' | 'out';
 
-const out: PortDirection = 'out';
+export const portDirections = {
+    in: 'in' as PortDirection,
+    out: 'out' as PortDirection,
+};
 
 export const defaultPortDirections = {
-    Top: out,
-    Right: out,
-    Bottom: out,
-    Left: out,
+    Top: portDirections.out,
+    Right: portDirections.out,
+    Bottom: portDirections.out,
+    Left: portDirections.out,
 };

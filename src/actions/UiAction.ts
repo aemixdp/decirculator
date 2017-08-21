@@ -1,7 +1,7 @@
 import { CircuitObject } from '../data/CircuitObject';
-import { PortLocationInfo } from '../data/PortLocationInfo';
 import { BlockDescriptor } from '../data/BlockDescriptor';
 import { Point } from '../data/Point';
+import { PortInfo } from '../data/PortInfo';
 
 export type UiAction = DragViewport | DragBlock | SelectObject | HoverPort | DrawBlock | DrawWire;
 
@@ -23,8 +23,7 @@ export type SelectObject = {
 
 export type HoverPort = {
     type: 'HOVER_PORT';
-    blockId: number;
-    portLocationInfo: PortLocationInfo;
+    portInfo?: PortInfo;
 };
 
 export type DrawBlock = {
@@ -34,6 +33,7 @@ export type DrawBlock = {
 
 export type DrawWire = {
     type: 'DRAW_WIRE';
+    endPosition?: Point;
 };
 
 export function dragViewport(newOffset: Point): DragViewport {
@@ -62,12 +62,15 @@ export function deselectObject(): SelectObject {
     return selectObject(undefined);
 }
 
-export function hoverPort(blockId: number, portLocationInfo: PortLocationInfo): HoverPort {
+export function hoverPort(portInfo?: PortInfo): HoverPort {
     return {
         type: 'HOVER_PORT',
-        blockId,
-        portLocationInfo,
+        portInfo,
     };
+}
+
+export function unhoverPort(): HoverPort {
+    return hoverPort(undefined);
 }
 
 export function drawBlock(blockDescriptor: BlockDescriptor): DrawBlock {
@@ -77,8 +80,9 @@ export function drawBlock(blockDescriptor: BlockDescriptor): DrawBlock {
     };
 }
 
-export function drawWire(): DrawWire {
+export function drawWire(endPosition?: Point): DrawWire {
     return {
         type: 'DRAW_WIRE',
+        endPosition,
     };
 }
