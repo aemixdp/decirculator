@@ -1,7 +1,8 @@
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
+import { Side } from '../data/Side';
 
-export type CircuitObjectsAction = CreateBlock | CreateWire | EditObject | DeleteObject;
+export type CircuitObjectsAction = CreateBlock | CreateWire | EditObject | DeleteObject | TogglePort;
 
 export type CreateBlock = {
     type: 'CREATE_BLOCK';
@@ -23,6 +24,12 @@ export type EditObject = {
 export type DeleteObject = {
     type: 'DELETE_OBJECT';
     id: number;
+};
+
+export type TogglePort = {
+    type: 'TOGGLE_PORT';
+    blockId: number;
+    side: Side;
 };
 
 export function createBlock(blockData: BlockCircuitObject): CreateBlock {
@@ -52,5 +59,13 @@ export function deleteObject(id: number): DeleteObject {
     return {
         type: 'DELETE_OBJECT',
         id,
+    };
+}
+
+export function togglePort(blockId: number, side: Side): TogglePort {
+    return {
+        type: 'TOGGLE_PORT',
+        blockId,
+        side,
     };
 }

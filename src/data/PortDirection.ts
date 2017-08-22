@@ -5,6 +5,10 @@ export const portDirections = {
     out: 'out' as PortDirection,
 };
 
+export function flipPortDirection(portDirection: PortDirection): PortDirection {
+    return portDirection === 'in' ? 'out' : 'in';
+}
+
 export const defaultPortDirections = {
     Top: portDirections.out,
     Right: portDirections.out,

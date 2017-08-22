@@ -5,7 +5,8 @@ import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { arrayToIdMap } from '../utils/objectUtils';
 import blockDescriptors from '../circuitry/blocks';
 import { DragBlock } from '../actions/UiAction';
-import { portDirections } from '../data/PortDirection';
+import { portDirections, flipPortDirection } from '../data/PortDirection';
+import { PortInfo } from '../data/PortInfo';
 
 export type CircuitObjectsState = {
     idCounter: number;
@@ -71,6 +72,46 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
                 ),
                 blocks: blocksAfterDelete,
                 blockById: arrayToIdMap(blocksAfterDelete),
+            };
+        case 'TOGGLE_PORT':
+            const adjacentWire = state.wires.find(w =>
+                (
+                    w.startPortInfo.blockId === action.blockId &&
+                    w.startPortInfo.port.side.name === action.side.name
+                ) || (
+                    w.endPortInfo !== undefined &&
+                    w.endPortInfo.blockId === action.blockId &&
+                    w.endPortInfo.port.side.name === action.side.name
+                )
+            );
+            const togglePort = (block: BlockCircuitObject, sideName: string) => ({
+                ...block,
+                ports: { ...block.ports, [sideName]: flipPortDirection(block.ports[sideName]) },
+            });
+            const blocksAfterTogglePort = state.blocks.map(block => {
+                if (block.id === action.blockId) {
+                    return togglePort(block, action.side.name);
+                } else if (adjacentWire && block.id === adjacentWire.startPortInfo.blockId) {
+                    return togglePort(block, adjacentWire.startPortInfo.port.side.name);
+                } else if (adjacentWire && adjacentWire.endPortInfo && block.id === adjacentWire.endPortInfo.blockId) {
+                    return togglePort(block, adjacentWire.endPortInfo.port.side.name);
+                } else {
+                    return block;
+                }
+            });
+            return {
+                ...state,
+                wires: !adjacentWire ? state.wires : state.wires.map(wire =>
+                    wire.id !== adjacentWire.id ? wire : {
+                        ...wire,
+                        startPortInfo: adjacentWire.endPortInfo as PortInfo,
+                        startPosition: adjacentWire.endPosition,
+                        endPortInfo: adjacentWire.startPortInfo,
+                        endPosition: adjacentWire.startPosition,
+                    }
+                ),
+                blocks: blocksAfterTogglePort,
+                blockById: arrayToIdMap(blocksAfterTogglePort),
             };
         case 'START_SIMULATION':
             return {
