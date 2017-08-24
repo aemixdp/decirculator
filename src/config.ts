@@ -1,0 +1,1 @@
+export const wireframeCellSize = 18;
