@@ -4,6 +4,6 @@ export type StartSimulation = { type: 'START_SIMULATION' };
 export type PauseSimulation = { type: 'PAUSE_SIMULATION' };
 export type StopSimulation = { type: 'STOP_SIMULATION' };
 
-export const startSimulation: StartSimulation = { type: 'START_SIMULATION' };
-export const pauseSimulation: PauseSimulation = { type: 'PAUSE_SIMULATION' };
-export const stopSimulation: StopSimulation = { type: 'STOP_SIMULATION' };
+export const start: StartSimulation = { type: 'START_SIMULATION' };
+export const pause: PauseSimulation = { type: 'PAUSE_SIMULATION' };
+export const stop: StopSimulation = { type: 'STOP_SIMULATION' };
