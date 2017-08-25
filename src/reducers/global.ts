@@ -10,7 +10,7 @@ export interface GlobalState {
     circuitObjects: CircuitObjectsState;
     ui: UiState;
     config: ConfigState;
-    circuits: any;
+    circuits: string[];
 }
 
 export function global(state: GlobalState, action: GlobalAction): GlobalState {

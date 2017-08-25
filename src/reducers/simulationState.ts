@@ -2,7 +2,7 @@ import { SimulationAction } from '../actions/SimulationAction';
 
 export type SimulationState = 'STARTED' | 'PAUSED' | 'STOPPED';
 
-export function simulationState(state: SimulationState = 'STOPPED', action: SimulationAction): SimulationState {
+export function simulationState(state: SimulationState, action: SimulationAction): SimulationState {
     switch (action.type) {
         case 'START_SIMULATION':
             return 'STARTED';
