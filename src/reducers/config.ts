@@ -2,7 +2,7 @@ import { ConfigAction } from '../actions/ConfigAction';
 
 export interface ConfigState {
     circuitName: string;
-    midiOutput: any;
+    midiOutput?: any;
     bpm: number;
 }
 
