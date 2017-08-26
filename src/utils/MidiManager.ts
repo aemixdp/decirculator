@@ -9,16 +9,16 @@ type MidiOutput = {
 };
 
 type MidiManagerOptions = {
-    onDevicesChange: () => void;
+    onOutputsChange: () => void;
 };
 
 export class MidiManager {
     midiOutputs: { [_: string]: MidiOutput };
     midiAccess: any;
-    onDevicesChange: () => void;
-    constructor({ onDevicesChange = () => { } }: MidiManagerOptions) {
+    onOutputsChange: () => void;
+    constructor({ onOutputsChange = () => { } }: MidiManagerOptions) {
         this.midiOutputs = {};
-        this.onDevicesChange = onDevicesChange;
+        this.onOutputsChange = onOutputsChange;
         (navigator as any).requestMIDIAccess().then((midiAccess: any) => {
             this.midiAccess = midiAccess;
             this.refreshDevices();
@@ -42,7 +42,7 @@ export class MidiManager {
         }
         this.midiOutputs = outputs;
         if (outputsChanged) {
-            this.onDevicesChange();
+            this.onOutputsChange();
         }
     }
     note(outputName: string, toggleState: boolean, channel: number, note: number, velocity: number): void {

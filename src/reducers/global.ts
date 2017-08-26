@@ -63,7 +63,7 @@ export function global(state: GlobalState, action: GlobalAction): GlobalState {
         case 'INVALIDATE_MIDI_OUTPUTS':
             return {
                 ...state,
-                midiOutputs: state.midiOutputs,
+                midiOutputs: action.midiOutputs,
             };
         default:
             return state;

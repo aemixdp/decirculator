@@ -7,7 +7,7 @@ export type SetCircuitName = {
 
 export type SetMidiOutput = {
     type: 'SET_MIDI_OUTPUT';
-    midiOutput: any;
+    midiOutputName: string;
 };
 
 export type SetBpm = {
@@ -22,10 +22,10 @@ export function setCircuitName(name: string): SetCircuitName {
     };
 }
 
-export function setMidiOutput(midiOutput: any): SetMidiOutput {
+export function setMidiOutput(midiOutputName: string): SetMidiOutput {
     return {
         type: 'SET_MIDI_OUTPUT',
-        midiOutput,
+        midiOutputName,
     };
 }
 
