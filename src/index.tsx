@@ -1,9 +1,52 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { App } from './components/App';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { rootReducer } from './reducers/index';
+import { AppContainer } from './containers/AppContainer';
+import { GlobalState } from './reducers/global';
+import { circuitSaga } from './sagas/circuitSaga';
+import { midiSaga } from './sagas/midiSaga';
+import { themeSaga } from './sagas/themeSaga';
+import createSagaMiddleware from 'redux-saga';
 import './index.css';
+import { take } from 'redux-saga/effects';
 
-ReactDOM.render(
-    <App wireframeCellSize={18} />,
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore<GlobalState>(rootReducer, {
+    simulationState: 'STOPPED',
+    circuitObjects: {
+        idCounter: 0,
+        wires: [],
+        blocks: [],
+        blockById: {},
+        blocksBeforeSimulation: {},
+    },
+    ui: {
+        viewportOffset: { x: 0, y: 0 },
+    },
+    config: {
+        circuitName: 'New circuit',
+        bpm: 130,
+    },
+    circuits: [],
+    midiOutputs: [],
+}, applyMiddleware(sagaMiddleware));
+
+sagaMiddleware.run(function* () {
+    while (true) {
+        console.log(yield take());
+    }
+});
+
+sagaMiddleware.run(themeSaga);
+sagaMiddleware.run(circuitSaga);
+sagaMiddleware.run(midiSaga);
+
+render(
+    <Provider store={store}>
+        <AppContainer />
+    </Provider>,
     document.getElementById('mount')
 );
