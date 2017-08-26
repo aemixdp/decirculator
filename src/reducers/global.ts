@@ -11,6 +11,8 @@ export interface GlobalState {
     ui: UiState;
     config: ConfigState;
     circuits: string[];
+    theme?: any;
+    midiOutputs: string[];
 }
 
 export function global(state: GlobalState, action: GlobalAction): GlobalState {
@@ -53,6 +55,16 @@ export function global(state: GlobalState, action: GlobalAction): GlobalState {
             } else {
                 return state;
             }
+        case 'INVALIDATE_THEME':
+            return {
+                ...state,
+                theme: action.theme,
+            };
+        case 'INVALIDATE_MIDI_OUTPUTS':
+            return {
+                ...state,
+                midiOutputs: state.midiOutputs,
+            };
         default:
             return state;
     }
