@@ -124,7 +124,7 @@ export class Circuit {
      * Handle of timer which calls the tick function.
      */
     timer: any;
-    constructor(options: { onVisibleChanges: () => void, onMidiOut: OnMidiOut }) {
+    constructor() {
         this.length = 0;
         this.isWire = [];
         this.isOutputPort = [];
@@ -148,8 +148,6 @@ export class Circuit {
         this.playFired = [];
         this.removed = [];
         this.changed = [];
-        this.onVisibleChanges = options.onVisibleChanges;
-        this.onMidiOut = options.onMidiOut;
     }
     update(blocks: BlockCircuitObject[], wires: WireCircuitObject[], config: CircuitConfig) {
         this.config = Object.assign({}, config);
