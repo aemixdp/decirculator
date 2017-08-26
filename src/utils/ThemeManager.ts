@@ -2,13 +2,13 @@ import { snakeToCamel } from './textUtils';
 
 type ThemeManagerOptions = {
     pollInterval: number;
-    onThemeChanged: () => void;
+    onThemeChanged?: () => void;
 };
 
 export class ThemeManager {
     theme: any;
     pollInterval: number;
-    onThemeChanged: () => void;
+    onThemeChanged?: () => void;
     constructor(options: ThemeManagerOptions) {
         this.theme = Object.create(null);
         this.onThemeChanged = options.onThemeChanged;
@@ -28,7 +28,7 @@ export class ThemeManager {
                 themeChanged = true;
             }
         }
-        if (themeChanged) {
+        if (themeChanged && this.onThemeChanged) {
             this.onThemeChanged();
         }
     }
