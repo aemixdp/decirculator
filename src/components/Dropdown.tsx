@@ -27,6 +27,7 @@ export class Dropdown extends React.Component<Props, any> {
                     value={this.props.value}
                     spellCheck={this.props.spellCheck}
                     onChange={this.props.onTextChange}
+                    readOnly={!this.props.onTextChange}
                 />
             </div>
         );
