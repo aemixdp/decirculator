@@ -12,6 +12,7 @@ export class ThemeManager {
     constructor(options: ThemeManagerOptions) {
         this.theme = Object.create(null);
         this.onThemeChanged = options.onThemeChanged;
+        this.invalidateTheme();
         setInterval(this.invalidateTheme, options.pollInterval);
     }
     invalidateTheme = () => {
