@@ -28,6 +28,7 @@ const store = createStore<GlobalState>(rootReducer, {
     },
     config: {
         circuitName: 'New circuit',
+        midiOutputName: '',
         bpm: 130,
     },
     circuits: [],
