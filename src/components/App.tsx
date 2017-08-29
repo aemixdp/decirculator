@@ -222,13 +222,15 @@ export class App extends React.Component<Props, {}> {
         }
     }
     handleViewportClick = (event: any) => {
-        if (!this.clickHandled) {
+        if (!this.clickHandled && this.props.selectedObject) {
             this.props.dispatch(uiActions.deselectObject());
         }
         this.clickHandled = false;
     }
     handleOuterClick = () => {
-        this.props.dispatch(uiActions.deselectObject());
+        if (this.props.selectedObject) {
+            this.props.dispatch(uiActions.deselectObject());
+        }
     }
     handlePortClick = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
         this.props.dispatch(circuitObjectsActions.togglePort(block.id, port.side));
