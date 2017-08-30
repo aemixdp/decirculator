@@ -27,7 +27,7 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
                 viewportOffset: action.newOffset,
             };
         case 'DRAG_BLOCK':
-            if (action.blockId === NaN && uiState.newBlock) {
+            if (!action.blockId && uiState.newBlock) {
                 return {
                     ...uiState,
                     newBlock: {
