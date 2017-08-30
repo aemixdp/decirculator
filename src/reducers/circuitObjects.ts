@@ -107,9 +107,7 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
                     wire.id !== adjacentWire.id ? wire : {
                         ...wire,
                         startPortInfo: adjacentWire.endPortInfo as PortInfo,
-                        // startPosition: adjacentWire.endPosition,
                         endPortInfo: adjacentWire.startPortInfo,
-                        // endPosition: adjacentWire.startPosition,
                     }
                 ),
                 blocks: blocksAfterTogglePort,
