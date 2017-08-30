@@ -5,8 +5,8 @@ import { Point } from '../Point';
 export interface WireCircuitObject extends AnyCircuitObject {
     kind: 'wire';
     gate: boolean;
-    startPosition: Point;
+    startPosition?: Point;
     startPortInfo: PortInfo;
-    endPosition: Point;
+    endPosition?: Point;
     endPortInfo?: PortInfo;
 }

@@ -41,6 +41,8 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
                     return block;
                 }
             });
+            delete newWire.startPosition;
+            delete newWire.endPosition;
             return {
                 ...state,
                 idCounter: state.idCounter + 1,
@@ -105,9 +107,9 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
                     wire.id !== adjacentWire.id ? wire : {
                         ...wire,
                         startPortInfo: adjacentWire.endPortInfo as PortInfo,
-                        startPosition: adjacentWire.endPosition,
+                        // startPosition: adjacentWire.endPosition,
                         endPortInfo: adjacentWire.startPortInfo,
-                        endPosition: adjacentWire.startPosition,
+                        // endPosition: adjacentWire.startPosition,
                     }
                 ),
                 blocks: blocksAfterTogglePort,

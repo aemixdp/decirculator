@@ -7,7 +7,7 @@ type EventListeners = {
     onClick: (event: Event, wire: WireCircuitObject) => void;
 };
 
-type Props = EventListeners & WireCircuitObject & CircuitObjectVisuals;
+type Props = EventListeners & CircuitObjectVisuals & WireCircuitObject;
 
 export class Wire extends React.Component<Props, any> {
     static defaultProps = {
@@ -17,9 +17,9 @@ export class Wire extends React.Component<Props, any> {
         this.props.onClick(e, this.props);
     }
     render() {
-        const sp = this.props.startPosition;
+        const sp = this.props.startPosition || { x: 0, y: 0 };
         const sd = this.props.startPortInfo.port.side;
-        const ep = this.props.endPosition;
+        const ep = this.props.endPosition || { x: 0, y: 0 };
         const ed = this.props.endPortInfo && this.props.endPortInfo.port.side;
         const points = [
             sp.x, sp.y,

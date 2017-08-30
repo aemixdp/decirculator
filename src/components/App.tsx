@@ -63,49 +63,7 @@ export class App extends React.Component<Props, {}> {
     constructor() {
         super();
         this.clickHandled = false;
-        // this.themeManager = new ThemeManager({
-        //     pollInterval: 500,
-        //     onThemeChanged: this.handleThemeChanged,
-        // });
-        // this.midiManager = new MidiManager({
-        //     onDevicesChange: this.handleDevicesChange,
-        // });
-        // this.props = {
-        //     theme: this.themeManager.theme,
-        //     idCounter: 0,
-        //     selectedObject: undefined,
-        //     blocks: [],
-        //     wires: [],
-        //     newBlock: undefined,
-        //     newWire: undefined,
-        //     blockById: {},
-        //     blocksBeforeSimulation: [],
-        //     viewportOffset: { x: 0, y: 0 },
-        //     hoveringPortInfo: undefined,
-        //     midiOutput: { name: '' },
-        //     midiOutputs: [],
-        //     circuitName: 'New circuit',
-        //     circuits: Object.keys(localStorage),
-        //     simulationState: 'stopped',
-        //     config: {
-        //         bpm: 130,
-        //         gateLength: 500,
-        //     },
-        // };
-        // this.resetCircuit();
     }
-    // resetCircuit() {
-    //     if (this.circuit) {
-    //         this.circuit.stop();
-    //     }
-    //     this.circuit = new Circuit({
-    //         onVisibleChanges: this.handleCircuitVisibleChanges,
-    //         onMidiOut: this.handleMidiOut,
-    //     });
-    // }
-    // invalidateCircuit() {
-    //     this.circuit.update(this.props.blocks, this.props.wires, this.props.config);
-    // }
     componentWillMount() {
         document.addEventListener('keydown', this.handleKeyDown);
     }
@@ -115,14 +73,6 @@ export class App extends React.Component<Props, {}> {
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
     }
-    // componentDidUpdate(prevProps: Props, prevState: State) {
-    //     if (
-    //         this.props.blocks !== prevState.blocks ||
-    //         this.props.wires !== prevState.wires
-    //     ) {
-    //         this.invalidateCircuit();
-    //     }
-    // }
     handleCircuitVisibleChanges = () => {
         const newBlocks = this.props.blocks.map(b =>
             (this.circuit.changed[b.id] && b.name === 'Counter')
