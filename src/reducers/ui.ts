@@ -93,6 +93,11 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
             } else {
                 return uiState;
             }
+        case 'CANCEL_DRAWING_WIRE':
+            return {
+                ...uiState,
+                newWire: undefined,
+            };
         case 'CREATE_BLOCK':
             return {
                 ...uiState,

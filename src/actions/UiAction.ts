@@ -3,7 +3,7 @@ import { BlockDescriptor } from '../data/BlockDescriptor';
 import { Point } from '../data/Point';
 import { PortInfo } from '../data/PortInfo';
 
-export type UiAction = DragViewport | DragBlock | SelectObject | HoverPort | DrawBlock | DrawWire;
+export type UiAction = DragViewport | DragBlock | SelectObject | HoverPort | DrawBlock | DrawWire | CancelDrawingWire;
 
 export type DragViewport = {
     type: 'DRAG_VIEWPORT';
@@ -34,6 +34,10 @@ export type DrawBlock = {
 export type DrawWire = {
     type: 'DRAW_WIRE';
     endPosition?: Point;
+};
+
+export type CancelDrawingWire = {
+    type: 'CANCEL_DRAWING_WIRE';
 };
 
 export function dragViewport(newOffset: Point): DragViewport {
@@ -84,5 +88,11 @@ export function drawWire(endPosition?: Point): DrawWire {
     return {
         type: 'DRAW_WIRE',
         endPosition,
+    };
+}
+
+export function cancelDrawingWire(): CancelDrawingWire {
+    return {
+        type: 'CANCEL_DRAWING_WIRE',
     };
 }

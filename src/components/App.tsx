@@ -155,12 +155,14 @@ export class App extends React.Component<Props, {}> {
     }
     handleViewportMouseUp = (event: any) => {
         const newWire = this.props.newWire;
-        if (
-            newWire &&
-            newWire.endPortInfo &&
-            newWire.endPortInfo.blockId !== newWire.startPortInfo.blockId
-        ) {
-            this.props.dispatch(circuitObjectsActions.createWire(newWire));
+        if (newWire) {
+            if (newWire.endPortInfo &&
+                newWire.endPortInfo.blockId !== newWire.startPortInfo.blockId
+            ) {
+                this.props.dispatch(circuitObjectsActions.createWire(newWire));
+            } else {
+                this.props.dispatch(uiActions.cancelDrawingWire());
+            }
         }
     }
     handleViewportMouseMove = (event: any) => {
