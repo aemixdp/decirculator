@@ -50,6 +50,7 @@ export function global(state: GlobalState, action: GlobalAction): GlobalState {
                     config: {
                         ...state.config,
                         bpm: data.bpm,
+                        circuitName: action.circuitName,
                     },
                 };
             } else {
