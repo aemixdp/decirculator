@@ -31,7 +31,7 @@ const store = createStore<GlobalState>(rootReducer, {
         midiOutputName: '',
         bpm: 130,
     },
-    circuits: [],
+    circuits: Object.keys(localStorage),
     midiOutputs: [],
 }, applyMiddleware(sagaMiddleware));
 
