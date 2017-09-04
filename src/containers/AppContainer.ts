@@ -1,25 +1,29 @@
 import { connect } from 'react-redux';
+import { StateWithHistory } from 'redux-undo';
 import { App } from '../components/App';
 import { GlobalState } from '../reducers/global';
 
 export const AppContainer = connect(
-    (state: GlobalState, ownProps: any) => ({
-        theme: state.theme,
-        viewportOffset: state.ui.viewportOffset,
-        selectedObject: state.ui.selectedObject,
-        newBlock: state.ui.newBlock,
-        newWire: state.ui.newWire,
-        hoveringPortInfo: state.ui.hoveringPortInfo,
-        isHoveringPort: state.ui.hoveringPortInfo !== undefined,
-        wires: state.circuitObjects.wires,
-        blocks: state.circuitObjects.blocks,
-        blockById: state.circuitObjects.blockById,
-        circuitName: state.config.circuitName,
-        bpm: state.config.bpm,
-        simulationState: state.simulationState,
-        circuits: state.circuits,
-        midiOutputName: state.config.midiOutputName,
-        midiOutputs: state.midiOutputs,
-    }),
+    (state: StateWithHistory<GlobalState>, ownProps: any) => {
+        const present = state.present;
+        return {
+            theme: present.theme,
+            viewportOffset: present.ui.viewportOffset,
+            selectedObject: present.ui.selectedObject,
+            newBlock: present.ui.newBlock,
+            newWire: present.ui.newWire,
+            hoveringPortInfo: present.ui.hoveringPortInfo,
+            isHoveringPort: present.ui.hoveringPortInfo !== undefined,
+            wires: present.circuitObjects.wires,
+            blocks: present.circuitObjects.blocks,
+            blockById: present.circuitObjects.blockById,
+            circuitName: present.config.circuitName,
+            bpm: present.config.bpm,
+            simulationState: present.simulationState,
+            circuits: present.circuits,
+            midiOutputName: present.config.midiOutputName,
+            midiOutputs: present.midiOutputs,
+        };
+    },
     (dispatch) => ({ dispatch }),
 )(App as any);

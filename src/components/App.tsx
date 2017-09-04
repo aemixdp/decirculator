@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactKonva from 'react-konva';
+import { ActionCreators as reduxUndoActions } from 'redux-undo';
 import { Wire } from './Wire';
 import { BlockHoverZone } from './BlockHoverZone';
 import { BlockButton } from './BlockButton';
@@ -111,6 +112,10 @@ export class App extends React.Component<Props, {}> {
             }
         } else if (e.keyCode === 27 /* esc */) {
             this.props.dispatch(uiActions.deselectObject());
+        } else if (e.keyCode === 90 && e.ctrlKey /* ctrl-z */) {
+            this.props.dispatch(reduxUndoActions.undo());
+        } else if (e.keyCode === 89 && e.ctrlKey /* ctrl-y */) {
+            this.props.dispatch(reduxUndoActions.redo());
         }
     }
     handleNewBlockDragStart = (e: Event, blockDescriptor: BlockDescriptor<any>) => {

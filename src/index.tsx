@@ -1,20 +1,19 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import { rootReducer } from './reducers/index';
+import { Provider } from 'react-redux';
+import createSagaMiddleware from 'redux-saga';
+import { take } from 'redux-saga/effects';
+import { rootReducer } from './reducers';
 import { AppContainer } from './containers/AppContainer';
-import { GlobalState } from './reducers/global';
 import { circuitSaga } from './sagas/circuitSaga';
 import { midiSaga } from './sagas/midiSaga';
 import { themeSaga } from './sagas/themeSaga';
-import createSagaMiddleware from 'redux-saga';
 import './index.css';
-import { take } from 'redux-saga/effects';
 
 const sagaMiddleware = createSagaMiddleware();
 
-const store = createStore<GlobalState>(rootReducer, {
+const store = createStore<any>(rootReducer, {
     simulationState: 'STOPPED',
     circuitObjects: {
         idCounter: 0,
