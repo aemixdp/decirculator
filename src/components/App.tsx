@@ -114,6 +114,9 @@ export class App extends React.Component<Props, {}> {
             this.props.dispatch(uiActions.deselectObject());
         } else if (e.keyCode === 90 && e.ctrlKey /* ctrl-z */) {
             this.props.dispatch(reduxUndoActions.undo());
+            if (this.props.isHoveringPort) {
+                this.props.dispatch(uiActions.unhoverPort());
+            }
         } else if (e.keyCode === 89 && e.ctrlKey /* ctrl-y */) {
             this.props.dispatch(reduxUndoActions.redo());
         }
