@@ -1,8 +1,15 @@
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { Side } from '../data/Side';
+import { Circuit } from '../circuitry/Circuit';
 
-export type CircuitObjectsAction = CreateBlock | CreateWire | EditObject | DeleteObject | TogglePort;
+export type CircuitObjectsAction
+    = CreateBlock
+    | CreateWire
+    | EditObject
+    | DeleteObject
+    | TogglePort
+    | InvalidateCircuitry;
 
 export type CreateBlock = {
     type: 'CREATE_BLOCK';
@@ -30,6 +37,11 @@ export type TogglePort = {
     type: 'TOGGLE_PORT';
     blockId: number;
     side: Side;
+};
+
+export type InvalidateCircuitry = {
+    type: 'INVALIDATE_CIRCUITRY';
+    circuit: Circuit;
 };
 
 export function createBlock(blockData: BlockCircuitObject): CreateBlock {
@@ -67,5 +79,12 @@ export function togglePort(blockId: number, side: Side): TogglePort {
         type: 'TOGGLE_PORT',
         blockId,
         side,
+    };
+}
+
+export function invalidateCircuitry(circuit: Circuit): InvalidateCircuitry {
+    return {
+        type: 'INVALIDATE_CIRCUITRY',
+        circuit,
     };
 }

@@ -74,22 +74,6 @@ export class App extends React.Component<Props, {}> {
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
     }
-    handleCircuitVisibleChanges = () => {
-        const newBlocks = this.props.blocks.map(b =>
-            (this.circuit.changed[b.id] && b.name === 'Counter')
-                ? { ...b, current: this.circuit.counterValue[b.id] }
-                : b
-        );
-        this.setState({
-            blocks: newBlocks,
-            wires: this.props.wires.map(w =>
-                this.circuit.changed[w.id]
-                    ? { ...w, gate: this.circuit.gate[w.id] }
-                    : w
-            ),
-            blockById: newBlocks.reduce((acc, b) => (acc[b.id] = b) && acc, {}),
-        });
-    }
     handleMidiOut = (toggleState: boolean, channel: number, note: number, velocity: number) => {
         if (this.props.midiOutputName) {
             this.midiManager.note(this.props.midiOutputName, toggleState, channel, note, velocity);

@@ -4,6 +4,7 @@ export interface ConfigState {
     circuitName: string;
     midiOutputName?: string;
     bpm: number;
+    gateLength: number;
 }
 
 export function config(state: ConfigState, action: ConfigAction): ConfigState {

@@ -1,15 +1,21 @@
 import { eventChannel, Task } from 'redux-saga';
-import { put, take, fork, cancel } from 'redux-saga/effects';
-import * as simulationActions from '../actions/SimulationAction';
+import { put, take, fork, cancel, select } from 'redux-saga/effects';
 import * as globalActions from '../actions/GlobalAction';
+import * as circuitObjectsActions from '../actions/CircuitObjectsAction';
+import { SimulationAction } from '../actions/SimulationAction';
+import { StateWithHistory } from 'redux-undo';
+import { GlobalState } from '../reducers/global';
 import { Circuit } from '../circuitry/Circuit';
+import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
+import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
+import { CircuitConfig } from '../circuitry/data/CircuitConfig';
 
 function* dispatchCircuitEvents(circuit: Circuit) {
     const chan = eventChannel(emitter => {
         circuit.onMidiOut = (noteOn, note, channel, velocity) =>
             emitter(globalActions.sendMidi(noteOn, note, channel, velocity));
         circuit.onVisibleChanges = () =>
-            emitter(globalActions.invalidateCircuit(circuit));
+            emitter(circuitObjectsActions.invalidateCircuitry(circuit));
         return () => {
             circuit.stop();
         };
@@ -22,24 +28,39 @@ function* dispatchCircuitEvents(circuit: Circuit) {
 export function* circuitSaga() {
     let circuit: Circuit | undefined;
     let circuitEventsDispatcher: Task | undefined;
+    let wires: WireCircuitObject[] | undefined;
+    let blocks: BlockCircuitObject[] | undefined;
+    let config: CircuitConfig | undefined;
     while (true) {
-        const action = yield take();
+        const action: SimulationAction = yield take();
+        const state: StateWithHistory<GlobalState> = yield select();
+        const newWires = state.present.circuitObjects.wires;
+        const newBlocks = state.present.circuitObjects.blocks;
+        const newConfig = state.present.config;
+        if (circuit && (wires !== newWires || blocks !== newBlocks || config !== newConfig)) {
+            circuit.update(newBlocks, newWires, newConfig);
+        }
+        wires = newWires;
+        blocks = newBlocks;
+        config = newConfig;
         switch (action.type) {
-            case simulationActions.start.type:
+            case 'START_SIMULATION':
                 if (!circuit) {
                     circuit = new Circuit();
                     circuitEventsDispatcher = yield fork(dispatchCircuitEvents, circuit);
+                    circuit.update(blocks, wires, config);
                 }
                 circuit.start();
                 break;
-            case simulationActions.pause.type:
+            case 'PAUSE_SIMULATION':
                 if (circuit) {
                     circuit.stop();
                 }
                 break;
-            case simulationActions.stop.type:
+            case 'STOP_SIMULATION':
                 if (circuit) {
                     circuit.stop();
+                    circuit = undefined;
                 }
                 if (circuitEventsDispatcher) {
                     yield cancel(circuitEventsDispatcher);

@@ -157,6 +157,22 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
             } else {
                 return state;
             }
+        case 'INVALIDATE_CIRCUITRY':
+            const blocksAfterInvalidate = state.blocks.map(b =>
+                (action.circuit.changed[b.id] && b.name === 'Counter')
+                    ? { ...b, current: action.circuit.counterValue[b.id] }
+                    : b
+            );
+            return {
+                ...state,
+                wires: state.wires.map(w =>
+                    action.circuit.changed[w.id]
+                        ? { ...w, gate: action.circuit.gate[w.id] }
+                        : w
+                ),
+                blocks: blocksAfterInvalidate,
+                blockById: arrayToIdMap(blocksAfterInvalidate),
+            };
         default:
             return state;
     }

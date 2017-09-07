@@ -9,6 +9,7 @@ import { AppContainer } from './containers/AppContainer';
 import { circuitSaga } from './sagas/circuitSaga';
 import { midiSaga } from './sagas/midiSaga';
 import { themeSaga } from './sagas/themeSaga';
+import { GlobalState } from './reducers/global';
 import './index.css';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -29,10 +30,11 @@ const store = createStore<any>(rootReducer, {
         circuitName: 'New circuit',
         midiOutputName: '',
         bpm: 130,
+        gateLength: 100,
     },
     circuits: Object.keys(localStorage),
     midiOutputs: [],
-}, applyMiddleware(sagaMiddleware));
+} as GlobalState, applyMiddleware(sagaMiddleware));
 
 sagaMiddleware.run(function* () {
     while (true) {

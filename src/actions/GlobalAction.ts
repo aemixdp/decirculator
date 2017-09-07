@@ -1,6 +1,4 @@
-import { Circuit } from '../circuitry/Circuit';
-
-export type GlobalAction = Save | Load | SendMidi | InvalidateCircuit | InvalidateTheme | InvalidateMidiOutputs;
+export type GlobalAction = Save | Load | SendMidi | InvalidateTheme | InvalidateMidiOutputs;
 
 export type Save = {
     type: 'SAVE';
@@ -18,11 +16,6 @@ export type SendMidi = {
     channel: number;
     velocity: number;
     noteOn: boolean;
-};
-
-export type InvalidateCircuit = {
-    type: 'INVALIDATE_CIRCUIT';
-    circuit: Circuit;
 };
 
 export type InvalidateTheme = {
@@ -56,13 +49,6 @@ export function sendMidi(noteOn: boolean, note: number, channel: number, velocit
         note,
         channel,
         velocity,
-    };
-}
-
-export function invalidateCircuit(circuit: Circuit): InvalidateCircuit {
-    return {
-        type: 'INVALIDATE_CIRCUIT',
-        circuit,
     };
 }
 
