@@ -9,7 +9,7 @@ import { noteToMs } from '../utils/musicUtils';
 import blockDescriptors from './blocks';
 
 type OnMidiOut =
-    (toggleState: boolean, channel: number, note: number, velocity: number) => void;
+    (noteOn: boolean, note: number, channel: number, velocity: number) => void;
 
 export class Circuit {
     /**

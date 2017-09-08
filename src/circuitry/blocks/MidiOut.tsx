@@ -22,7 +22,7 @@ export const MidiOut: BlockDescriptor<State> = {
         if (circuit.cooldown[blockId]) {
             const timeUntilTurnOff = circuit.timeUntilTurnOff[blockId] -= delta;
             if (timeUntilTurnOff <= 0) {
-                circuit.onMidiOut(false, circuit.channel[blockId], circuit.note[blockId], circuit.velocity[blockId]);
+                circuit.onMidiOut(false, circuit.note[blockId], circuit.channel[blockId], circuit.velocity[blockId]);
                 circuit.cooldown[blockId] = false;
             }
         }
@@ -30,7 +30,7 @@ export const MidiOut: BlockDescriptor<State> = {
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
             if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
-                circuit.onMidiOut(true, circuit.channel[blockId], circuit.note[blockId], circuit.velocity[blockId]);
+                circuit.onMidiOut(true, circuit.note[blockId], circuit.channel[blockId], circuit.velocity[blockId]);
                 circuit.timeUntilTurnOff[blockId] = config.gateLength;
                 circuit.changed[blockId] = true;
                 circuit.cooldown[blockId] = true;

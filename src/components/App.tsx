@@ -74,11 +74,6 @@ export class App extends React.Component<Props, {}> {
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
     }
-    handleMidiOut = (toggleState: boolean, channel: number, note: number, velocity: number) => {
-        if (this.props.midiOutputName) {
-            this.midiManager.note(this.props.midiOutputName, toggleState, channel, note, velocity);
-        }
-    }
     handleThemeChanged = () => {
         this.setState({
             theme: this.themeManager.theme,
