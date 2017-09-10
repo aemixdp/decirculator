@@ -23,7 +23,6 @@ export const rootReducer: Reducer<StateWithHistory<GlobalState>> = undoable(glob
     filter: includeAction([
         'CREATE_BLOCK',
         'CREATE_WIRE',
-        'DRAW_WIRE',
         'EDIT_OBJECT',
         'DELETE_OBJECT',
         'TOGGLE_PORT',
@@ -36,9 +35,6 @@ export const rootReducer: Reducer<StateWithHistory<GlobalState>> = undoable(glob
         switch (action.type) {
             case 'DRAG_BLOCK':
                 return 1;
-            case 'CREATE_WIRE':
-            case 'DRAW_WIRE':
-                return 2;
             default:
                 return null;
         }
