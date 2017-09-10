@@ -6,6 +6,7 @@ import { circuitObjects } from './circuitObjects';
 import { ui } from './ui';
 import { config } from './config';
 import { undoHistoryLength } from '../config';
+import { UiAction } from '../actions/UiAction';
 
 function globalReducer(state: GlobalState, action: any): GlobalState {
     return global({
@@ -31,10 +32,10 @@ export const rootReducer: Reducer<StateWithHistory<GlobalState>> = undoable(glob
         'SET_BPM',
         'DRAG_BLOCK',
     ]),
-    groupBy: (action) => {
+    groupBy: (action: UiAction) => {
         switch (action.type) {
             case 'DRAG_BLOCK':
-                return 1;
+                return action.blockId;
             default:
                 return null;
         }
