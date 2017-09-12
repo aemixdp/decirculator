@@ -18,9 +18,11 @@ export const Delay: BlockDescriptor<State> = {
     },
     dynamicStateKeys: [],
     tick: (circuit, blockId, delta, config) => {
-        const delayList = circuit.delayList[blockId];
         const offset = blockId * 4;
-        if (delayList.tick(delta)) {
+        const delayList = circuit.delayList[blockId];
+        const eta = delayList.tick(delta);
+        if (eta <= 0) {
+            circuit.compensation[blockId] = eta;
             for (let i = 0; i < 4; i += 1) {
                 if (circuit.input[offset + i] === -1) {
                     circuit.outputGate[offset + i] = true;
@@ -30,7 +32,8 @@ export const Delay: BlockDescriptor<State> = {
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
             if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
-                delayList.add(noteToMs(circuit.beats[blockId], circuit.noteFraction[blockId], config.bpm));
+                const delay = noteToMs(circuit.beats[blockId], circuit.noteFraction[blockId], config.bpm);
+                delayList.add(delay + circuit.compensation[inputId] - delta);
                 circuit.cooldown[inputId] = true;
                 break;
             }

@@ -41,7 +41,11 @@ export class Circuit {
      */
     outputGate: Array<boolean>;
     /**
-     * cooldown[i] {wires, MidiOut} = cooldown of i-th object in milliseconds.
+     * compensation[i] {blocks, wires} = compensation of i-th object in milliseconds.
+     */
+    compensation: Array<number>;
+    /**
+     * cooldown[i] {wires, MidiOut} = cooldown state of i-th object.
      */
     cooldown: Array<boolean>;
     /**
@@ -132,6 +136,7 @@ export class Circuit {
         this.blockTick = [];
         this.gate = [];
         this.outputGate = [];
+        this.compensation = [];
         this.cooldown = [];
         this.input = [];
         this.timeUntilTurnOn = [];
@@ -166,6 +171,7 @@ export class Circuit {
             this.blockTick.push(null);
             this.gate.push(false);
             this.outputGate.push(false, false, false, false);
+            this.compensation.push(0);
             this.cooldown.push(false);
             this.input.push(-1, -1, -1, -1);
             this.timeUntilTurnOn.push(0);
@@ -247,6 +253,7 @@ export class Circuit {
                 if (this.outputGate[outputGateIndex]) {
                     this.gate[i] = true;
                     this.changed[i] = true;
+                    this.compensation[i] = this.compensation[spi.blockId];
                 }
             }
         }
@@ -276,7 +283,7 @@ export class Circuit {
     }
     start() {
         this.timestamp = Date.now();
-        this.timer = setInterval(this.tick, 5);
+        this.timer = setInterval(this.tick, 0);
     }
     stop() {
         clearInterval(this.timer);

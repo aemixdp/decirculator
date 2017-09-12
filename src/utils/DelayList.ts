@@ -15,7 +15,7 @@ export class DelayList {
     add(delay: number): void {
         this.root = new Cons(delay, this.root);
     }
-    tick(delta: number): boolean {
+    tick(delta: number): number {
         let prevNode = null;
         let currNode = this.root;
         while (currNode) {
@@ -26,11 +26,11 @@ export class DelayList {
                 } else {
                     this.root = null;
                 }
-                return true;
+                return currNode.head;
             }
             prevNode = currNode;
             currNode = currNode.tail;
         }
-        return false;
+        return NaN;
     }
 }
