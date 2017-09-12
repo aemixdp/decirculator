@@ -9,11 +9,12 @@ import { undoHistoryLength } from '../config';
 import { UiAction } from '../actions/UiAction';
 
 function globalReducer(state: GlobalState, action: any): GlobalState {
+    const newCircuitObjects = circuitObjects(state.circuitObjects, action);
     return global({
         ...state,
         simulationState: simulationState(state.simulationState, action),
-        circuitObjects: circuitObjects(state.circuitObjects, action),
-        ui: ui(state.ui, state.circuitObjects, action),
+        circuitObjects: newCircuitObjects,
+        ui: ui(state.ui, newCircuitObjects, action),
         config: config(state.config, action),
     }, action);
 }
