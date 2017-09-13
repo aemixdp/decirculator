@@ -10,7 +10,13 @@ import { circuitSaga } from './sagas/circuitSaga';
 import { midiSaga } from './sagas/midiSaga';
 import { themeSaga } from './sagas/themeSaga';
 import { GlobalState } from './reducers/global';
+import builtins from './builtins';
 import './index.css';
+
+for (const key in builtins) {
+    const value = builtins[key];
+    localStorage.setItem(key, JSON.stringify(value));
+}
 
 const sagaMiddleware = createSagaMiddleware();
 
