@@ -3,17 +3,17 @@ import { BlockDescriptor } from '../data/BlockDescriptor';
 import { Point } from '../data/Point';
 import { PortInfo } from '../data/PortInfo';
 
-export type UiAction = DragViewport | DragBlock | SelectObject | HoverPort | DrawBlock | DrawWire | CancelDrawingWire;
+export type UiAction = DragViewport | DragBlocks | SelectObject | HoverPort | DrawBlock | DrawWire | CancelDrawingWire;
 
 export type DragViewport = {
     type: 'DRAG_VIEWPORT';
     newOffset: Point;
 };
 
-export type DragBlock = {
-    type: 'DRAG_BLOCK';
-    blockId: number;
-    newPosition: Point;
+export type DragBlocks = {
+    type: 'DRAG_BLOCKS';
+    blockIds: number[];
+    offset: Point;
 };
 
 export type SelectObject = {
@@ -47,11 +47,11 @@ export function dragViewport(newOffset: Point): DragViewport {
     };
 }
 
-export function dragBlock(blockId: number, newPosition: Point): DragBlock {
+export function dragBlocks(blockIds: number[], offset: Point): DragBlocks {
     return {
-        type: 'DRAG_BLOCK',
-        blockId,
-        newPosition,
+        type: 'DRAG_BLOCKS',
+        blockIds,
+        offset,
     };
 }
 

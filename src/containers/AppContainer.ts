@@ -4,7 +4,7 @@ import { App } from '../components/App';
 import { GlobalState } from '../reducers/global';
 
 export const AppContainer = connect(
-    (state: StateWithHistory<GlobalState>, ownProps: any) => {
+    (state: StateWithHistory<GlobalState>) => {
         const present = state.present;
         return {
             theme: present.theme,

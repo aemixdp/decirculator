@@ -122,10 +122,10 @@ export class App extends React.Component<Props, {}> {
     }
     handleBlockDrag = (event: any, block: any) => {
         if (this.refs.viewport.domNode.contains(event.evt.toElement)) {
-            this.props.dispatch(uiActions.dragBlock(block.id,
+            this.props.dispatch(uiActions.dragBlocks([block.id],
                 snapToWireframe(wireframeCellSize, {
-                    x: event.evt.offsetX - this.props.viewportOffset.x - 25,
-                    y: event.evt.offsetY - this.props.viewportOffset.y - 25,
+                    x: event.evt.offsetX - this.props.viewportOffset.x - 25 - block.x,
+                    y: event.evt.offsetY - this.props.viewportOffset.y - 25 - block.y,
                 })
             ));
         }

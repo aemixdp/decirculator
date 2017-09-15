@@ -31,12 +31,12 @@ export const rootReducer: Reducer<StateWithHistory<GlobalState>> = undoable(glob
         'SET_CIRCUIT_NAME',
         'SET_MIDI_OUTPUT',
         'SET_BPM',
-        'DRAG_BLOCK',
+        'DRAG_BLOCKS',
     ]),
     groupBy: (action: UiAction) => {
         switch (action.type) {
-            case 'DRAG_BLOCK':
-                return action.blockId;
+            case 'DRAG_BLOCKS':
+                return action.blockIds.toString();
             default:
                 return null;
         }

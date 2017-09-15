@@ -4,7 +4,7 @@ import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { arrayToIdMap } from '../utils/objectUtils';
 import blockDescriptors from '../circuitry/blocks';
-import { DragBlock } from '../actions/UiAction';
+import { DragBlocks } from '../actions/UiAction';
 import { portDirections, flipPortDirection } from '../data/PortDirection';
 import { PortInfo } from '../data/PortInfo';
 
@@ -16,7 +16,7 @@ export type CircuitObjectsState = {
     blocksBeforeSimulation: { [id: number]: BlockCircuitObject };
 };
 
-type Action = CircuitObjectsAction | SimulationAction | DragBlock;
+type Action = CircuitObjectsAction | SimulationAction | DragBlocks;
 
 export function circuitObjects(state: CircuitObjectsState, action: Action): CircuitObjectsState {
     switch (action.type) {
@@ -136,26 +136,22 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
                 blocks: blocksAfterSimulation,
                 blockById: arrayToIdMap(blocksAfterSimulation),
             };
-        case 'DRAG_BLOCK':
-            if (action.blockId !== NaN) {
-                const transformedBlock = {
-                    ...state.blockById[action.blockId],
-                    ...action.newPosition,
-                };
+        case 'DRAG_BLOCKS':
+            if (action.blockIds.length === 1 && isNaN(action.blockIds[0])) {
+                return state;
+            } else {
+                const blocksAfterDrag = state.blocks.map(block =>
+                    action.blockIds.indexOf(block.id) === -1 ? block : {
+                        ...block,
+                        x: block.x + action.offset.x,
+                        y: block.y + action.offset.y,
+                    }
+                );
                 return {
                     ...state,
-                    blocks: state.blocks.map(block =>
-                        block.id === action.blockId
-                            ? transformedBlock
-                            : block
-                    ),
-                    blockById: {
-                        ...state.blockById,
-                        [action.blockId]: transformedBlock,
-                    },
+                    blocks: blocksAfterDrag,
+                    blockById: arrayToIdMap(blocksAfterDrag),
                 };
-            } else {
-                return state;
             }
         case 'INVALIDATE_CIRCUITRY':
             const blocksAfterInvalidate = state.blocks.map(b =>

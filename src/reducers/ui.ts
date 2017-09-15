@@ -26,13 +26,14 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
                 ...uiState,
                 viewportOffset: action.newOffset,
             };
-        case 'DRAG_BLOCK':
-            if (!action.blockId && uiState.newBlock) {
+        case 'DRAG_BLOCKS':
+            if (action.blockIds.length === 1 && isNaN(action.blockIds[0]) && uiState.newBlock) {
                 return {
                     ...uiState,
                     newBlock: {
                         ...uiState.newBlock,
-                        ...action.newPosition,
+                        x: uiState.newBlock.x + action.offset.x,
+                        y: uiState.newBlock.y + action.offset.y,
                     }
                 };
             } else {
