@@ -15,8 +15,8 @@ type EventListeners = {
     onDragEnd: BlockEventListener;
     onDragMove: BlockEventListener;
     onClick: BlockEventListener;
-    onMouseEnter: (e: Event) => void;
-    onMouseLeave: (e: Event) => void;
+    onMouseEnter: BlockEventListener;
+    onMouseLeave: BlockEventListener;
 };
 
 type Props = Partial<EventListeners> & BlockCircuitObject & CircuitObjectVisuals;
@@ -42,20 +42,29 @@ export class Block extends React.Component<Props, any> {
             this.props.onClick(e, this.props);
         }
     }
+    handleMouseEnter = (e: Event) => {
+        if (this.props.onMouseEnter) {
+            this.props.onMouseEnter(e, this.props);
+        }
+    }
+    handleMouseLeave = (e: Event) => {
+        if (this.props.onMouseLeave) {
+            this.props.onMouseLeave(e, this.props);
+        }
+    }
     render() {
         return (
             <Group
                 x={this.props.x}
                 y={this.props.y}
-                draggable={!this.props.hoveringPort}
                 onDragStart={this.handleDragStart}
                 onDragEnd={this.handleDragEnd}
                 onDragMove={this.handleDragMove}
                 onClick={this.handleClick}
             >
                 <Group
-                    onMouseEnter={this.props.onMouseEnter}
-                    onMouseLeave={this.props.onMouseLeave}
+                    onMouseEnter={this.handleMouseEnter}
+                    onMouseLeave={this.handleMouseLeave}
                 >
                     <Rect
                         width={50}

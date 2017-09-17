@@ -10,7 +10,6 @@ type BlockButtonEventListener =
 type EventListeners = {
     onDragStart: BlockButtonEventListener;
     onDragEnd: BlockButtonEventListener;
-    onDragMove: BlockButtonEventListener;
 };
 
 type DefaultProps = EventListeners;
@@ -20,16 +19,12 @@ export class BlockButton extends React.Component<Props, any> {
     static defaultProps: DefaultProps = {
         onDragStart: () => { },
         onDragEnd: () => { },
-        onDragMove: () => { },
     };
     handleDragStart = (e: Event) => {
         this.props.onDragStart(e, this.props);
     }
     handleDragEnd = (e: Event) => {
         this.props.onDragEnd(e, this.props);
-    }
-    handleDragMove = (e: Event) => {
-        this.props.onDragMove(e, this.props);
     }
     render() {
         return (
@@ -45,13 +40,12 @@ export class BlockButton extends React.Component<Props, any> {
                         id={-1}
                         theme={this.props.theme}
                         active={true}
-                        draggable={true}
+                        draggable={false}
                         ports={defaultPortDirections}
                         x={2}
                         y={2}
                         onDragStart={this.handleDragStart}
                         onDragEnd={this.handleDragEnd}
-                        onDragMove={this.handleDragMove}
                     />
                 </Layer>
             </Stage>

@@ -36,7 +36,7 @@ export const rootReducer: Reducer<StateWithHistory<GlobalState>> = undoable(glob
     groupBy: (action: UiAction) => {
         switch (action.type) {
             case 'DRAG_BLOCKS':
-                return action.blockIds.toString();
+                return Array.from(action.ids).toString();
             default:
                 return null;
         }

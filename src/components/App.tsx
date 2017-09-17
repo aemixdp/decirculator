@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactKonva from 'react-konva';
+import ReactKonva, { Rect } from 'react-konva';
 import { ActionCreators as reduxUndoActions } from 'redux-undo';
 import { Wire } from './Wire';
 import { BlockHoverZone } from './BlockHoverZone';
@@ -12,7 +12,7 @@ import { ThemeManager } from '../utils/ThemeManager';
 import { MidiManager } from '../utils/MidiManager';
 import { propagationStopper } from '../utils/eventUtils';
 import { Circuit } from '../circuitry/Circuit';
-import { shapeCenter } from '../utils/geometryUtils';
+import { shapeCenter, normalizeRectangle } from '../utils/geometryUtils';
 import { objectValues } from '../utils/objectUtils';
 import { CircuitObject } from '../data/CircuitObject';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
@@ -30,6 +30,7 @@ import { PortInfo } from '../data/PortInfo';
 import * as configActions from '../actions/ConfigAction';
 import * as simulationActions from '../actions/SimulationAction';
 import { SimulationState } from '../reducers/simulationState';
+import { IdMap } from '../data/IdMap';
 
 const { Stage, Layer }: any = ReactKonva;
 
@@ -37,7 +38,7 @@ type Props = {
     dispatch: Dispatch<AnyAction>;
     theme: any;
     viewportOffset: Point;
-    selectedObject?: CircuitObject;
+    selectedObjectIds: Set<number>;
     newBlock?: BlockCircuitObject;
     newWire?: WireCircuitObject;
     hoveringPortInfo?: PortInfo;
@@ -45,7 +46,7 @@ type Props = {
     blocks: BlockCircuitObject[];
     wires: WireCircuitObject[];
     circuitName: string;
-    blockById: { [id: number]: BlockCircuitObject };
+    blockById: IdMap<BlockCircuitObject>;
     bpm: number;
     simulationState: SimulationState;
     circuits: string[];
@@ -53,7 +54,17 @@ type Props = {
     midiOutputs: string[];
 };
 
-export class App extends React.Component<Props, {}> {
+type State = {
+    selectionStart?: Point,
+    selectionEnd?: Point,
+    isCtrlPressed: boolean,
+    isHoveringBlock: boolean,
+    isDraggingBlocks: boolean,
+    isDraggingViewport: boolean,
+    pivotBlockId?: number,
+};
+
+export class App extends React.Component<Props, State> {
     clickHandled: boolean;
     themeManager: ThemeManager;
     midiManager: MidiManager;
@@ -64,33 +75,31 @@ export class App extends React.Component<Props, {}> {
     constructor() {
         super();
         this.clickHandled = false;
+        this.state = {
+            isCtrlPressed: false,
+            isHoveringBlock: false,
+            isDraggingBlocks: false,
+            isDraggingViewport: false,
+        };
     }
     componentWillMount() {
         document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
     }
     componentDidMount() {
         this.refs.viewport.domNode.addEventListener('click', propagationStopper);
     }
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
-    }
-    handleThemeChanged = () => {
-        this.setState({
-            theme: this.themeManager.theme,
-        });
-    }
-    handleDevicesChange = () => {
-        this.setState({
-            midiOutputs: Object.keys(this.midiManager.midiOutputs),
-        });
+        document.removeEventListener('keyup', this.handleKeyUp);
     }
     handleKeyDown = (e: KeyboardEvent) => {
         if (e.keyCode === 46 /* delete */) {
-            if (this.props.selectedObject) {
-                this.props.dispatch(circuitObjectsActions.deleteObject(this.props.selectedObject.id));
+            if (this.props.selectedObjectIds.size > 0) {
+                this.props.dispatch(circuitObjectsActions.deleteObjects(this.props.selectedObjectIds));
             }
         } else if (e.keyCode === 27 /* esc */) {
-            this.props.dispatch(uiActions.deselectObject());
+            this.props.dispatch(uiActions.deselectObjects());
         } else if (e.keyCode === 90 && e.ctrlKey /* ctrl-z */) {
             this.props.dispatch(reduxUndoActions.undo());
             if (this.props.newWire) {
@@ -101,6 +110,17 @@ export class App extends React.Component<Props, {}> {
             }
         } else if (e.keyCode === 89 && e.ctrlKey /* ctrl-y */) {
             this.props.dispatch(reduxUndoActions.redo());
+        }
+        if (e.ctrlKey) {
+            this.setState({ isCtrlPressed: true });
+        }
+    }
+    handleKeyUp = (e: KeyboardEvent) => {
+        if (!e.ctrlKey) {
+            this.setState({
+                isCtrlPressed: false,
+                isDraggingViewport: false,
+            });
         }
     }
     handleNewBlockDragStart = (e: Event, blockDescriptor: BlockDescriptor<any>) => {
@@ -114,33 +134,46 @@ export class App extends React.Component<Props, {}> {
             this.props.dispatch(circuitObjectsActions.createBlock(this.props.newBlock));
         }
     }
-    handleBlockMouseEnter = () => {
+    handleBlockMouseEnter = (event: any, block: BlockCircuitObject) => {
+        if (this.state.isDraggingBlocks) return;
         document.body.style.cursor = 'move';
+        this.setState({
+            isHoveringBlock: true,
+            pivotBlockId: block.id,
+        });
     }
     handleBlockMouseLeave = () => {
+        if (this.state.isDraggingBlocks) return;
         document.body.style.cursor = 'default';
+        this.setState({ isHoveringBlock: false });
     }
-    handleBlockDrag = (event: any, block: any) => {
-        if (this.refs.viewport.domNode.contains(event.evt.toElement)) {
-            this.props.dispatch(uiActions.dragBlocks([block.id],
-                snapToWireframe(wireframeCellSize, {
-                    x: event.evt.offsetX - this.props.viewportOffset.x - 25 - block.x,
-                    y: event.evt.offsetY - this.props.viewportOffset.y - 25 - block.y,
-                })
-            ));
-        }
-    }
+    // handleBlockDrag = (event: any, block: any) => {
+    //     if (this.refs.viewport.domNode.contains(event.evt.toElement)) {
+
+    //     }
+    // }
     handleViewportDrag = (event: any) => {
-        if (event.target.nodeType === 'Stage') {
+        if (this.state.isDraggingViewport && event.target.nodeType === 'Stage') {
             const { x, y } = event.target.attrs;
             this.props.dispatch(uiActions.dragViewport(
                 snapToWireframe(wireframeCellSize, { x, y })
             ));
         }
     }
-    handleViewportMouseDown = (e: Event) => {
+    handleViewportMouseDown = (event: any) => {
         if (this.props.isHoveringPort) {
             this.props.dispatch(uiActions.drawWire());
+        } else if (this.state.isCtrlPressed) {
+            this.setState({ isDraggingViewport: true });
+        } else if (this.state.isHoveringBlock) {
+            this.setState({ isDraggingBlocks: true });
+        } else {
+            this.setState({
+                selectionStart: {
+                    x: event.evt.offsetX - this.props.viewportOffset.x,
+                    y: event.evt.offsetY - this.props.viewportOffset.y,
+                }
+            });
         }
     }
     handleViewportMouseUp = (event: any) => {
@@ -153,6 +186,15 @@ export class App extends React.Component<Props, {}> {
             } else {
                 this.props.dispatch(uiActions.cancelDrawingWire());
             }
+        } else if (this.state.selectionStart) {
+            this.setState({
+                selectionStart: undefined,
+                selectionEnd: undefined,
+            });
+        } else if (this.state.isDraggingViewport) {
+            this.setState({ isDraggingViewport: false });
+        } else if (this.state.isDraggingBlocks) {
+            this.setState({ isDraggingBlocks: false });
         }
     }
     handleViewportMouseMove = (event: any) => {
@@ -161,17 +203,48 @@ export class App extends React.Component<Props, {}> {
                 x: event.evt.offsetX - this.props.viewportOffset.x,
                 y: event.evt.offsetY - this.props.viewportOffset.y,
             }));
+        } else if (this.state.isDraggingBlocks && this.state.pivotBlockId !== undefined) {
+            const block = this.props.blockById[this.state.pivotBlockId];
+            if (!this.props.selectedObjectIds.has(block.id)) {
+                this.props.dispatch(uiActions.selectObjects(new Set([block.id])));
+            }
+            this.props.dispatch(uiActions.dragBlocks(this.props.selectedObjectIds,
+                snapToWireframe(wireframeCellSize, {
+                    x: event.evt.offsetX - this.props.viewportOffset.x - 25 - block.x,
+                    y: event.evt.offsetY - this.props.viewportOffset.y - 25 - block.y,
+                })
+            ));
+        } else if (this.state.selectionStart) {
+            const selectionEnd = {
+                x: event.evt.offsetX - this.props.viewportOffset.x,
+                y: event.evt.offsetY - this.props.viewportOffset.y,
+            };
+            this.setState({ selectionEnd });
+            const selectionArea = normalizeRectangle(this.state.selectionStart, selectionEnd);
+            const blocksInsideSelectionArea: Set<number> = new Set();
+            for (const block of this.props.blocks) {
+                if (
+                    block.x > selectionArea.start.x && block.x < selectionArea.end.x &&
+                    block.y > selectionArea.start.y && block.y < selectionArea.end.y
+                ) {
+                    blocksInsideSelectionArea.add(block.id);
+                }
+            }
+            if (this.props.selectedObjectIds.size !== blocksInsideSelectionArea.size) {
+                this.props.dispatch(uiActions.selectObjects(blocksInsideSelectionArea));
+            }
+            this.clickHandled = true;
         }
     }
     handleViewportClick = (event: any) => {
-        if (!this.clickHandled && this.props.selectedObject) {
-            this.props.dispatch(uiActions.deselectObject());
+        if (!this.clickHandled && this.props.selectedObjectIds.size > 0) {
+            this.props.dispatch(uiActions.deselectObjects());
         }
         this.clickHandled = false;
     }
     handleOuterClick = () => {
-        if (this.props.selectedObject) {
-            this.props.dispatch(uiActions.deselectObject());
+        if (this.props.selectedObjectIds.size > 0) {
+            this.props.dispatch(uiActions.deselectObjects());
         }
     }
     handlePortClick = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
@@ -179,15 +252,17 @@ export class App extends React.Component<Props, {}> {
         this.clickHandled = true;
     }
     handlePortMouseEnter = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
+        if (this.state.isDraggingBlocks) return;
         this.props.dispatch(uiActions.hoverPort({ blockId: block.id, port }));
         document.body.style.cursor = 'pointer';
     }
     handlePortMouseLeave = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
+        if (this.state.isDraggingBlocks) return;
         this.props.dispatch(uiActions.unhoverPort());
         document.body.style.cursor = 'default';
     }
     handleObjectClick = (event: any, object: CircuitObject) => {
-        this.props.dispatch(uiActions.selectObject(object));
+        this.props.dispatch(uiActions.selectObjects(new Set([object.id])));
         this.clickHandled = true;
     }
     handlePropertyChange = (event: any, object: CircuitObject, propName: string, propValue: any) => {
@@ -224,10 +299,7 @@ export class App extends React.Component<Props, {}> {
                 {...block}
                 key={`block_${block.id}`}
                 theme={this.props.theme}
-                isSelected={this.props.selectedObject
-                    ? block.id === this.props.selectedObject.id
-                    : false
-                }
+                isSelected={this.props.selectedObjectIds.has(block.id)}
                 hoveringPort={
                     (
                         this.props.hoveringPortInfo &&
@@ -236,7 +308,6 @@ export class App extends React.Component<Props, {}> {
                         ? this.props.hoveringPortInfo.port
                         : undefined
                 }
-                onDragMove={this.handleBlockDrag}
                 onMouseEnter={this.handleBlockMouseEnter}
                 onMouseLeave={this.handleBlockMouseLeave}
                 onClick={this.handleObjectClick}
@@ -255,16 +326,17 @@ export class App extends React.Component<Props, {}> {
                 startPosition={startPosition}
                 endPosition={endPosition}
                 theme={this.props.theme}
-                isSelected={this.props.selectedObject &&
-                    wire.id === this.props.selectedObject.id}
+                isSelected={this.props.selectedObjectIds.has(wire.id)}
                 onClick={this.handleObjectClick}
             />
         );
     }
-    renderProps = (object: any) => {
+    renderProps = () => {
+        const object: any = this.props.selectedObjectIds.size === 1 &&
+            this.props.blockById[this.props.selectedObjectIds.values().next().value];
         return (
             <Properties
-                {...(object || {}) }
+                {...object || {}}
                 onPropertyChange={this.handlePropertyChange}
                 onPropertyClick={propagationStopper}
             />
@@ -283,6 +355,22 @@ export class App extends React.Component<Props, {}> {
             />
         );
     }
+    renderSelectionRectangle = () => {
+        if (this.state.selectionStart && this.state.selectionEnd) {
+            const selectionArea = normalizeRectangle(this.state.selectionStart, this.state.selectionEnd);
+            return (
+                <Rect
+                    x={selectionArea.start.x}
+                    y={selectionArea.start.y}
+                    width={selectionArea.end.x - selectionArea.start.x}
+                    height={selectionArea.end.y - selectionArea.start.y}
+                    stroke={this.props.theme.selectionColor}
+                />
+            );
+        } else {
+            return null;
+        }
+    }
     render() {
         return (
             <div
@@ -298,7 +386,6 @@ export class App extends React.Component<Props, {}> {
                                 theme={this.props.theme}
                                 onDragStart={this.handleNewBlockDragStart}
                                 onDragEnd={this.handleNewBlockDragEnd}
-                                onDragMove={this.handleBlockDrag}
                             />
                         )}
                         <div className="controls simulation-controls" style={{ flex: 1 }}>
@@ -371,14 +458,14 @@ export class App extends React.Component<Props, {}> {
                             </div>
                         </div>
                     </div>
-                    {this.renderProps(this.props.selectedObject)}
+                    {this.renderProps()}
                     <Stage
                         ref="viewport"
                         x={this.props.viewportOffset.x}
                         y={this.props.viewportOffset.y}
                         width={952}
                         height={600}
-                        draggable={!this.props.hoveringPortInfo}
+                        draggable={this.state.isDraggingViewport}
                         onDragMove={this.handleViewportDrag}
                         onContentMouseDown={this.handleViewportMouseDown}
                         onContentMouseUp={this.handleViewportMouseUp}
@@ -397,6 +484,7 @@ export class App extends React.Component<Props, {}> {
                             {this.props.wires.map(this.renderWire)}
                             {this.props.newWire && this.renderWire(this.props.newWire)}
                             {this.renderHoverZones()}
+                            {this.renderSelectionRectangle()}
                         </Layer>
                     </Stage>
                 </div>

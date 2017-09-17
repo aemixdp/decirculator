@@ -9,7 +9,7 @@ export const AppContainer = connect(
         return {
             theme: present.theme,
             viewportOffset: present.ui.viewportOffset,
-            selectedObject: present.ui.selectedObject,
+            selectedObjectIds: present.ui.selectedObjectIds,
             newBlock: present.ui.newBlock,
             newWire: present.ui.newWire,
             hoveringPortInfo: present.ui.hoveringPortInfo,

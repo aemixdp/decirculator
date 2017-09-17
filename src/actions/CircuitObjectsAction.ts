@@ -7,7 +7,7 @@ export type CircuitObjectsAction
     = CreateBlock
     | CreateWire
     | EditObject
-    | DeleteObject
+    | DeleteObjects
     | TogglePort
     | InvalidateCircuitry;
 
@@ -28,9 +28,9 @@ export type EditObject = {
     propertyValue: any;
 };
 
-export type DeleteObject = {
-    type: 'DELETE_OBJECT';
-    id: number;
+export type DeleteObjects = {
+    type: 'DELETE_OBJECTS';
+    ids: Set<number>;
 };
 
 export type TogglePort = {
@@ -67,10 +67,10 @@ export function editObject(id: number, propertyName: string, propertyValue: any)
     };
 }
 
-export function deleteObject(id: number): DeleteObject {
+export function deleteObjects(ids: Set<number>): DeleteObjects {
     return {
-        type: 'DELETE_OBJECT',
-        id,
+        type: 'DELETE_OBJECTS',
+        ids,
     };
 }
 

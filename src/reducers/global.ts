@@ -3,7 +3,7 @@ import { SimulationState } from './simulationState';
 import { CircuitObjectsState } from './circuitObjects';
 import { UiState } from './ui';
 import { ConfigState } from './config';
-import { arrayToIdMap } from '../utils/objectUtils';
+import { arrayToIdMap } from '../data/IdMap';
 
 export interface GlobalState {
     simulationState: SimulationState;

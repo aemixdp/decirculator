@@ -1,9 +1,8 @@
-import { CircuitObject } from '../data/CircuitObject';
 import { BlockDescriptor } from '../data/BlockDescriptor';
 import { Point } from '../data/Point';
 import { PortInfo } from '../data/PortInfo';
 
-export type UiAction = DragViewport | DragBlocks | SelectObject | HoverPort | DrawBlock | DrawWire | CancelDrawingWire;
+export type UiAction = DragViewport | DragBlocks | SelectObjects | HoverPort | DrawBlock | DrawWire | CancelDrawingWire;
 
 export type DragViewport = {
     type: 'DRAG_VIEWPORT';
@@ -12,13 +11,13 @@ export type DragViewport = {
 
 export type DragBlocks = {
     type: 'DRAG_BLOCKS';
-    blockIds: number[];
+    ids: Set<number>;
     offset: Point;
 };
 
-export type SelectObject = {
-    type: 'SELECT_OBJECT';
-    object?: CircuitObject;
+export type SelectObjects = {
+    type: 'SELECT_OBJECTS';
+    ids: Set<number>;
 };
 
 export type HoverPort = {
@@ -47,23 +46,23 @@ export function dragViewport(newOffset: Point): DragViewport {
     };
 }
 
-export function dragBlocks(blockIds: number[], offset: Point): DragBlocks {
+export function dragBlocks(ids: Set<number>, offset: Point): DragBlocks {
     return {
         type: 'DRAG_BLOCKS',
-        blockIds,
+        ids,
         offset,
     };
 }
 
-export function selectObject(object?: CircuitObject): SelectObject {
+export function selectObjects(ids: Set<number>): SelectObjects {
     return {
-        type: 'SELECT_OBJECT',
-        object,
+        type: 'SELECT_OBJECTS',
+        ids,
     };
 }
 
-export function deselectObject(): SelectObject {
-    return selectObject(undefined);
+export function deselectObjects(): SelectObjects {
+    return selectObjects(new Set());
 }
 
 export function hoverPort(portInfo?: PortInfo): HoverPort {

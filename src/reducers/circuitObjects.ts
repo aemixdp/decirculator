@@ -2,11 +2,11 @@ import { SimulationAction } from '../actions/SimulationAction';
 import { CircuitObjectsAction } from '../actions/CircuitObjectsAction';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
-import { arrayToIdMap } from '../utils/objectUtils';
 import blockDescriptors from '../circuitry/blocks';
 import { DragBlocks } from '../actions/UiAction';
 import { portDirections, flipPortDirection } from '../data/PortDirection';
 import { PortInfo } from '../data/PortInfo';
+import { arrayToIdMap } from '../data/IdMap';
 
 export type CircuitObjectsState = {
     idCounter: number;
@@ -62,15 +62,15 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
                 blocks: blocksAfterEdit,
                 blockById: arrayToIdMap(blocksAfterEdit),
             };
-        case 'DELETE_OBJECT':
-            const blocksAfterDelete = state.blocks.filter(b => b.id !== action.id);
+        case 'DELETE_OBJECTS':
+            const blocksAfterDelete = state.blocks.filter(b => !action.ids.has(b.id));
             return {
                 ...state,
                 wires: state.wires.filter(w =>
-                    w.id !== action.id &&
-                    w.startPortInfo.blockId !== action.id &&
+                    !action.ids.has(w.id) &&
+                    !action.ids.has(w.startPortInfo.blockId) &&
                     w.endPortInfo &&
-                    w.endPortInfo.blockId !== action.id
+                    !action.ids.has(w.endPortInfo.blockId)
                 ),
                 blocks: blocksAfterDelete,
                 blockById: arrayToIdMap(blocksAfterDelete),
@@ -137,11 +137,11 @@ export function circuitObjects(state: CircuitObjectsState, action: Action): Circ
                 blockById: arrayToIdMap(blocksAfterSimulation),
             };
         case 'DRAG_BLOCKS':
-            if (action.blockIds.length === 1 && isNaN(action.blockIds[0])) {
+            if (action.ids.size === 1 && action.ids.has(NaN)) {
                 return state;
             } else {
                 const blocksAfterDrag = state.blocks.map(block =>
-                    action.blockIds.indexOf(block.id) === -1 ? block : {
+                    !action.ids.has(block.id) ? block : {
                         ...block,
                         x: block.x + action.offset.x,
                         y: block.y + action.offset.y,

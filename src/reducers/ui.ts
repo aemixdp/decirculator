@@ -1,5 +1,4 @@
 import { UiAction } from '../actions/UiAction';
-import { CircuitObject } from '../data/CircuitObject';
 import { Point } from '../data/Point';
 import { PortInfo } from '../data/PortInfo';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
@@ -11,7 +10,7 @@ import { CreateBlock, CreateWire, EditObject } from '../actions/CircuitObjectsAc
 
 export interface UiState {
     viewportOffset: Point;
-    selectedObject?: CircuitObject;
+    selectedObjectIds: Set<number>;
     hoveringPortInfo?: PortInfo;
     newBlock?: BlockCircuitObject;
     newWire?: WireCircuitObject;
@@ -27,7 +26,7 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
                 viewportOffset: action.newOffset,
             };
         case 'DRAG_BLOCKS':
-            if (action.blockIds.length === 1 && isNaN(action.blockIds[0]) && uiState.newBlock) {
+            if (action.ids.size === 1 && action.ids.has(NaN) && uiState.newBlock) {
                 return {
                     ...uiState,
                     newBlock: {
@@ -39,10 +38,10 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
             } else {
                 return uiState;
             }
-        case 'SELECT_OBJECT':
+        case 'SELECT_OBJECTS':
             return {
                 ...uiState,
-                selectedObject: action.object,
+                selectedObjectIds: action.ids,
             };
         case 'HOVER_PORT':
             return {
@@ -109,15 +108,6 @@ export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, a
                 ...uiState,
                 newWire: undefined,
             };
-        case 'EDIT_OBJECT':
-            if (uiState.selectedObject && action.id === uiState.selectedObject.id) {
-                return {
-                    ...uiState,
-                    selectedObject: circuitObjectsState.blockById[action.id],
-                };
-            } else {
-                return uiState;
-            }
         default:
             return uiState;
     }

@@ -31,6 +31,7 @@ const store = createStore<any>(rootReducer, {
     },
     ui: {
         viewportOffset: { x: 0, y: 0 },
+        selectedObjectIds: new Set(),
     },
     config: {
         circuitName: 'New circuit',
