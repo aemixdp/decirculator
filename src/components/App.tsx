@@ -29,7 +29,7 @@ import { wireframeCellSize } from '../config';
 import { PortInfo } from '../data/PortInfo';
 import * as configActions from '../actions/ConfigAction';
 import * as simulationActions from '../actions/SimulationAction';
-import { SimulationState } from '../reducers/simulationState';
+import { SimulationState } from '../reducers/simulationStateReducer';
 import { IdMap } from '../data/IdMap';
 
 const { Stage, Layer }: any = ReactKonva;

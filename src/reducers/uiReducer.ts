@@ -4,7 +4,7 @@ import { PortInfo } from '../data/PortInfo';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { defaultPortDirections } from '../data/PortDirection';
-import { CircuitObjectsState } from './circuitObjects';
+import { CircuitObjectsState } from './circuitObjectsReducer';
 import { shapeCenter } from '../utils/geometryUtils';
 import { CreateBlock, CreateWire, EditObject } from '../actions/CircuitObjectsAction';
 
@@ -18,7 +18,7 @@ export interface UiState {
 
 type Action = UiAction | CreateBlock | CreateWire | EditObject;
 
-export function ui(uiState: UiState, circuitObjectsState: CircuitObjectsState, action: Action): UiState {
+export function uiReducer(uiState: UiState, circuitObjectsState: CircuitObjectsState, action: Action): UiState {
     switch (action.type) {
         case 'DRAG_VIEWPORT':
             return {

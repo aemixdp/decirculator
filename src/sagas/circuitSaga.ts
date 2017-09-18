@@ -4,7 +4,7 @@ import * as globalActions from '../actions/GlobalAction';
 import * as circuitObjectsActions from '../actions/CircuitObjectsAction';
 import { SimulationAction } from '../actions/SimulationAction';
 import { StateWithHistory } from 'redux-undo';
-import { GlobalState } from '../reducers/global';
+import { GlobalState } from '../reducers/globalReducer';
 import { Circuit } from '../circuitry/Circuit';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';

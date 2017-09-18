@@ -1,7 +1,7 @@
 import { eventChannel } from 'redux-saga';
 import { put, take, fork, select } from 'redux-saga/effects';
 import { StateWithHistory } from 'redux-undo';
-import { GlobalState } from '../reducers/global';
+import { GlobalState } from '../reducers/globalReducer';
 import * as globalActions from '../actions/GlobalAction';
 import { MidiManager } from '../utils/MidiManager';
 

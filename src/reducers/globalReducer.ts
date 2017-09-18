@@ -1,8 +1,8 @@
 import { GlobalAction } from '../actions/GlobalAction';
-import { SimulationState } from './simulationState';
-import { CircuitObjectsState } from './circuitObjects';
-import { UiState } from './ui';
-import { ConfigState } from './config';
+import { SimulationState } from './simulationStateReducer';
+import { CircuitObjectsState } from './circuitObjectsReducer';
+import { UiState } from './uiReducer';
+import { ConfigState } from './configReducer';
 import { arrayToIdMap } from '../data/IdMap';
 
 export interface GlobalState {
@@ -15,7 +15,7 @@ export interface GlobalState {
     midiOutputs: string[];
 }
 
-export function global(state: GlobalState, action: GlobalAction): GlobalState {
+export function globalReducer(state: GlobalState, action: GlobalAction): GlobalState {
     switch (action.type) {
         case 'SAVE':
             const dataToSave = {

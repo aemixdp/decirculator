@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { StateWithHistory } from 'redux-undo';
 import { App } from '../components/App';
-import { GlobalState } from '../reducers/global';
+import { GlobalState } from '../reducers/globalReducer';
 
 export const AppContainer = connect(
     (state: StateWithHistory<GlobalState>) => {

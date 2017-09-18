@@ -7,7 +7,7 @@ export interface ConfigState {
     gateLength: number;
 }
 
-export function config(state: ConfigState, action: ConfigAction): ConfigState {
+export function configReducer(state: ConfigState, action: ConfigAction): ConfigState {
     switch (action.type) {
         case 'SET_CIRCUIT_NAME':
             return {

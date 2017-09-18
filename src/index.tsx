@@ -4,12 +4,12 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { take } from 'redux-saga/effects';
-import { rootReducer } from './reducers';
+import { rootReducer } from './reducers/rootReducer';
 import { AppContainer } from './containers/AppContainer';
 import { circuitSaga } from './sagas/circuitSaga';
 import { midiSaga } from './sagas/midiSaga';
 import { themeSaga } from './sagas/themeSaga';
-import { GlobalState } from './reducers/global';
+import { GlobalState } from './reducers/globalReducer';
 import builtins from './builtins';
 import './index.css';
 

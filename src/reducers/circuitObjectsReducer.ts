@@ -18,7 +18,7 @@ export type CircuitObjectsState = {
 
 type Action = CircuitObjectsAction | SimulationAction | DragBlocks;
 
-export function circuitObjects(state: CircuitObjectsState, action: Action): CircuitObjectsState {
+export function circuitObjectsReducer(state: CircuitObjectsState, action: Action): CircuitObjectsState {
     switch (action.type) {
         case 'CREATE_BLOCK':
             const newBlock = { ...action.blockData, id: state.idCounter };
