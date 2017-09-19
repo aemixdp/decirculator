@@ -1,12 +1,15 @@
-import { SimulationAction } from '../actions/SimulationAction';
-import { CircuitObjectsAction } from '../actions/CircuitObjectsAction';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import blockDescriptors from '../circuitry/blocks';
-import { DragBlocks } from '../actions/UiAction';
 import { portDirections, flipPortDirection } from '../data/PortDirection';
 import { PortInfo } from '../data/PortInfo';
 import { arrayToIdMap } from '../data/IdMap';
+import * as uiActions from '../actions/UiAction';
+import * as simulationActions from '../actions/SimulationAction';
+import {
+    CircuitObjectsAction, INVALIDATE_CIRCUITRY, TOGGLE_PORT,
+    DELETE_OBJECTS, EDIT_OBJECT, CREATE_WIRE, CREATE_BLOCK
+} from '../actions/CircuitObjectsAction';
 
 export type CircuitObjectsState = {
     idCounter: number;
@@ -16,11 +19,11 @@ export type CircuitObjectsState = {
     blocksBeforeSimulation: { [id: number]: BlockCircuitObject };
 };
 
-type Action = CircuitObjectsAction | SimulationAction | DragBlocks;
+type Action = CircuitObjectsAction | simulationActions.SimulationAction | uiActions.DragBlocks;
 
 export function circuitObjectsReducer(state: CircuitObjectsState, action: Action): CircuitObjectsState {
     switch (action.type) {
-        case 'CREATE_BLOCK':
+        case CREATE_BLOCK:
             const newBlock = { ...action.blockData, id: state.idCounter };
             return {
                 ...state,
@@ -28,7 +31,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 blocks: [...state.blocks, newBlock],
                 blockById: { ...state.blockById, [state.idCounter]: newBlock },
             };
-        case 'CREATE_WIRE':
+        case CREATE_WIRE:
             const newWire = { ...action.wireData, id: state.idCounter };
             const spi = newWire.startPortInfo;
             const epi = newWire.endPortInfo;
@@ -50,7 +53,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 blocks: blocksAfterCreatingWire,
                 blockById: arrayToIdMap(blocksAfterCreatingWire),
             };
-        case 'EDIT_OBJECT':
+        case EDIT_OBJECT:
             const mapper = (obj: any) =>
                 obj.id === action.id
                     ? { ...obj, [action.propertyName]: action.propertyValue }
@@ -62,7 +65,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 blocks: blocksAfterEdit,
                 blockById: arrayToIdMap(blocksAfterEdit),
             };
-        case 'DELETE_OBJECTS':
+        case DELETE_OBJECTS:
             const blocksAfterDelete = state.blocks.filter(b => !action.ids.has(b.id));
             return {
                 ...state,
@@ -75,7 +78,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 blocks: blocksAfterDelete,
                 blockById: arrayToIdMap(blocksAfterDelete),
             };
-        case 'TOGGLE_PORT':
+        case TOGGLE_PORT:
             const adjacentWire = state.wires.find(w =>
                 (
                     w.startPortInfo.blockId === action.blockId &&
@@ -113,12 +116,28 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 blocks: blocksAfterTogglePort,
                 blockById: arrayToIdMap(blocksAfterTogglePort),
             };
-        case 'START_SIMULATION':
+        case INVALIDATE_CIRCUITRY:
+            const blocksAfterInvalidate = state.blocks.map(b =>
+                (action.circuit.changed[b.id] && b.name === 'Counter')
+                    ? { ...b, current: action.circuit.counterValue[b.id] }
+                    : b
+            );
+            return {
+                ...state,
+                wires: state.wires.map(w =>
+                    action.circuit.changed[w.id]
+                        ? { ...w, gate: action.circuit.gate[w.id] }
+                        : w
+                ),
+                blocks: blocksAfterInvalidate,
+                blockById: arrayToIdMap(blocksAfterInvalidate),
+            };
+        case simulationActions.START_SIMULATION:
             return {
                 ...state,
                 blocksBeforeSimulation: state.blockById,
             };
-        case 'STOP_SIMULATION':
+        case simulationActions.STOP_SIMULATION:
             const blocksAfterSimulation = state.blocks.map(block => {
                 let blockBeforeSimulation = state.blocksBeforeSimulation[block.id];
                 let blockAfterSimulation = { ...block };
@@ -136,7 +155,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 blocks: blocksAfterSimulation,
                 blockById: arrayToIdMap(blocksAfterSimulation),
             };
-        case 'DRAG_BLOCKS':
+        case uiActions.DRAG_BLOCKS:
             if (action.ids.size === 1 && action.ids.has(NaN)) {
                 return state;
             } else {
@@ -153,22 +172,6 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                     blockById: arrayToIdMap(blocksAfterDrag),
                 };
             }
-        case 'INVALIDATE_CIRCUITRY':
-            const blocksAfterInvalidate = state.blocks.map(b =>
-                (action.circuit.changed[b.id] && b.name === 'Counter')
-                    ? { ...b, current: action.circuit.counterValue[b.id] }
-                    : b
-            );
-            return {
-                ...state,
-                wires: state.wires.map(w =>
-                    action.circuit.changed[w.id]
-                        ? { ...w, gate: action.circuit.gate[w.id] }
-                        : w
-                ),
-                blocks: blocksAfterInvalidate,
-                blockById: arrayToIdMap(blocksAfterInvalidate),
-            };
         default:
             return state;
     }

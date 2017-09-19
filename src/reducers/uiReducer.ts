@@ -1,4 +1,3 @@
-import { UiAction } from '../actions/UiAction';
 import { Point } from '../data/Point';
 import { PortInfo } from '../data/PortInfo';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
@@ -6,7 +5,11 @@ import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { defaultPortDirections } from '../data/PortDirection';
 import { CircuitObjectsState } from './circuitObjectsReducer';
 import { shapeCenter } from '../utils/geometryUtils';
-import { CreateBlock, CreateWire, EditObject } from '../actions/CircuitObjectsAction';
+import * as circuitObjectsActions from '../actions/CircuitObjectsAction';
+import {
+    UiAction, DRAG_VIEWPORT, DRAG_BLOCKS, SELECT_OBJECTS,
+    HOVER_PORT, DRAW_BLOCK, DRAW_WIRE, CANCEL_DRAWING_WIRE
+} from '../actions/UiAction';
 
 export interface UiState {
     viewportOffset: Point;
@@ -16,16 +19,19 @@ export interface UiState {
     newWire?: WireCircuitObject;
 }
 
-type Action = UiAction | CreateBlock | CreateWire | EditObject;
+type Action
+    = UiAction
+    | circuitObjectsActions.CreateBlock
+    | circuitObjectsActions.CreateWire;
 
 export function uiReducer(uiState: UiState, circuitObjectsState: CircuitObjectsState, action: Action): UiState {
     switch (action.type) {
-        case 'DRAG_VIEWPORT':
+        case DRAG_VIEWPORT:
             return {
                 ...uiState,
                 viewportOffset: action.newOffset,
             };
-        case 'DRAG_BLOCKS':
+        case DRAG_BLOCKS:
             if (action.ids.size === 1 && action.ids.has(NaN) && uiState.newBlock) {
                 return {
                     ...uiState,
@@ -38,17 +44,17 @@ export function uiReducer(uiState: UiState, circuitObjectsState: CircuitObjectsS
             } else {
                 return uiState;
             }
-        case 'SELECT_OBJECTS':
+        case SELECT_OBJECTS:
             return {
                 ...uiState,
                 selectedObjectIds: action.ids,
             };
-        case 'HOVER_PORT':
+        case HOVER_PORT:
             return {
                 ...uiState,
                 hoveringPortInfo: action.portInfo,
             };
-        case 'DRAW_BLOCK':
+        case DRAW_BLOCK:
             return {
                 ...uiState,
                 newBlock: {
@@ -62,7 +68,7 @@ export function uiReducer(uiState: UiState, circuitObjectsState: CircuitObjectsS
                     ...action.blockDescriptor.initialState,
                 },
             };
-        case 'DRAW_WIRE':
+        case DRAW_WIRE:
             const hpi = uiState.hoveringPortInfo;
             if (uiState.newWire) {
                 return {
@@ -93,17 +99,17 @@ export function uiReducer(uiState: UiState, circuitObjectsState: CircuitObjectsS
             } else {
                 return uiState;
             }
-        case 'CANCEL_DRAWING_WIRE':
+        case CANCEL_DRAWING_WIRE:
             return {
                 ...uiState,
                 newWire: undefined,
             };
-        case 'CREATE_BLOCK':
+        case circuitObjectsActions.CREATE_BLOCK:
             return {
                 ...uiState,
                 newBlock: undefined,
             };
-        case 'CREATE_WIRE':
+        case circuitObjectsActions.CREATE_WIRE:
             return {
                 ...uiState,
                 newWire: undefined,

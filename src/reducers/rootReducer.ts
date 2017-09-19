@@ -6,7 +6,9 @@ import { circuitObjectsReducer } from './circuitObjectsReducer';
 import { uiReducer } from './uiReducer';
 import { configReducer } from './configReducer';
 import { undoHistoryLength } from '../config';
-import { UiAction } from '../actions/UiAction';
+import * as uiActions from '../actions/UiAction';
+import * as circuitObjectsActions from '../actions/CircuitObjectsAction';
+import * as configActions from '../actions/ConfigAction';
 
 export const rootReducer: Reducer<StateWithHistory<GlobalState>> = undoable(
     (state: GlobalState, action: any) => {
@@ -22,19 +24,19 @@ export const rootReducer: Reducer<StateWithHistory<GlobalState>> = undoable(
         limit: undoHistoryLength,
         syncFilter: true,
         filter: includeAction([
-            'CREATE_BLOCK',
-            'CREATE_WIRE',
-            'EDIT_OBJECT',
-            'DELETE_OBJECT',
-            'TOGGLE_PORT',
-            'SET_CIRCUIT_NAME',
-            'SET_MIDI_OUTPUT',
-            'SET_BPM',
-            'DRAG_BLOCKS',
+            circuitObjectsActions.CREATE_BLOCK,
+            circuitObjectsActions.CREATE_WIRE,
+            circuitObjectsActions.EDIT_OBJECT,
+            circuitObjectsActions.DELETE_OBJECTS,
+            circuitObjectsActions.TOGGLE_PORT,
+            configActions.SET_CIRCUIT_NAME,
+            configActions.SET_MIDI_OUTPUT,
+            configActions.SET_BPM,
+            uiActions.DRAG_BLOCKS,
         ]),
-        groupBy: (action: UiAction) => {
+        groupBy: (action: uiActions.UiAction) => {
             switch (action.type) {
-                case 'DRAG_BLOCKS':
+                case uiActions.DRAG_BLOCKS:
                     return Array.from(action.ids).toString();
                 default:
                     return null;

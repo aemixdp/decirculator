@@ -1,4 +1,4 @@
-import { GlobalAction } from '../actions/GlobalAction';
+import { GlobalAction, SAVE, LOAD, INVALIDATE_THEME, INVALIDATE_MIDI_OUTPUTS } from '../actions/GlobalAction';
 import { SimulationState } from './simulationStateReducer';
 import { CircuitObjectsState } from './circuitObjectsReducer';
 import { UiState } from './uiReducer';
@@ -17,7 +17,7 @@ export interface GlobalState {
 
 export function globalReducer(state: GlobalState, action: GlobalAction): GlobalState {
     switch (action.type) {
-        case 'SAVE':
+        case SAVE:
             const dataToSave = {
                 idCounter: state.circuitObjects.idCounter,
                 wires: state.circuitObjects.wires,
@@ -30,7 +30,7 @@ export function globalReducer(state: GlobalState, action: GlobalAction): GlobalS
                 ...state,
                 circuits: Object.keys(localStorage),
             };
-        case 'LOAD':
+        case LOAD:
             const rawData = localStorage.getItem(action.circuitName);
             const data = rawData && JSON.parse(rawData);
             if (data) {
@@ -56,12 +56,12 @@ export function globalReducer(state: GlobalState, action: GlobalAction): GlobalS
             } else {
                 return state;
             }
-        case 'INVALIDATE_THEME':
+        case INVALIDATE_THEME:
             return {
                 ...state,
                 theme: action.theme,
             };
-        case 'INVALIDATE_MIDI_OUTPUTS':
+        case INVALIDATE_MIDI_OUTPUTS:
             return {
                 ...state,
                 midiOutputs: action.midiOutputs,
