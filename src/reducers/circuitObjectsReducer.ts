@@ -8,7 +8,8 @@ import * as uiActions from '../actions/UiAction';
 import * as simulationActions from '../actions/SimulationAction';
 import {
     CircuitObjectsAction, INVALIDATE_CIRCUITRY, TOGGLE_PORT,
-    DELETE_OBJECTS, EDIT_OBJECT, CREATE_WIRE, CREATE_BLOCK
+    DELETE_OBJECTS, EDIT_OBJECT, COPY_OBJECTS, PASTE_OBJECTS,
+    CREATE_WIRE, CREATE_BLOCK
 } from '../actions/CircuitObjectsAction';
 
 export type CircuitObjectsState = {
@@ -17,6 +18,7 @@ export type CircuitObjectsState = {
     blocks: BlockCircuitObject[];
     blockById: { [id: number]: BlockCircuitObject };
     blocksBeforeSimulation: { [id: number]: BlockCircuitObject };
+    copyBufferBlockIds: Set<number>;
 };
 
 type Action = CircuitObjectsAction | simulationActions.SimulationAction | uiActions.DragBlocks;
@@ -131,6 +133,59 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 ),
                 blocks: blocksAfterInvalidate,
                 blockById: arrayToIdMap(blocksAfterInvalidate),
+            };
+        case COPY_OBJECTS:
+            return {
+                ...state,
+                copyBufferBlockIds: action.blockIds,
+            };
+        case PASTE_OBJECTS:
+            let idCounter = state.idCounter;
+            const copiedBlocks: BlockCircuitObject[] = [];
+            const idMap: Map<number, number> = new Map();
+            let meanX = 0;
+            let meanY = 0;
+            for (const id of state.copyBufferBlockIds) {
+                const block = state.blockById[id];
+                copiedBlocks.push({
+                    ...block,
+                    id: idCounter,
+                });
+                meanX += block.x;
+                meanY += block.y;
+                idMap.set(id, idCounter);
+                idCounter += 1;
+            }
+            meanX = meanX / state.copyBufferBlockIds.size;
+            meanY = meanY / state.copyBufferBlockIds.size;
+            const offsetX = action.targetPosition.x - meanX;
+            const offsetY = action.targetPosition.y - meanY;
+            for (const block of copiedBlocks) {
+                block.x += offsetX;
+                block.y += offsetY;
+            }
+            const blocksAfterPaste = [...state.blocks, ...copiedBlocks];
+            const copiedWires = state.wires.filter(w =>
+                state.copyBufferBlockIds.has(w.startPortInfo.blockId) &&
+                w.endPortInfo && state.copyBufferBlockIds.has(w.endPortInfo.blockId)
+            ).map(w => ({
+                ...w,
+                id: idCounter++,
+                startPortInfo: {
+                    ...w.startPortInfo,
+                    blockId: idMap.get(w.startPortInfo.blockId) || NaN,
+                },
+                endPortInfo: w.endPortInfo && {
+                    ...w.endPortInfo,
+                    blockId: idMap.get(w.endPortInfo.blockId) || NaN,
+                },
+            }));
+            return {
+                ...state,
+                idCounter,
+                blocks: blocksAfterPaste,
+                wires: [...state.wires, ...copiedWires],
+                blockById: arrayToIdMap(blocksAfterPaste),
             };
         case simulationActions.START_SIMULATION:
             return {

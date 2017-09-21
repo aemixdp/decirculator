@@ -28,10 +28,12 @@ const store = createStore<any>(rootReducer, {
         blocks: [],
         blockById: {},
         blocksBeforeSimulation: {},
+        copyBufferBlockIds: new Set(),
     },
     ui: {
         viewportOffset: { x: 0, y: 0 },
         selectedObjectIds: new Set(),
+        pivotPosition: { x: 0, y: 0 },
     },
     config: {
         circuitName: 'New circuit',

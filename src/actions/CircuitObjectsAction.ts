@@ -2,6 +2,7 @@ import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { Side } from '../data/Side';
 import { Circuit } from '../circuitry/Circuit';
+import { Point } from '../data/Point';
 
 export const CREATE_BLOCK = 'CREATE_BLOCK';
 export const CREATE_WIRE = 'CREATE_WIRE';
@@ -9,12 +10,16 @@ export const EDIT_OBJECT = 'EDIT_OBJECT';
 export const DELETE_OBJECTS = 'DELETE_OBJECTS';
 export const TOGGLE_PORT = 'TOGGLE_PORT';
 export const INVALIDATE_CIRCUITRY = 'INVALIDATE_CIRCUITRY';
+export const COPY_OBJECTS = 'COPY_OBJECTS';
+export const PASTE_OBJECTS = 'PASTE_OBJECTS';
 
 export type CircuitObjectsAction
     = CreateBlock
     | CreateWire
     | EditObject
     | DeleteObjects
+    | CopyObjects
+    | PasteObjects
     | TogglePort
     | InvalidateCircuitry;
 
@@ -38,6 +43,16 @@ export type EditObject = {
 export type DeleteObjects = {
     type: typeof DELETE_OBJECTS;
     ids: Set<number>;
+};
+
+export type CopyObjects = {
+    type: typeof COPY_OBJECTS;
+    blockIds: Set<number>;
+};
+
+export type PasteObjects = {
+    type: typeof PASTE_OBJECTS;
+    targetPosition: Point;
 };
 
 export type TogglePort = {
@@ -78,6 +93,20 @@ export function deleteObjects(ids: Set<number>): DeleteObjects {
     return {
         type: DELETE_OBJECTS,
         ids,
+    };
+}
+
+export function copyObjects(blockIds: Set<number>): CopyObjects {
+    return {
+        type: COPY_OBJECTS,
+        blockIds,
+    };
+}
+
+export function pasteObjects(targetPosition: Point): PasteObjects {
+    return {
+        type: PASTE_OBJECTS,
+        targetPosition,
     };
 }
 

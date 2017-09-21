@@ -9,6 +9,7 @@ export const HOVER_PORT = 'HOVER_PORT';
 export const DRAW_BLOCK = 'DRAW_BLOCK';
 export const DRAW_WIRE = 'DRAW_WIRE';
 export const CANCEL_DRAWING_WIRE = 'CANCEL_DRAWING_WIRE';
+export const PLACE_PIVOT = 'PLACE_PIVOT';
 
 export type UiAction
     = DragViewport
@@ -17,7 +18,8 @@ export type UiAction
     | HoverPort
     | DrawBlock
     | DrawWire
-    | CancelDrawingWire;
+    | CancelDrawingWire
+    | PlacePivot;
 
 export type DragViewport = {
     type: typeof DRAG_VIEWPORT;
@@ -52,6 +54,11 @@ export type DrawWire = {
 
 export type CancelDrawingWire = {
     type: typeof CANCEL_DRAWING_WIRE;
+};
+
+export type PlacePivot = {
+    type: typeof PLACE_PIVOT;
+    pivotPosition: Point;
 };
 
 export function dragViewport(newOffset: Point): DragViewport {
@@ -108,5 +115,12 @@ export function drawWire(endPosition?: Point): DrawWire {
 export function cancelDrawingWire(): CancelDrawingWire {
     return {
         type: CANCEL_DRAWING_WIRE,
+    };
+}
+
+export function placePivot(pivotPosition: Point): PlacePivot {
+    return {
+        type: PLACE_PIVOT,
+        pivotPosition,
     };
 }

@@ -52,6 +52,7 @@ type Props = {
     circuits: string[];
     midiOutputName: string;
     midiOutputs: string[];
+    pivotPosition: Point;
 };
 
 type State = {
@@ -110,6 +111,10 @@ export class App extends React.Component<Props, State> {
             }
         } else if (e.keyCode === 89 && e.ctrlKey /* ctrl-y */) {
             this.props.dispatch(reduxUndoActions.redo());
+        } else if (e.keyCode === 67 && e.ctrlKey /* ctrl-c */) {
+            this.props.dispatch(circuitObjectsActions.copyObjects(this.props.selectedObjectIds));
+        } else if (e.keyCode === 86 && e.ctrlKey /* ctrl-v */) {
+            this.props.dispatch(circuitObjectsActions.pasteObjects(this.props.pivotPosition));
         }
         if (e.ctrlKey) {
             this.setState({ isCtrlPressed: true });
@@ -147,11 +152,6 @@ export class App extends React.Component<Props, State> {
         document.body.style.cursor = 'default';
         this.setState({ isHoveringBlock: false });
     }
-    // handleBlockDrag = (event: any, block: any) => {
-    //     if (this.refs.viewport.domNode.contains(event.evt.toElement)) {
-
-    //     }
-    // }
     handleViewportDrag = (event: any) => {
         if (this.state.isDraggingViewport && event.target.nodeType === 'Stage') {
             const { x, y } = event.target.attrs;
@@ -196,6 +196,10 @@ export class App extends React.Component<Props, State> {
         } else if (this.state.isDraggingBlocks) {
             this.setState({ isDraggingBlocks: false });
         }
+        this.props.dispatch(uiActions.placePivot({
+            x: event.evt.offsetX - this.props.viewportOffset.x,
+            y: event.evt.offsetY - this.props.viewportOffset.y,
+        }));
     }
     handleViewportMouseMove = (event: any) => {
         if (this.props.newWire) {

@@ -28,6 +28,7 @@ export const rootReducer: Reducer<StateWithHistory<GlobalState>> = undoable(
             circuitObjectsActions.CREATE_WIRE,
             circuitObjectsActions.EDIT_OBJECT,
             circuitObjectsActions.DELETE_OBJECTS,
+            circuitObjectsActions.PASTE_OBJECTS,
             circuitObjectsActions.TOGGLE_PORT,
             configActions.SET_CIRCUIT_NAME,
             configActions.SET_MIDI_OUTPUT,

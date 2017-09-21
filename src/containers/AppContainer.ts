@@ -23,6 +23,7 @@ export const AppContainer = connect(
             circuits: present.circuits,
             midiOutputName: present.config.midiOutputName,
             midiOutputs: present.midiOutputs,
+            pivotPosition: present.ui.pivotPosition,
         };
     },
     (dispatch) => ({ dispatch }),
