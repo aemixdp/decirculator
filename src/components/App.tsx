@@ -196,10 +196,6 @@ export class App extends React.Component<Props, State> {
         } else if (this.state.isDraggingBlocks) {
             this.setState({ isDraggingBlocks: false });
         }
-        this.props.dispatch(uiActions.placePivot({
-            x: event.evt.offsetX - this.props.viewportOffset.x,
-            y: event.evt.offsetY - this.props.viewportOffset.y,
-        }));
     }
     handleViewportMouseMove = (event: any) => {
         if (this.props.newWire) {
@@ -207,6 +203,7 @@ export class App extends React.Component<Props, State> {
                 x: event.evt.offsetX - this.props.viewportOffset.x,
                 y: event.evt.offsetY - this.props.viewportOffset.y,
             }));
+            this.clickHandled = true;
         } else if (this.state.isDraggingBlocks && this.state.pivotBlockId !== undefined) {
             const block = this.props.blockById[this.state.pivotBlockId];
             if (!this.props.selectedObjectIds.has(block.id)) {
@@ -242,8 +239,14 @@ export class App extends React.Component<Props, State> {
         }
     }
     handleViewportClick = (event: any) => {
-        if (!this.clickHandled && this.props.selectedObjectIds.size > 0) {
-            this.props.dispatch(uiActions.deselectObjects());
+        if (!this.clickHandled) {
+            if (this.props.selectedObjectIds.size > 0) {
+                this.props.dispatch(uiActions.deselectObjects());
+            }
+            this.props.dispatch(uiActions.placePivot({
+                x: event.evt.offsetX - this.props.viewportOffset.x,
+                y: event.evt.offsetY - this.props.viewportOffset.y,
+            }));
         }
         this.clickHandled = false;
     }
