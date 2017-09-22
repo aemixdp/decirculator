@@ -218,6 +218,7 @@ export class App extends React.Component<Props, State> {
                     y: event.evt.offsetY - this.props.viewportOffset.y - 25 - block.y,
                 })
             ));
+            this.clickHandled = true;
         } else if (this.state.selectionStart) {
             const selectionEnd = {
                 x: event.evt.offsetX - this.props.viewportOffset.x,
@@ -266,6 +267,7 @@ export class App extends React.Component<Props, State> {
         document.body.style.cursor = 'default';
     }
     handleObjectClick = (event: any, object: CircuitObject) => {
+        if (this.clickHandled) return;
         this.props.dispatch(uiActions.selectObjects(new Set([object.id])));
         this.clickHandled = true;
     }
