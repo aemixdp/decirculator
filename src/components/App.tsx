@@ -66,7 +66,7 @@ type State = {
 };
 
 export class App extends React.Component<Props, State> {
-    clickHandled: boolean;
+    isClickHandled: boolean;
     themeManager: ThemeManager;
     midiManager: MidiManager;
     circuit: Circuit;
@@ -75,7 +75,7 @@ export class App extends React.Component<Props, State> {
     };
     constructor() {
         super();
-        this.clickHandled = false;
+        this.isClickHandled = false;
         this.state = {
             isCtrlPressed: false,
             isHoveringBlock: false,
@@ -203,7 +203,7 @@ export class App extends React.Component<Props, State> {
                 x: event.evt.offsetX - this.props.viewportOffset.x,
                 y: event.evt.offsetY - this.props.viewportOffset.y,
             }));
-            this.clickHandled = true;
+            this.isClickHandled = true;
         } else if (this.state.isDraggingBlocks && this.state.pivotBlockId !== undefined) {
             const block = this.props.blockById[this.state.pivotBlockId];
             if (!this.props.selectedObjectIds.has(block.id)) {
@@ -215,7 +215,7 @@ export class App extends React.Component<Props, State> {
                     y: event.evt.offsetY - this.props.viewportOffset.y - 25 - block.y,
                 })
             ));
-            this.clickHandled = true;
+            this.isClickHandled = true;
         } else if (this.state.selectionStart) {
             const selectionEnd = {
                 x: event.evt.offsetX - this.props.viewportOffset.x,
@@ -235,11 +235,11 @@ export class App extends React.Component<Props, State> {
             if (this.props.selectedObjectIds.size !== blocksInsideSelectionArea.size) {
                 this.props.dispatch(uiActions.selectObjects(blocksInsideSelectionArea));
             }
-            this.clickHandled = true;
+            this.isClickHandled = true;
         }
     }
     handleViewportClick = (event: any) => {
-        if (!this.clickHandled) {
+        if (!this.isClickHandled) {
             if (this.props.selectedObjectIds.size > 0) {
                 this.props.dispatch(uiActions.deselectObjects());
             }
@@ -248,7 +248,7 @@ export class App extends React.Component<Props, State> {
                 y: event.evt.offsetY - this.props.viewportOffset.y,
             }));
         }
-        this.clickHandled = false;
+        this.isClickHandled = false;
     }
     handleOuterClick = () => {
         if (this.props.selectedObjectIds.size > 0) {
@@ -257,7 +257,7 @@ export class App extends React.Component<Props, State> {
     }
     handlePortClick = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
         this.props.dispatch(circuitObjectsActions.togglePort(block.id, port.side));
-        this.clickHandled = true;
+        this.isClickHandled = true;
     }
     handlePortMouseEnter = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
         if (this.state.isDraggingBlocks) return;
@@ -270,9 +270,9 @@ export class App extends React.Component<Props, State> {
         document.body.style.cursor = 'default';
     }
     handleObjectClick = (event: any, object: CircuitObject) => {
-        if (this.clickHandled) return;
+        if (this.isClickHandled) return;
         this.props.dispatch(uiActions.selectObjects(new Set([object.id])));
-        this.clickHandled = true;
+        this.isClickHandled = true;
     }
     handlePropertyChange = (event: any, object: CircuitObject, propName: string, propValue: any) => {
         this.props.dispatch(circuitObjectsActions.editObject(object.id, propName, propValue));
