@@ -31,6 +31,7 @@ import * as configActions from '../actions/ConfigAction';
 import * as simulationActions from '../actions/SimulationAction';
 import { SimulationState } from '../reducers/simulationStateReducer';
 import { IdMap } from '../data/IdMap';
+import { Block } from './Block';
 
 const { Stage, Layer }: any = ReactKonva;
 
@@ -226,8 +227,8 @@ export class App extends React.Component<Props, State> {
             const blocksInsideSelectionArea: Set<number> = new Set();
             for (const block of this.props.blocks) {
                 if (
-                    block.x > selectionArea.start.x && block.x < selectionArea.end.x &&
-                    block.y > selectionArea.start.y && block.y < selectionArea.end.y
+                    block.x + Block.width > selectionArea.start.x && block.x < selectionArea.end.x &&
+                    block.y + Block.height > selectionArea.start.y && block.y < selectionArea.end.y
                 ) {
                     blocksInsideSelectionArea.add(block.id);
                 }

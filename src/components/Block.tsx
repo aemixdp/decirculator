@@ -22,6 +22,9 @@ type EventListeners = {
 type Props = Partial<EventListeners> & BlockCircuitObject & CircuitObjectVisuals;
 
 export class Block extends React.Component<Props, any> {
+    static width = 50;
+    static height = 50;
+    static strokeWidth = 4;
     handleDragStart = (e: Event) => {
         if (this.props.onDragStart) {
             this.props.onDragStart(e, this.props);
@@ -67,9 +70,9 @@ export class Block extends React.Component<Props, any> {
                     onMouseLeave={this.handleMouseLeave}
                 >
                     <Rect
-                        width={50}
-                        height={50}
-                        strokeWidth={4}
+                        width={Block.width}
+                        height={Block.height}
+                        strokeWidth={Block.strokeWidth}
                         stroke={this.props.isSelected
                             ? this.props.theme.selectionColor
                             : this.props.theme.blockOutlineColor
