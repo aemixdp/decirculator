@@ -145,7 +145,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
             const idMap: Map<number, number> = new Map();
             let meanX = 0;
             let meanY = 0;
-            for (const id of state.copyBufferBlockIds) {
+            state.copyBufferBlockIds.forEach((id) => {
                 const block = state.blockById[id];
                 copiedBlocks.push({
                     ...block,
@@ -155,7 +155,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 meanY += block.y;
                 idMap.set(id, idCounter);
                 idCounter += 1;
-            }
+            });
             meanX = meanX / state.copyBufferBlockIds.size;
             meanY = meanY / state.copyBufferBlockIds.size;
             const offsetX = action.targetPosition.x - meanX;
