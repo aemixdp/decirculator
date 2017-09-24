@@ -1,4 +1,3 @@
-import { BlockDescriptor } from '../data/BlockDescriptor';
 import { Point } from '../data/Point';
 import { PortInfo } from '../data/PortInfo';
 
@@ -16,7 +15,6 @@ export type UiAction
     | DragBlocks
     | SelectObjects
     | HoverPort
-    | DrawBlock
     | DrawWire
     | CancelDrawingWire
     | PlacePivot;
@@ -40,11 +38,6 @@ export type SelectObjects = {
 export type HoverPort = {
     type: typeof HOVER_PORT;
     portInfo?: PortInfo;
-};
-
-export type DrawBlock = {
-    type: typeof DRAW_BLOCK;
-    blockDescriptor: BlockDescriptor<{}>;
 };
 
 export type DrawWire = {
@@ -96,13 +89,6 @@ export function hoverPort(portInfo?: PortInfo): HoverPort {
 
 export function unhoverPort(): HoverPort {
     return hoverPort(undefined);
-}
-
-export function drawBlock(blockDescriptor: BlockDescriptor): DrawBlock {
-    return {
-        type: DRAW_BLOCK,
-        blockDescriptor,
-    };
 }
 
 export function drawWire(endPosition?: Point): DrawWire {

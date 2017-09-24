@@ -2,13 +2,12 @@ import { Point } from '../data/Point';
 import { PortInfo } from '../data/PortInfo';
 import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
-import { defaultPortDirections } from '../data/PortDirection';
 import { CircuitObjectsState } from './circuitObjectsReducer';
 import { shapeCenter } from '../utils/geometryUtils';
 import * as circuitObjectsActions from '../actions/CircuitObjectsAction';
 import {
-    UiAction, DRAG_VIEWPORT, DRAG_BLOCKS, SELECT_OBJECTS, HOVER_PORT,
-    DRAW_BLOCK, DRAW_WIRE, CANCEL_DRAWING_WIRE, PLACE_PIVOT
+    UiAction, DRAG_VIEWPORT, DRAG_BLOCKS, SELECT_OBJECTS,
+    HOVER_PORT, DRAW_WIRE, CANCEL_DRAWING_WIRE, PLACE_PIVOT
 } from '../actions/UiAction';
 
 export interface UiState {
@@ -54,20 +53,6 @@ export function uiReducer(uiState: UiState, circuitObjectsState: CircuitObjectsS
             return {
                 ...uiState,
                 hoveringPortInfo: action.portInfo,
-            };
-        case DRAW_BLOCK:
-            return {
-                ...uiState,
-                newBlock: {
-                    id: NaN,
-                    kind: 'block',
-                    name: action.blockDescriptor.name,
-                    active: true,
-                    x: -100,
-                    y: -100,
-                    ports: defaultPortDirections,
-                    ...action.blockDescriptor.initialState,
-                },
             };
         case DRAW_WIRE:
             const hpi = uiState.hoveringPortInfo;

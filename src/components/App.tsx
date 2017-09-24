@@ -32,6 +32,7 @@ import * as simulationActions from '../actions/SimulationAction';
 import { SimulationState } from '../reducers/simulationStateReducer';
 import { IdMap } from '../data/IdMap';
 import { Block } from './Block';
+import { defaultPortDirections } from '../data/PortDirection';
 
 const { Stage, Layer }: any = ReactKonva;
 
@@ -129,17 +130,6 @@ export class App extends React.Component<Props, State> {
             });
         }
     }
-    handleNewBlockDragStart = (e: Event, blockDescriptor: BlockDescriptor<any>) => {
-        this.props.dispatch(uiActions.drawBlock(blockDescriptor));
-    }
-    handleNewBlockDragEnd = (event: any) => {
-        if (
-            this.props.newBlock &&
-            this.refs.viewport.domNode.contains(event.evt.toElement)
-        ) {
-            this.props.dispatch(circuitObjectsActions.createBlock(this.props.newBlock));
-        }
-    }
     handleBlockMouseEnter = (event: any, block: BlockCircuitObject) => {
         if (this.state.isDraggingBlocks) return;
         document.body.style.cursor = 'move';
@@ -160,6 +150,28 @@ export class App extends React.Component<Props, State> {
                 snapToWireframe(wireframeCellSize, { x, y })
             ));
         }
+    }
+    handleNewBlockDragStart = (event: any, blockDescriptor: BlockDescriptor<any>) => {
+        event.dataTransfer.setData('blockDescriptorName', blockDescriptor.name);
+    }
+    handleNewBlockViewportDragOver = (event: any) => {
+        event.preventDefault();
+    }
+    handleNewBlockDrop = (event: any) => {
+        const blockDescriptor = blockDescriptors[event.dataTransfer.getData('blockDescriptorName')];
+        const viewportClientRect = event.target.getBoundingClientRect();
+        this.props.dispatch(circuitObjectsActions.createBlock({
+            id: NaN,
+            kind: 'block',
+            name: blockDescriptor.name,
+            active: true,
+            ports: defaultPortDirections,
+            ...blockDescriptor.initialState,
+            ...snapToWireframe(wireframeCellSize, {
+                x: event.clientX - viewportClientRect.left - this.props.viewportOffset.x - Block.width / 2,
+                y: event.clientY - viewportClientRect.top - this.props.viewportOffset.y - Block.height / 2,
+            }),
+        }));
     }
     handleViewportMouseDown = (event: any) => {
         if (this.props.isHoveringPort) {
@@ -395,7 +407,6 @@ export class App extends React.Component<Props, State> {
                                 key={blockDescriptor.name}
                                 theme={this.props.theme}
                                 onDragStart={this.handleNewBlockDragStart}
-                                onDragEnd={this.handleNewBlockDragEnd}
                             />
                         )}
                         <div className="controls simulation-controls" style={{ flex: 1 }}>
@@ -469,34 +480,39 @@ export class App extends React.Component<Props, State> {
                         </div>
                     </div>
                     {this.renderProps()}
-                    <Stage
-                        ref="viewport"
-                        x={this.props.viewportOffset.x}
-                        y={this.props.viewportOffset.y}
-                        width={952}
-                        height={600}
-                        draggable={this.state.isDraggingViewport}
-                        onDragMove={this.handleViewportDrag}
-                        onContentMouseDown={this.handleViewportMouseDown}
-                        onContentMouseUp={this.handleViewportMouseUp}
-                        onContentMouseMove={this.handleViewportMouseMove}
-                        onContentClick={this.handleViewportClick}
+                    <div
+                        onDragOver={this.handleNewBlockViewportDragOver}
+                        onDrop={this.handleNewBlockDrop}
                     >
-                        <Wireframe
-                            theme={this.props.theme}
-                            x={-this.props.viewportOffset.x}
-                            y={-this.props.viewportOffset.y}
-                            wireframeCellSize={wireframeCellSize}
-                        />
-                        <Layer>
-                            {this.props.blocks.map(this.renderBlock)}
-                            {this.props.newBlock && this.renderBlock(this.props.newBlock)}
-                            {this.props.wires.map(this.renderWire)}
-                            {this.props.newWire && this.renderWire(this.props.newWire)}
-                            {this.renderHoverZones()}
-                            {this.renderSelectionRectangle()}
-                        </Layer>
-                    </Stage>
+                        <Stage
+                            ref="viewport"
+                            x={this.props.viewportOffset.x}
+                            y={this.props.viewportOffset.y}
+                            width={952}
+                            height={600}
+                            draggable={this.state.isDraggingViewport}
+                            onDragMove={this.handleViewportDrag}
+                            onContentMouseDown={this.handleViewportMouseDown}
+                            onContentMouseUp={this.handleViewportMouseUp}
+                            onContentMouseMove={this.handleViewportMouseMove}
+                            onContentClick={this.handleViewportClick}
+                        >
+                            <Wireframe
+                                theme={this.props.theme}
+                                x={-this.props.viewportOffset.x}
+                                y={-this.props.viewportOffset.y}
+                                wireframeCellSize={wireframeCellSize}
+                            />
+                            <Layer>
+                                {this.props.blocks.map(this.renderBlock)}
+                                {this.props.newBlock && this.renderBlock(this.props.newBlock)}
+                                {this.props.wires.map(this.renderWire)}
+                                {this.props.newWire && this.renderWire(this.props.newWire)}
+                                {this.renderHoverZones()}
+                                {this.renderSelectionRectangle()}
+                            </Layer>
+                        </Stage>
+                    </div>
                 </div>
             </div>
         );
