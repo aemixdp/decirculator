@@ -60,15 +60,15 @@ type Props = {
 type State = {
     selectionStart?: Point,
     selectionEnd?: Point,
-    isCtrlPressed: boolean,
-    isHoveringBlock: boolean,
-    isDraggingBlocks: boolean,
-    isDraggingViewport: boolean,
-    pivotBlockId?: number,
 };
 
 export class App extends React.Component<Props, State> {
     isClickHandled: boolean;
+    isCtrlPressed: boolean;
+    isHoveringBlock: boolean;
+    isDraggingBlocks: boolean;
+    isDraggingViewport: boolean;
+    pivotBlockId?: number;
     themeManager: ThemeManager;
     midiManager: MidiManager;
     circuit: Circuit;
@@ -78,12 +78,11 @@ export class App extends React.Component<Props, State> {
     constructor() {
         super();
         this.isClickHandled = false;
-        this.state = {
-            isCtrlPressed: false,
-            isHoveringBlock: false,
-            isDraggingBlocks: false,
-            isDraggingViewport: false,
-        };
+        this.isCtrlPressed = false;
+        this.isHoveringBlock = false;
+        this.isDraggingBlocks = false;
+        this.isDraggingViewport = false;
+        this.state = {};
     }
     componentWillMount() {
         document.addEventListener('keydown', this.handleKeyDown);
@@ -119,32 +118,28 @@ export class App extends React.Component<Props, State> {
             this.props.dispatch(circuitObjectsActions.pasteObjects(this.props.pivotPosition));
         }
         if (e.ctrlKey) {
-            this.setState({ isCtrlPressed: true });
+            this.isCtrlPressed = true;
         }
     }
     handleKeyUp = (e: KeyboardEvent) => {
         if (!e.ctrlKey) {
-            this.setState({
-                isCtrlPressed: false,
-                isDraggingViewport: false,
-            });
+            this.isCtrlPressed = false;
+            this.isDraggingViewport = false;
         }
     }
     handleBlockMouseEnter = (event: any, block: BlockCircuitObject) => {
-        if (this.state.isDraggingBlocks) return;
+        if (this.isDraggingBlocks) return;
         document.body.style.cursor = 'move';
-        this.setState({
-            isHoveringBlock: true,
-            pivotBlockId: block.id,
-        });
+        this.isHoveringBlock = true;
+        this.pivotBlockId = block.id;
     }
     handleBlockMouseLeave = () => {
-        if (this.state.isDraggingBlocks) return;
+        if (this.isDraggingBlocks) return;
         document.body.style.cursor = 'default';
-        this.setState({ isHoveringBlock: false });
+        this.isHoveringBlock = false;
     }
     handleViewportDrag = (event: any) => {
-        if (this.state.isDraggingViewport && event.target.nodeType === 'Stage') {
+        if (this.isDraggingViewport && event.target.nodeType === 'Stage') {
             const { x, y } = event.target.attrs;
             this.props.dispatch(uiActions.dragViewport(
                 snapToWireframe(wireframeCellSize, { x, y })
@@ -176,10 +171,10 @@ export class App extends React.Component<Props, State> {
     handleViewportMouseDown = (event: any) => {
         if (this.props.isHoveringPort) {
             this.props.dispatch(uiActions.drawWire());
-        } else if (this.state.isCtrlPressed) {
-            this.setState({ isDraggingViewport: true });
-        } else if (this.state.isHoveringBlock) {
-            this.setState({ isDraggingBlocks: true });
+        } else if (this.isCtrlPressed) {
+            this.isDraggingViewport = true;
+        } else if (this.isHoveringBlock) {
+            this.isDraggingBlocks = true;
         } else {
             this.setState({
                 selectionStart: {
@@ -204,10 +199,10 @@ export class App extends React.Component<Props, State> {
                 selectionStart: undefined,
                 selectionEnd: undefined,
             });
-        } else if (this.state.isDraggingViewport) {
-            this.setState({ isDraggingViewport: false });
-        } else if (this.state.isDraggingBlocks) {
-            this.setState({ isDraggingBlocks: false });
+        } else if (this.isDraggingViewport) {
+            this.isDraggingViewport = false;
+        } else if (this.isDraggingBlocks) {
+            this.isDraggingBlocks = false;
         }
     }
     handleViewportMouseMove = (event: any) => {
@@ -217,8 +212,8 @@ export class App extends React.Component<Props, State> {
                 y: event.evt.offsetY - this.props.viewportOffset.y,
             }));
             this.isClickHandled = true;
-        } else if (this.state.isDraggingBlocks && this.state.pivotBlockId !== undefined) {
-            const block = this.props.blockById[this.state.pivotBlockId];
+        } else if (this.isDraggingBlocks && this.pivotBlockId !== undefined) {
+            const block = this.props.blockById[this.pivotBlockId];
             if (!this.props.selectedObjectIds.has(block.id)) {
                 this.props.dispatch(uiActions.selectObjects(new Set([block.id])));
             }
@@ -273,12 +268,12 @@ export class App extends React.Component<Props, State> {
         this.isClickHandled = true;
     }
     handlePortMouseEnter = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
-        if (this.state.isDraggingBlocks) return;
+        if (this.isDraggingBlocks) return;
         this.props.dispatch(uiActions.hoverPort({ blockId: block.id, port }));
         document.body.style.cursor = 'pointer';
     }
     handlePortMouseLeave = (event: any, block: BlockCircuitObject, port: PortLocationInfo) => {
-        if (this.state.isDraggingBlocks) return;
+        if (this.isDraggingBlocks) return;
         this.props.dispatch(uiActions.unhoverPort());
         document.body.style.cursor = 'default';
     }
@@ -490,7 +485,7 @@ export class App extends React.Component<Props, State> {
                             y={this.props.viewportOffset.y}
                             width={952}
                             height={600}
-                            draggable={this.state.isDraggingViewport}
+                            draggable={this.isDraggingViewport}
                             onDragMove={this.handleViewportDrag}
                             onContentMouseDown={this.handleViewportMouseDown}
                             onContentMouseUp={this.handleViewportMouseUp}
