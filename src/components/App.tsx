@@ -217,12 +217,13 @@ export class App extends React.Component<Props, State> {
             if (!this.props.selectedObjectIds.has(block.id)) {
                 this.props.dispatch(uiActions.selectObjects(new Set([block.id])));
             }
-            this.props.dispatch(uiActions.dragBlocks(this.props.selectedObjectIds,
-                snapToWireframe(wireframeCellSize, {
-                    x: event.evt.offsetX - this.props.viewportOffset.x - 25 - block.x,
-                    y: event.evt.offsetY - this.props.viewportOffset.y - 25 - block.y,
-                })
-            ));
+            const offset = snapToWireframe(wireframeCellSize, {
+                x: event.evt.offsetX - this.props.viewportOffset.x - 25 - block.x,
+                y: event.evt.offsetY - this.props.viewportOffset.y - 25 - block.y,
+            });
+            if (offset.x !== 0 || offset.y !== 0) {
+                this.props.dispatch(uiActions.dragBlocks(this.props.selectedObjectIds, offset));
+            }
             this.isClickHandled = true;
         } else if (this.state.selectionStart) {
             const selectionEnd = {
