@@ -10,6 +10,7 @@ import { circuitSaga } from './sagas/circuitSaga';
 import { midiSaga } from './sagas/midiSaga';
 import { themeSaga } from './sagas/themeSaga';
 import { GlobalState } from './reducers/globalReducer';
+import { fontAwesomeOnLoad } from './utils/textUtils';
 import builtins from './builtins';
 import './index.css';
 
@@ -55,9 +56,11 @@ sagaMiddleware.run(themeSaga);
 sagaMiddleware.run(circuitSaga);
 sagaMiddleware.run(midiSaga);
 
-render(
-    <Provider store={store}>
-        <AppContainer />
-    </Provider>,
-    document.getElementById('mount')
-);
+fontAwesomeOnLoad(() => {
+    render(
+        <Provider store={store}>
+            <AppContainer />
+        </Provider>,
+        document.getElementById('mount')
+    );
+});
