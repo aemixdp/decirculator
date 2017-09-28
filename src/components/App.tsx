@@ -60,6 +60,7 @@ type Props = {
 type State = {
     selectionStart?: Point,
     selectionEnd?: Point,
+    isDraggingViewport: boolean,
 };
 
 export class App extends React.Component<Props, State> {
@@ -67,7 +68,6 @@ export class App extends React.Component<Props, State> {
     isCtrlPressed: boolean;
     isHoveringBlock: boolean;
     isDraggingBlocks: boolean;
-    isDraggingViewport: boolean;
     pivotBlockId?: number;
     themeManager: ThemeManager;
     midiManager: MidiManager;
@@ -81,8 +81,9 @@ export class App extends React.Component<Props, State> {
         this.isCtrlPressed = false;
         this.isHoveringBlock = false;
         this.isDraggingBlocks = false;
-        this.isDraggingViewport = false;
-        this.state = {};
+        this.state = {
+            isDraggingViewport: false,
+        };
     }
     componentWillMount() {
         document.addEventListener('keydown', this.handleKeyDown);
@@ -124,7 +125,7 @@ export class App extends React.Component<Props, State> {
     handleKeyUp = (e: KeyboardEvent) => {
         if (!e.ctrlKey) {
             this.isCtrlPressed = false;
-            this.isDraggingViewport = false;
+            this.setState({ isDraggingViewport: false });
         }
     }
     handleBlockMouseEnter = (event: any, block: BlockCircuitObject) => {
@@ -139,7 +140,7 @@ export class App extends React.Component<Props, State> {
         this.isHoveringBlock = false;
     }
     handleViewportDrag = (event: any) => {
-        if (this.isDraggingViewport && event.target.nodeType === 'Stage') {
+        if (this.state.isDraggingViewport && event.target.nodeType === 'Stage') {
             const { x, y } = event.target.attrs;
             this.props.dispatch(uiActions.dragViewport(
                 snapToWireframe(wireframeCellSize, { x, y })
@@ -172,7 +173,7 @@ export class App extends React.Component<Props, State> {
         if (this.props.isHoveringPort) {
             this.props.dispatch(uiActions.drawWire());
         } else if (this.isCtrlPressed) {
-            this.isDraggingViewport = true;
+            this.setState({ isDraggingViewport: true });
         } else if (this.isHoveringBlock) {
             this.isDraggingBlocks = true;
         } else {
@@ -199,8 +200,8 @@ export class App extends React.Component<Props, State> {
                 selectionStart: undefined,
                 selectionEnd: undefined,
             });
-        } else if (this.isDraggingViewport) {
-            this.isDraggingViewport = false;
+        } else if (this.state.isDraggingViewport) {
+            this.setState({ isDraggingViewport: false });
         } else if (this.isDraggingBlocks) {
             this.isDraggingBlocks = false;
         }
@@ -486,7 +487,7 @@ export class App extends React.Component<Props, State> {
                             y={this.props.viewportOffset.y}
                             width={952}
                             height={600}
-                            draggable={this.isDraggingViewport}
+                            draggable={this.state.isDraggingViewport}
                             onDragMove={this.handleViewportDrag}
                             onContentMouseDown={this.handleViewportMouseDown}
                             onContentMouseUp={this.handleViewportMouseUp}
