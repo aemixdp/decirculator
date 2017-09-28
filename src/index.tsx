@@ -9,6 +9,7 @@ import { AppContainer } from './containers/AppContainer';
 import { circuitSaga } from './sagas/circuitSaga';
 import { midiSaga } from './sagas/midiSaga';
 import { themeSaga } from './sagas/themeSaga';
+import { uiSaga } from './sagas/uiSaga';
 import { GlobalState } from './reducers/globalReducer';
 import { fontAwesomeOnLoad } from './utils/textUtils';
 import builtins from './builtins';
@@ -55,6 +56,7 @@ sagaMiddleware.run(function* () {
 sagaMiddleware.run(themeSaga);
 sagaMiddleware.run(circuitSaga);
 sagaMiddleware.run(midiSaga);
+sagaMiddleware.run(uiSaga);
 
 fontAwesomeOnLoad(() => {
     render(
