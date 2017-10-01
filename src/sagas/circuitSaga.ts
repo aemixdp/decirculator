@@ -2,7 +2,7 @@ import { eventChannel, Task } from 'redux-saga';
 import { put, take, fork, cancel, select } from 'redux-saga/effects';
 import * as globalActions from '../actions/GlobalAction';
 import * as circuitObjectsActions from '../actions/CircuitObjectsAction';
-import { SimulationAction } from '../actions/SimulationAction';
+import { SimulationAction, START_SIMULATION, PAUSE_SIMULATION, STOP_SIMULATION } from '../actions/SimulationAction';
 import { StateWithHistory } from 'redux-undo';
 import { GlobalState } from '../reducers/globalReducer';
 import { Circuit } from '../circuitry/Circuit';
@@ -44,7 +44,7 @@ export function* circuitSaga() {
         blocks = newBlocks;
         config = newConfig;
         switch (action.type) {
-            case 'START_SIMULATION':
+            case START_SIMULATION:
                 if (!circuit) {
                     circuit = new Circuit();
                     circuitEventsDispatcher = yield fork(dispatchCircuitEvents, circuit);
@@ -52,12 +52,12 @@ export function* circuitSaga() {
                 }
                 circuit.start();
                 break;
-            case 'PAUSE_SIMULATION':
+            case PAUSE_SIMULATION:
                 if (circuit) {
                     circuit.stop();
                 }
                 break;
-            case 'STOP_SIMULATION':
+            case STOP_SIMULATION:
                 if (circuit) {
                     circuit.stop();
                     circuit = undefined;

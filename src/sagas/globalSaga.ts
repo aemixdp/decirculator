@@ -1,11 +1,13 @@
 import { put, take, select } from 'redux-saga/effects';
 import { CircuitObjectsAction, PASTE_OBJECTS } from '../actions/CircuitObjectsAction';
 import * as uiActions from '../actions/UiAction';
+import * as simulationActions from '../actions/SimulationAction';
 import { GlobalState } from '../reducers/globalReducer';
+import { GlobalAction, LOAD } from '../actions/GlobalAction';
 
-export function* uiSaga() {
+export function* globalSaga() {
     while (true) {
-        const action: CircuitObjectsAction = yield take();
+        const action: CircuitObjectsAction | GlobalAction = yield take();
         const state: GlobalState = (yield select()).present;
         switch (action.type) {
             case PASTE_OBJECTS:
@@ -17,6 +19,11 @@ export function* uiSaga() {
                             .map(block => block.id)
                     )
                 ));
+                break;
+            case LOAD:
+                if (state.simulationState !== 'STOPPED') {
+                    yield put(simulationActions.stop);
+                }
                 break;
             default:
                 break;
