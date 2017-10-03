@@ -311,6 +311,9 @@ export class App extends React.Component<Props, State> {
     handleMidiOutputChange = (event: any) => {
         this.props.dispatch(configActions.setMidiOutput(event.target.value));
     }
+    handleRefreshMidiDevices = () => {
+        this.props.dispatch(globalActions.refreshMidiDevices);
+    }
     renderBlock = (block: BlockCircuitObject) => {
         const blockDescriptor = blockDescriptors[block.name];
         return (
@@ -471,7 +474,7 @@ export class App extends React.Component<Props, State> {
                                 <IconButton
                                     className="refresh fa fa-refresh"
                                     enabled={true}
-                                    onClick={() => console.log('hi')}
+                                    onClick={this.handleRefreshMidiDevices}
                                 />
                             </div>
                         </div>

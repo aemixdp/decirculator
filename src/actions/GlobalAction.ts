@@ -1,6 +1,7 @@
 export const SAVE = 'SAVE';
 export const LOAD = 'LOAD';
 export const SEND_MIDI = 'SEND_MIDI';
+export const REFRESH_MIDI_DEVICES = 'REFRESH_MIDI_DEVICES';
 export const INVALIDATE_THEME = 'INVALIDATE_THEME';
 export const INVALIDATE_MIDI_OUTPUTS = 'INVALIDATE_MIDI_OUTPUTS';
 
@@ -8,6 +9,7 @@ export type GlobalAction
     = Save
     | Load
     | SendMidi
+    | RefreshMidiDevices
     | InvalidateTheme
     | InvalidateMidiOutputs;
 
@@ -27,6 +29,10 @@ export type SendMidi = {
     channel: number;
     velocity: number;
     noteOn: boolean;
+};
+
+export type RefreshMidiDevices = {
+    type: typeof REFRESH_MIDI_DEVICES;
 };
 
 export type InvalidateTheme = {
@@ -62,6 +68,10 @@ export function sendMidi(noteOn: boolean, note: number, channel: number, velocit
         velocity,
     };
 }
+
+export const refreshMidiDevices = {
+    type: REFRESH_MIDI_DEVICES,
+};
 
 export function invalidateTheme(theme: any): InvalidateTheme {
     return {

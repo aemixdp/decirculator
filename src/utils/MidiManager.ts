@@ -14,22 +14,18 @@ export class MidiManager {
     onOutputsChange: () => void;
     constructor() {
         this.midiOutputs = {};
-        (navigator as any).requestMIDIAccess().then((midiAccess: any) => {
-            this.midiAccess = midiAccess;
-            this.refreshDevices();
-            setInterval(this.refreshDevices, 2000);
-        });
+        this.refreshDevices();
     }
-    refreshDevices = () => {
-        if (!this.midiAccess) return;
+    refreshDevices = async () => {
+        const midiAccess = await (navigator as any).requestMIDIAccess();
         const outputs = {};
         let outputsChanged = false;
-        for (const output of this.midiAccess.outputs.values()) {
+        midiAccess.outputs.forEach((output: any) => {
             outputs[output.name] = output;
             if (!this.midiOutputs[output.name]) {
                 outputsChanged = true;
             }
-        }
+        });
         for (const output of objectValues(this.midiOutputs)) {
             if (!outputs[output.name]) {
                 outputsChanged = true;
