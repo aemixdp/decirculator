@@ -2,6 +2,19 @@
 
 Visual programming language for sequencing MIDI signals using delay-based circuits.
 
+## Blocks
+
+Block   | Description
+------- | --------------------------------------------------------------------------------------------------
+Play    | Emits signal to all outputs on simulation start
+Delay   | Emits signal to all outputs after specified delay time after receiving signal at any of inputs
+Clock   | Emits signal to all outputs at specified interval
+Counter | Emits signal to all outputs after receiving specified count of input signals
+Switch  | Emits signal to one output at a time clockwise straight after receiving signal at any of inputs
+And     | Emits signal to all outputs when there are signals at all inputs at the same time
+Or      | Emits signal to all outputs after receiving signal at any of inputs (like Delay with 0 delay time)
+MidiOut | Send midi message with specified parameters after receiving signal at any of inputs
+
 ## Controls
 
 Action                   | How To
