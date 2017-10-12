@@ -106,7 +106,16 @@ html, body, input, textarea, select, button {
 }
 
 .block-type-button {
-    cursor: pointer;
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+.block-type-button:active { 
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
 }
 
 .active-block-type {

@@ -29,6 +29,7 @@ export class BlockButton extends React.Component<Props, any> {
         }
         return this.imageDataUrl ? (
             <div
+                className="block-type-button"
                 draggable={true}
                 onDragStart={this.handleDragStart}
                 style={{
