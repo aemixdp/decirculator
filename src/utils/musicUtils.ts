@@ -15,8 +15,8 @@ const ACCIDENTAL = {
 
 export function textNoteToMidiNote(note: string): number {
     const match = (/(\w)(-?\d)?([#b])?/g).exec(note);
-    if (match) {
-        const noteIndex = NOTE_INDEX[match[1]];
+    const noteIndex = match && NOTE_INDEX[match[1]];
+    if (match && noteIndex) {
         const octave = parseInt(match[2], 10) || 3;
         const accidental = ACCIDENTAL[match[3]] || 0;
         return 24 + 12 * octave + noteIndex + accidental;
