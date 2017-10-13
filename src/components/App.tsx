@@ -354,8 +354,11 @@ export class App extends React.Component<Props, State> {
         );
     }
     renderProps = () => {
-        const object: any = this.props.selectedObjectIds.size === 1 &&
-            this.props.blockById[this.props.selectedObjectIds.values().next().value];
+        const objectId = this.props.selectedObjectIds.values().next().value;
+        const object: any = objectId && (
+            this.props.blockById[objectId] ||
+            this.props.wires.find(w => w.id === objectId)
+        );
         return (
             <Properties
                 {...object || {}}

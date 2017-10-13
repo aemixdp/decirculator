@@ -6,6 +6,7 @@ export const Switch: BlockDescriptor<{}> = {
     name: 'Switch',
     initialState: {},
     dynamicStateKeys: [],
+    editableStateProps: [],
     tick: (circuit, blockId) => {
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {

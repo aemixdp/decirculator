@@ -17,6 +17,10 @@ export const Delay: BlockDescriptor<State> = {
         noteFraction: 4,
     },
     dynamicStateKeys: [],
+    editableStateProps: [
+        { propKey: 'beats', propType: 'number' },
+        { propKey: 'noteFraction', propType: 'number' },
+    ],
     tick: (circuit, blockId, delta, config) => {
         const offset = blockId * 4;
         const delayList = circuit.delayList[blockId];

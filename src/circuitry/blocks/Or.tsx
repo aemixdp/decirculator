@@ -6,6 +6,7 @@ export const Or: BlockDescriptor<{}> = {
     name: 'Or',
     initialState: {},
     dynamicStateKeys: [],
+    editableStateProps: [],
     tick: (circuit, blockId) => {
         const offset = blockId * 4;
         let disjunction = false;

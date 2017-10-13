@@ -18,6 +18,10 @@ export interface BlockDescriptor<S = any> {
     name: string;
     initialState: S;
     dynamicStateKeys: (keyof S)[];
+    editableStateProps: {
+        propKey: keyof S,
+        propType: 'number' | 'boolean' | 'note-list' | 'delay-list',
+    }[];
     tick: TickProcessor;
     component: (props: Props & S) => React.ReactElement<any>;
 }

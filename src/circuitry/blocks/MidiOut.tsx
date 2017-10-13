@@ -18,6 +18,11 @@ export const MidiOut: BlockDescriptor<State> = {
         velocity: 100,
     },
     dynamicStateKeys: [],
+    editableStateProps: [
+        { propKey: 'channel', propType: 'number' },
+        { propKey: 'note', propType: 'number' },
+        { propKey: 'velocity', propType: 'number' },
+    ],
     tick: (circuit, blockId, delta, config) => {
         if (circuit.cooldown[blockId]) {
             const timeUntilTurnOff = circuit.timeUntilTurnOff[blockId] -= delta;

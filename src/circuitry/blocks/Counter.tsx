@@ -16,6 +16,9 @@ export const Counter: BlockDescriptor<State> = {
         steps: 4,
     },
     dynamicStateKeys: ['current'],
+    editableStateProps: [
+        { propKey: 'steps', propType: 'number' },
+    ],
     tick: (circuit, blockId) => {
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {

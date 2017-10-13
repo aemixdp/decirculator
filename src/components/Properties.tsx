@@ -1,34 +1,13 @@
 import React from 'react';
 import { mangle } from '../utils/textUtils';
-import { objectEntries } from '../utils/objectUtils';
 import { CircuitObject } from '../data/CircuitObject';
+import blockDescriptors from '../circuitry/blocks';
 
-const excludedProps = {
-    id: true,
-    kind: true,
-    name: true,
-    x: true,
-    y: true,
-    ports: true,
-    startPosition: true,
-    startPortInfo: true,
-    endPosition: true,
-    endPortInfo: true,
-    label: true,
-    active: true,
-    isSelected: true,
-    children: true,
-    hoveringPort: true,
-    theme: true,
-    labelX: true,
-    labelY: true,
-    labelFontSize: true,
-    tick: true,
-    gate: true,
-};
-
-const booleanProps = {
-    skipFirstGate: true,
+const PROP_TYPE_INPUT_TYPE = {
+    'number': 'text',
+    'note-list': 'text',
+    'delay-list': 'text',
+    'boolean': 'checkbox',
 };
 
 type EventListeners = {
@@ -60,11 +39,10 @@ export class Properties extends React.Component<Props, any> {
         this.props.onPropertyClick(event);
     }
     render() {
-        const filteredProps = objectEntries<any>(this.props)
-            .filter(([key, value]) =>
-                key.indexOf('on') !== 0 &&
-                !excludedProps[key]
-            );
+        const editableProps =
+            this.props.kind === 'block'
+                ? blockDescriptors[this.props.name].editableStateProps
+                : [];
         return (
             <div className="object-properties">
                 {!this.props.hasOwnProperty('id') ? [] : [
@@ -78,20 +56,20 @@ export class Properties extends React.Component<Props, any> {
                         onClick={this.handlePropertyClick}
                     />,
                     <span key="name">
-                        [{this.props.kind === 'block' ? this.props.name : 'wire'}]
+                        [{this.props.kind === 'block' ? this.props.name : 'Wire'}]
                     </span>,
                 ]}
-                {filteredProps.map(([key, value]) =>
-                    <div className="h-box" key={key}>
+                {editableProps.map(prop =>
+                    <div className="h-box" key={prop.propKey}>
                         <span className="property-name">
-                            {mangle(key)}:
+                            {mangle(prop.propKey)}:
                         </span>
                         <input
-                            type={booleanProps[key] ? 'checkbox' : 'text'}
+                            type={PROP_TYPE_INPUT_TYPE[prop.propType]}
                             className="property-value"
-                            data-prop={key}
-                            value={value}
-                            checked={value}
+                            data-prop={prop.propKey}
+                            value={this.props[prop.propKey]}
+                            checked={this.props[prop.propKey]}
                             onChange={this.handlePropertyChange}
                             onClick={this.handlePropertyClick}
                         />

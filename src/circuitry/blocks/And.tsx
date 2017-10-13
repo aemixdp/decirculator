@@ -6,6 +6,7 @@ export const And: BlockDescriptor<{}> = {
     name: 'And',
     initialState: {},
     dynamicStateKeys: [],
+    editableStateProps: [],
     tick: (circuit, blockId) => {
         const offset = blockId * 4;
         let conjunction = true;
