@@ -18,7 +18,7 @@ export const Clock: BlockDescriptor<State> = {
         noteFraction: 4,
         skipFirstGate: false,
     },
-    dynamicStateKeys: [],
+    statePropsToResetAfterSimulation: [],
     editableStateProps: [
         { propKey: 'skipFirstGate', propType: 'boolean' },
         { propKey: 'beats', propType: 'number' },

@@ -5,7 +5,7 @@ import { BlockDescriptor } from '../../data/BlockDescriptor';
 export const Play: BlockDescriptor<{}> = {
     name: 'Play',
     initialState: {},
-    dynamicStateKeys: [],
+    statePropsToResetAfterSimulation: [],
     editableStateProps: [],
     tick: (circuit, blockId) => {
         if (!circuit.playFired[blockId]) {

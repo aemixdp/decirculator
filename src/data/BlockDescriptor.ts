@@ -17,7 +17,7 @@ type Props = EventListeners & BlockCircuitObject & CircuitObjectVisuals;
 export interface BlockDescriptor<S = any> {
     name: string;
     initialState: S;
-    dynamicStateKeys: (keyof S)[];
+    statePropsToResetAfterSimulation: (keyof S)[];
     editableStateProps: {
         propKey: keyof S,
         propType: 'number' | 'boolean' | 'note-list' | 'delay-list',

@@ -19,7 +19,7 @@ export const MidiOut: BlockDescriptor<State> = {
         currentNoteIndex: 0,
         velocity: 100,
     },
-    dynamicStateKeys: [],
+    statePropsToResetAfterSimulation: [],
     editableStateProps: [
         { propKey: 'channel', propType: 'number' },
         { propKey: 'notes', propType: 'note-list' },

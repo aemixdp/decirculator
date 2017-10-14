@@ -15,7 +15,7 @@ export const Counter: BlockDescriptor<State> = {
         current: 0,
         steps: 4,
     },
-    dynamicStateKeys: ['current'],
+    statePropsToResetAfterSimulation: ['current'],
     editableStateProps: [
         { propKey: 'steps', propType: 'number' },
     ],

@@ -205,7 +205,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 let blockAfterSimulation = { ...block };
                 if (blockBeforeSimulation) {
                     const blockDescriptor = blockDescriptors[blockBeforeSimulation.name];
-                    for (const key of blockDescriptor.dynamicStateKeys) {
+                    for (const key of blockDescriptor.statePropsToResetAfterSimulation) {
                         blockAfterSimulation[key] = blockBeforeSimulation[key];
                     }
                 }

@@ -16,7 +16,7 @@ export const Delay: BlockDescriptor<State> = {
         beats: 1,
         noteFraction: 4,
     },
-    dynamicStateKeys: [],
+    statePropsToResetAfterSimulation: [],
     editableStateProps: [
         { propKey: 'beats', propType: 'number' },
         { propKey: 'noteFraction', propType: 'number' },
