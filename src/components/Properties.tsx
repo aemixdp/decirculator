@@ -35,7 +35,7 @@ export class Properties extends React.Component<Props, any> {
         const propValue = event.target.type === 'text'
             ? PARSER_BY_PROP_TYPE[propType](event.target.value)
             : event.target.checked;
-        if (propValue) {
+        if (propValue || propValue === false) {
             this.props.onPropertyChange(event, this.props, propName, propValue);
         }
     }
