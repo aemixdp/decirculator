@@ -21,6 +21,7 @@ export interface BlockDescriptor<S = any> {
     editableStateProps: {
         propKey: keyof S,
         propType: 'number' | 'boolean' | 'note-list' | 'delay-list',
+        propLabel?: string,
     }[];
     tick: TickProcessor;
     component: (props: Props & S) => React.ReactElement<any>;

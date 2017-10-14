@@ -65,7 +65,7 @@ export class Properties extends React.Component<Props, any> {
                 {editableProps.map(prop =>
                     <div className="h-box" key={prop.propKey}>
                         <span className="property-name">
-                            {mangle(prop.propKey)}:
+                            {mangle(prop.propLabel || prop.propKey)}:
                         </span>
                         <input
                             type={INPUT_TYPE_BY_PROP_TYPE[prop.propType]}
