@@ -119,11 +119,18 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 blockById: arrayToIdMap(blocksAfterTogglePort),
             };
         case INVALIDATE_CIRCUITRY:
-            const blocksAfterInvalidate = state.blocks.map(b =>
-                (action.circuit.changed[b.id] && b.name === 'Counter')
-                    ? { ...b, current: action.circuit.counterValue[b.id] }
-                    : b
-            );
+            const blocksAfterInvalidate = state.blocks.map(block => {
+                if (!action.circuit.changed[block.id])
+                    return block;
+                switch (block.name) {
+                    case 'Counter':
+                        return { ...block, current: action.circuit.counterValue[block.id] };
+                    case 'MidiOut':
+                        return { ...block, currentNoteIndex: action.circuit.currentNoteIndex[block.id] };
+                    default:
+                        return block;
+                }
+            });
             return {
                 ...state,
                 wires: state.wires.map(w =>

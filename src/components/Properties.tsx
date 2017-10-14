@@ -1,13 +1,20 @@
 import React from 'react';
-import { mangle } from '../utils/textUtils';
 import { CircuitObject } from '../data/CircuitObject';
+import { mangle } from '../utils/textUtils';
+import { parseNoteList } from '../utils/musicUtils';
 import blockDescriptors from '../circuitry/blocks';
 
-const PROP_TYPE_INPUT_TYPE = {
+const INPUT_TYPE_BY_PROP_TYPE = {
+    'boolean': 'checkbox',
     'number': 'text',
     'note-list': 'text',
     'delay-list': 'text',
-    'boolean': 'checkbox',
+};
+
+const PARSER_BY_PROP_TYPE = {
+    'number': (value: string) => parseInt(value, 10),
+    'note-list': (value: string) => parseNoteList(value) && value,
+    'delay-list': (value: string) => parseInt(value, 10),
 };
 
 type EventListeners = {
@@ -23,17 +30,14 @@ export class Properties extends React.Component<Props, any> {
         onPropertyClick: () => { },
     };
     handlePropertyChange = (event: React.ChangeEvent<any>) => {
-        const propName = event.target.dataset.prop;
-        let propValue;
-        if (event.target.type === 'text') {
-            propValue = parseInt(event.target.value, 10);
-            if (isNaN(propValue)) {
-                return;
-            }
-        } else if (event.target.type === 'checkbox') {
-            propValue = event.target.checked;
+        const propName = event.target.dataset.propName;
+        const propType = event.target.dataset.propType;
+        const propValue = event.target.type === 'text'
+            ? PARSER_BY_PROP_TYPE[propType](event.target.value)
+            : event.target.checked;
+        if (propValue) {
+            this.props.onPropertyChange(event, this.props, propName, propValue);
         }
-        this.props.onPropertyChange(event, this.props, propName, propValue);
     }
     handlePropertyClick = (event: React.MouseEvent<any>) => {
         this.props.onPropertyClick(event);
@@ -45,29 +49,29 @@ export class Properties extends React.Component<Props, any> {
                 : [];
         return (
             <div className="object-properties">
-                {!this.props.hasOwnProperty('id') ? [] : [
-                    <input
-                        key="active"
-                        type="checkbox"
-                        data-prop="active"
-                        data-value="checked"
-                        checked={this.props.active}
-                        onChange={this.handlePropertyChange}
-                        onClick={this.handlePropertyClick}
-                    />,
-                    <span key="name">
-                        [{this.props.kind === 'block' ? this.props.name : 'Wire'}]
-                    </span>,
-                ]}
+                <input
+                    key="active"
+                    type="checkbox"
+                    data-prop-name="active"
+                    data-prop-type="boolean"
+                    data-value="checked"
+                    checked={this.props.active}
+                    onChange={this.handlePropertyChange}
+                    onClick={this.handlePropertyClick}
+                />
+                <span key="name">
+                    [{this.props.kind === 'block' ? this.props.name : 'Wire'}]
+                </span>
                 {editableProps.map(prop =>
                     <div className="h-box" key={prop.propKey}>
                         <span className="property-name">
                             {mangle(prop.propKey)}:
                         </span>
                         <input
-                            type={PROP_TYPE_INPUT_TYPE[prop.propType]}
+                            type={INPUT_TYPE_BY_PROP_TYPE[prop.propType]}
                             className="property-value"
-                            data-prop={prop.propKey}
+                            data-prop-name={prop.propKey}
+                            data-prop-type={prop.propType}
                             value={this.props[prop.propKey]}
                             checked={this.props[prop.propKey]}
                             onChange={this.handlePropertyChange}

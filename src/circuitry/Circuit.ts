@@ -5,7 +5,7 @@ import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { TickProcessor } from './data/TickProcessor';
 import { CircuitConfig } from './data/CircuitConfig';
-import { noteToMs } from '../utils/musicUtils';
+import { noteToMs, parseNoteList } from '../utils/musicUtils';
 import blockDescriptors from './blocks';
 
 type OnMidiOut =
@@ -89,9 +89,13 @@ export class Circuit {
      */
     channel: Array<number>;
     /**
-     * note[i] {MidiOut} = midi note to send for i-th block.
+     * notes[i] {MidiOut} = midi notes to send for i-th block.
      */
-    note: Array<number>;
+    notes: Array<Array<number>>;
+    /**
+     * currentNoteIndex[i] {MidiOut} = index of current note of i-th block.
+     */
+    currentNoteIndex: Array<number>;
     /**
      * velocity[i] {MidiOut} = velocity of midi note to send for i-th block.
      */
@@ -148,7 +152,8 @@ export class Circuit {
         this.beats = [];
         this.noteFraction = [];
         this.channel = [];
-        this.note = [];
+        this.notes = [];
+        this.currentNoteIndex = [];
         this.velocity = [];
         this.playFired = [];
         this.removed = [];
@@ -183,7 +188,8 @@ export class Circuit {
             this.beats.push(0);
             this.noteFraction.push(0);
             this.channel.push(0);
-            this.note.push(0);
+            this.notes.push([]);
+            this.currentNoteIndex.push(0);
             this.velocity.push(0);
             this.playFired.push(false);
             this.removed.push(false);
@@ -220,7 +226,8 @@ export class Circuit {
                     break;
                 case 'MidiOut':
                     this.channel[id] = block.channel;
-                    this.note[id] = block.note;
+                    this.notes[id] = parseNoteList(block.notes) || [];
+                    this.currentNoteIndex[id] = block.currentNoteIndex;
                     this.velocity[id] = block.velocity;
                 default:
                     break;

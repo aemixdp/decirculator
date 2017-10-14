@@ -355,17 +355,20 @@ export class App extends React.Component<Props, State> {
     }
     renderProps = () => {
         const objectId = this.props.selectedObjectIds.values().next().value;
-        const object: any = objectId && (
-            this.props.blockById[objectId] ||
-            this.props.wires.find(w => w.id === objectId)
-        );
-        return (
-            <Properties
-                {...object || {}}
-                onPropertyChange={this.handlePropertyChange}
-                onPropertyClick={propagationStopper}
-            />
-        );
+        if (objectId !== undefined) {
+            const object: any =
+                this.props.blockById[objectId] ||
+                this.props.wires.find(w => w.id === objectId);
+            return (
+                <Properties
+                    {...object}
+                    onPropertyChange={this.handlePropertyChange}
+                    onPropertyClick={propagationStopper}
+                />
+            );
+        } else {
+            return null;
+        }
     }
     renderHoverZones = () => {
         return this.props.blocks.map(block =>
@@ -482,7 +485,9 @@ export class App extends React.Component<Props, State> {
                             </div>
                         </div>
                     </div>
-                    {this.renderProps()}
+                    <div className="object-properties-container">
+                        {this.renderProps()}
+                    </div>
                     <div
                         onDragOver={this.handleNewBlockViewportDragOver}
                         onDrop={this.handleNewBlockDrop}

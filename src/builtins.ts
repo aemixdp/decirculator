@@ -318,7 +318,8 @@ export default {
                     'Left': 'in'
                 },
                 'channel': 1,
-                'note': 36,
+                'notes': '36',
+                'currentNoteIndex': 0,
                 'velocity': 100
             },
             {
@@ -839,7 +840,8 @@ export default {
                     'Left': 'in'
                 },
                 'channel': 1,
-                'note': 36,
+                'notes': '36',
+                'currentNoteIndex': 0,
                 'velocity': 100
             },
             {
@@ -904,7 +906,8 @@ export default {
                     'Left': 'in'
                 },
                 'channel': 1,
-                'note': 37,
+                'notes': '37',
+                'currentNoteIndex': 0,
                 'velocity': 100
             }
         ],

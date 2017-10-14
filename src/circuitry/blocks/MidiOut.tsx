@@ -6,7 +6,8 @@ import { textOffset } from '../../utils/textUtils';
 
 type State = {
     channel: number;
-    note: number;
+    notes: string;
+    currentNoteIndex: number;
     velocity: number;
 };
 
@@ -14,20 +15,22 @@ export const MidiOut: BlockDescriptor<State> = {
     name: 'MidiOut',
     initialState: {
         channel: 1,
-        note: 64,
+        notes: 'C3',
+        currentNoteIndex: 0,
         velocity: 100,
     },
     dynamicStateKeys: [],
     editableStateProps: [
         { propKey: 'channel', propType: 'number' },
-        { propKey: 'note', propType: 'number' },
+        { propKey: 'notes', propType: 'note-list' },
         { propKey: 'velocity', propType: 'number' },
     ],
     tick: (circuit, blockId, delta, config) => {
         if (circuit.cooldown[blockId]) {
             const timeUntilTurnOff = circuit.timeUntilTurnOff[blockId] -= delta;
             if (timeUntilTurnOff <= 0) {
-                circuit.onMidiOut(false, circuit.note[blockId], circuit.channel[blockId], circuit.velocity[blockId]);
+                const note = circuit.notes[blockId][circuit.currentNoteIndex[blockId]];
+                circuit.onMidiOut(false, note, circuit.channel[blockId], circuit.velocity[blockId]);
                 circuit.cooldown[blockId] = false;
             }
         }
@@ -35,7 +38,11 @@ export const MidiOut: BlockDescriptor<State> = {
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
             if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
-                circuit.onMidiOut(true, circuit.note[blockId], circuit.channel[blockId], circuit.velocity[blockId]);
+                const notes = circuit.notes[blockId];
+                const currentNoteIndex = circuit.currentNoteIndex[blockId];
+                const note = notes[currentNoteIndex];
+                circuit.onMidiOut(true, note, circuit.channel[blockId], circuit.velocity[blockId]);
+                circuit.currentNoteIndex[blockId] = (currentNoteIndex + 1) % notes.length;
                 circuit.timeUntilTurnOff[blockId] = config.gateLength;
                 circuit.changed[blockId] = true;
                 circuit.cooldown[blockId] = true;
@@ -44,31 +51,36 @@ export const MidiOut: BlockDescriptor<State> = {
             }
         }
     },
-    component: (props) =>
-        <Block
-            {...props}
-            label={'\uf176'}
-            labelX={18}
-            labelY={9}
-            labelFontSize={30}
-        >
-            <Text
-                key={1}
-                text={`${props.channel !== undefined ? props.channel : ''}`}
-                x={textOffset(props.channel, 40, 34, 30, 24, 18, 12, 6)}
-                y={4}
-                fill={props.theme.blockTextColor}
-                fontFamily={props.theme.font}
-                fontSize={10}
-            />
-            <Text
-                key={2}
-                text={`${props.note !== undefined ? props.note : ''}`}
-                x={textOffset(props.note, 40, 34, 30, 24, 18, 12, 6)}
-                y={37}
-                fill={props.theme.blockTextColor}
-                fontFamily={props.theme.font}
-                fontSize={10}
-            />
-        </Block>
+    component: (props) => {
+        const channelText = `${props.channel !== undefined ? props.channel : ''}`;
+        const noteText = `${props.notes !== undefined ? props.notes.split(',')[props.currentNoteIndex] : ''}`;
+        return (
+            <Block
+                {...props}
+                label={'\uf176'}
+                labelX={18}
+                labelY={9}
+                labelFontSize={30}
+            >
+                <Text
+                    key={1}
+                    text={channelText}
+                    x={textOffset(channelText, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+                <Text
+                    key={2}
+                    text={noteText}
+                    x={textOffset(noteText, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+            </Block>
+        );
+    }
 };

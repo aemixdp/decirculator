@@ -16,13 +16,25 @@ const ACCIDENTAL = {
 export function textNoteToMidiNote(note: string): number {
     const match = (/(\w)(-?\d)?([#b])?/g).exec(note);
     const noteIndex = match && NOTE_INDEX[match[1]];
-    if (match && noteIndex) {
+    if (match && noteIndex !== null) {
         const octave = parseInt(match[2], 10) || 3;
         const accidental = ACCIDENTAL[match[3]] || 0;
         return 24 + 12 * octave + noteIndex + accidental;
     } else {
-        throw new Error('Unknown note!');
+        return NaN;
     }
+}
+
+export function parseNoteList(notes: string): number[] | null {
+    const textNotes = notes.split(',');
+    const midiNotes = [];
+    for (const textNote of textNotes) {
+        const midiNote = parseInt(textNote, 10) || textNoteToMidiNote(textNote);
+        if (!midiNote)
+            return null;
+        midiNotes.push(midiNote);
+    }
+    return midiNotes;
 }
 
 export function noteToMs(beats: number, noteFraction: number, bpm: number): number {

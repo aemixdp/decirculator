@@ -126,15 +126,19 @@ html, body, input, textarea, select, button {
     border: 1px solid transparent;
 }
 
-.object-properties {
-    display: flex;
-    align-items: center;
+.object-properties-container {
+    height: 20px;
     margin-top: 10px;
     padding: 4px;
+    background-color: #CDD3D7;
+}
+
+.object-properties {
     height: 20px;
+    display: flex;
+    align-items: center;    
     font-weight: bold;
     font-size: 12px;
-    background-color: #CDD3D7;
 }
 
 .object-properties > * {
