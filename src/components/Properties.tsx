@@ -7,14 +7,14 @@ import blockDescriptors from '../circuitry/blocks';
 const INPUT_TYPE_BY_PROP_TYPE = {
     'boolean': 'checkbox',
     'number': 'text',
-    'note-list': 'text',
-    'delay-list': 'text',
+    'notes': 'text',
+    'delays': 'text',
 };
 
 const PARSER_BY_PROP_TYPE = {
     'number': (value: string) => parseInt(value, 10),
-    'note-list': (value: string) => parseNoteList(value) && value,
-    'delay-list': (value: string) => parseInt(value, 10),
+    'notes': (value: string) => parseNoteList(value) && value,
+    'delays': (value: string) => parseInt(value, 10),
 };
 
 type EventListeners = {

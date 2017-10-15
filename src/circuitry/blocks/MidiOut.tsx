@@ -22,7 +22,7 @@ export const MidiOut: BlockDescriptor<State> = {
     statePropsToResetAfterSimulation: [],
     editableStateProps: [
         { propKey: 'channel', propType: 'number' },
-        { propKey: 'notes', propType: 'note-list' },
+        { propKey: 'notes', propType: 'notes' },
         { propKey: 'velocity', propType: 'number' },
     ],
     tick: (circuit, blockId, delta, config) => {
