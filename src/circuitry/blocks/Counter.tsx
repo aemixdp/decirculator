@@ -38,30 +38,35 @@ export const Counter: BlockDescriptor<State> = {
             }
         }
     },
-    component: (props) =>
-        <Block
-            {...props}
-            label={'\uf055'}
-            labelX={13}
-            labelY={11}
-        >
-            <Text
-                key={1}
-                text={`${props.current !== undefined ? props.current : ''}`}
-                x={textOffset(props.current, 40, 34, 30, 24, 18, 12, 6)}
-                y={4}
-                fill={props.theme.blockTextColor}
-                fontFamily={props.theme.font}
-                fontSize={10}
-            />
-            <Text
-                key={2}
-                text={`${props.steps !== undefined ? props.steps : ''}`}
-                x={textOffset(props.steps, 40, 34, 30, 24, 18, 12, 6)}
-                y={37}
-                fill={props.theme.blockTextColor}
-                fontFamily={props.theme.font}
-                fontSize={10}
-            />
-        </Block>
+    component: (props) => {
+        const currentText = `${props.current !== undefined ? props.current : 'c'}`;
+        const stepsText = `${props.steps !== undefined ? props.steps : 's'}`;
+        return (
+            <Block
+                {...props}
+                label={'\uf055'}
+                labelX={13}
+                labelY={11}
+            >
+                <Text
+                    key={1}
+                    text={currentText}
+                    x={textOffset(currentText, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+                <Text
+                    key={2}
+                    text={stepsText}
+                    x={textOffset(stepsText, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+            </Block>
+        );
+    }
 };

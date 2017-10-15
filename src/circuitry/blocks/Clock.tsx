@@ -37,30 +37,35 @@ export const Clock: BlockDescriptor<State> = {
                 noteToMs(circuit.beats[blockId], circuit.noteFraction[blockId], config.bpm);
         }
     },
-    component: (props) =>
-        <Block
-            {...props }
-            label={'\uf017'}
-            labelX={13}
-            labelY={11}
-        >
-            <Text
-                key={1}
-                text={`${props.beats !== undefined ? props.beats : ''}`}
-                x={textOffset(props.beats, 40, 34, 30, 24, 18, 12, 6)}
-                y={4}
-                fill={props.theme.blockTextColor}
-                fontFamily={props.theme.font}
-                fontSize={10}
-            />
-            <Text
-                key={2}
-                text={`${props.noteFraction !== undefined ? props.noteFraction : ''}`}
-                x={textOffset(props.noteFraction, 40, 34, 30, 24, 18, 12, 6)}
-                y={37}
-                fill={props.theme.blockTextColor}
-                fontFamily={props.theme.font}
-                fontSize={10}
-            />
-        </Block>
+    component: (props) => {
+        const beatsText = `${props.beats !== undefined ? props.beats : 'be'}`;
+        const noteFractionText = `${props.noteFraction !== undefined ? props.noteFraction : 'nF'}`;
+        return (
+            <Block
+                {...props }
+                label={'\uf017'}
+                labelX={13}
+                labelY={11}
+            >
+                <Text
+                    key={1}
+                    text={beatsText}
+                    x={textOffset(beatsText, 40, 34, 30, 24, 18, 12, 6)}
+                    y={4}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+                <Text
+                    key={2}
+                    text={noteFractionText}
+                    x={textOffset(noteFractionText, 40, 34, 30, 24, 18, 12, 6)}
+                    y={37}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+            </Block>
+        );
+    }
 };
