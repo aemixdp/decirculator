@@ -20,7 +20,7 @@ export interface BlockDescriptor<S = any> {
     statePropsToResetAfterSimulation: (keyof S)[];
     editableStateProps: {
         propKey: keyof S,
-        propType: 'number' | 'boolean' | 'notes' | 'delays',
+        propType: 'boolean' | 'number' | 'numbers' | 'notes' | 'delays',
         propLabel?: string,
     }[];
     tick: TickProcessor;

@@ -8,7 +8,8 @@ type State = {
     channel: number;
     notes: string;
     currentNoteIndex: number;
-    velocity: number;
+    velocities: number[];
+    currentVelocityIndex: number;
 };
 
 export const MidiOut: BlockDescriptor<State> = {
@@ -17,20 +18,22 @@ export const MidiOut: BlockDescriptor<State> = {
         channel: 1,
         notes: 'C3',
         currentNoteIndex: 0,
-        velocity: 100,
+        velocities: [100],
+        currentVelocityIndex: 0,
     },
     statePropsToResetAfterSimulation: [],
     editableStateProps: [
         { propKey: 'channel', propType: 'number' },
         { propKey: 'notes', propType: 'notes' },
-        { propKey: 'velocity', propType: 'number' },
+        { propKey: 'velocities', propType: 'numbers' },
     ],
     tick: (circuit, blockId, delta, config) => {
         if (circuit.cooldown[blockId]) {
             const timeUntilTurnOff = circuit.timeUntilTurnOff[blockId] -= delta;
             if (timeUntilTurnOff <= 0) {
                 const note = circuit.notes[blockId][circuit.currentNoteIndex[blockId]];
-                circuit.onMidiOut(false, note, circuit.channel[blockId], circuit.velocity[blockId]);
+                const velocity = circuit.velocities[blockId][circuit.currentVelocityIndex[blockId]];
+                circuit.onMidiOut(false, note, circuit.channel[blockId], velocity);
                 circuit.cooldown[blockId] = false;
             }
         }
@@ -41,8 +44,12 @@ export const MidiOut: BlockDescriptor<State> = {
                 const notes = circuit.notes[blockId];
                 const currentNoteIndex = circuit.currentNoteIndex[blockId];
                 const note = notes[currentNoteIndex];
-                circuit.onMidiOut(true, note, circuit.channel[blockId], circuit.velocity[blockId]);
+                const velocities = circuit.velocities[blockId];
+                const currentVelocityIndex = circuit.currentVelocityIndex[blockId];
+                const velocity = velocities[currentVelocityIndex];
+                circuit.onMidiOut(true, note, circuit.channel[blockId], velocity);
                 circuit.currentNoteIndex[blockId] = (currentNoteIndex + 1) % notes.length;
+                circuit.currentVelocityIndex[blockId] = (currentVelocityIndex + 1) % velocities.length;
                 circuit.timeUntilTurnOff[blockId] = config.gateLength;
                 circuit.changed[blockId] = true;
                 circuit.cooldown[blockId] = true;
@@ -54,7 +61,7 @@ export const MidiOut: BlockDescriptor<State> = {
     component: (props) => {
         const channelText = `${props.channel !== undefined ? props.channel : 'ch'}`;
         const noteText = `${props.notes !== undefined ? props.notes.split(',')[props.currentNoteIndex] : 'no'}`;
-        const velocityText = `${props.velocity !== undefined ? props.velocity : 've'}`;
+        const velocityText = `${props.velocities !== undefined ? props.velocities[props.currentVelocityIndex] : 've'}`;
         return (
             <Block
                 {...props}

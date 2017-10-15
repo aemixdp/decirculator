@@ -126,7 +126,11 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                     case 'Counter':
                         return { ...block, current: action.circuit.counterValue[block.id] };
                     case 'MidiOut':
-                        return { ...block, currentNoteIndex: action.circuit.currentNoteIndex[block.id] };
+                        return {
+                            ...block,
+                            currentNoteIndex: action.circuit.currentNoteIndex[block.id],
+                            currentVelocityIndex: action.circuit.currentVelocityIndex[block.id],
+                        };
                     default:
                         return block;
                 }

@@ -320,7 +320,8 @@ export default {
                 'channel': 1,
                 'notes': '36',
                 'currentNoteIndex': 0,
-                'velocity': 100
+                'velocities': [100],
+                'currentVelocityIndex': 0
             },
             {
                 'id': 21,
@@ -842,7 +843,8 @@ export default {
                 'channel': 1,
                 'notes': '36',
                 'currentNoteIndex': 0,
-                'velocity': 100
+                'velocities': [100],
+                'currentVelocityIndex': 0
             },
             {
                 'id': 6,
@@ -908,7 +910,8 @@ export default {
                 'channel': 1,
                 'notes': '37',
                 'currentNoteIndex': 0,
-                'velocity': 100
+                'velocities': [100],
+                'currentVelocityIndex': 0
             }
         ],
         'viewportOffset': {

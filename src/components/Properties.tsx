@@ -7,12 +7,21 @@ import blockDescriptors from '../circuitry/blocks';
 const INPUT_TYPE_BY_PROP_TYPE = {
     'boolean': 'checkbox',
     'number': 'text',
+    'numbers': 'text',
     'notes': 'text',
     'delays': 'text',
 };
 
 const PARSER_BY_PROP_TYPE = {
     'number': (value: string) => parseInt(value, 10),
+    'numbers': (value: string) => {
+        const numbers = value.split(',')
+            .filter(s => s.length > 0)
+            .map(s => parseInt(s, 10));
+        return numbers.findIndex(isNaN) === -1
+            ? numbers
+            : null;
+    },
     'notes': (value: string) => parseNoteList(value) && value,
     'delays': (value: string) => parseInt(value, 10),
 };

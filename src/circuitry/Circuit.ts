@@ -97,9 +97,13 @@ export class Circuit {
      */
     currentNoteIndex: Array<number>;
     /**
-     * velocity[i] {MidiOut} = velocity of midi note to send for i-th block.
+     * velocities[i] {MidiOut} = velocities of midi notes to send for i-th block.
      */
-    velocity: Array<number>;
+    velocities: Array<Array<number>>;
+    /**
+     * currentVelocityIndex[i] {MidiOut} = index of current velocity of i-th block.
+     */
+    currentVelocityIndex: Array<number>;
     /**
      * playFired[i] {Play} = true if i-th block was already in 'gate on' state during current simulation run.
      */
@@ -154,7 +158,8 @@ export class Circuit {
         this.channel = [];
         this.notes = [];
         this.currentNoteIndex = [];
-        this.velocity = [];
+        this.velocities = [];
+        this.currentVelocityIndex = [];
         this.playFired = [];
         this.removed = [];
         this.changed = [];
@@ -190,7 +195,8 @@ export class Circuit {
             this.channel.push(0);
             this.notes.push([]);
             this.currentNoteIndex.push(0);
-            this.velocity.push(0);
+            this.velocities.push([]);
+            this.currentVelocityIndex.push(0);
             this.playFired.push(false);
             this.removed.push(false);
             this.changed.push(false);
@@ -228,7 +234,8 @@ export class Circuit {
                     this.channel[id] = block.channel;
                     this.notes[id] = parseNoteList(block.notes) || [];
                     this.currentNoteIndex[id] = block.currentNoteIndex;
-                    this.velocity[id] = block.velocity;
+                    this.velocities[id] = block.velocities;
+                    this.currentVelocityIndex[id] = block.currentVelocityIndex;
                 default:
                     break;
             }
