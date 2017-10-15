@@ -25,7 +25,7 @@ export function textNoteToMidiNote(note: string): number {
     }
 }
 
-export function parseNoteList(notes: string): number[] | null {
+export function parseNotes(notes: string): number[] | null {
     const textNotes = notes.split(',');
     const midiNotes = [];
     for (const textNote of textNotes) {

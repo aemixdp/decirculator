@@ -5,7 +5,7 @@ import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { TickProcessor } from './data/TickProcessor';
 import { CircuitConfig } from './data/CircuitConfig';
-import { noteToMs, parseNoteList } from '../utils/musicUtils';
+import { noteToMs, parseNotes } from '../utils/musicUtils';
 import blockDescriptors from './blocks';
 
 type OnMidiOut =
@@ -232,7 +232,7 @@ export class Circuit {
                     break;
                 case 'MidiOut':
                     this.channel[id] = block.channel;
-                    this.notes[id] = parseNoteList(block.notes) || [];
+                    this.notes[id] = parseNotes(block.notes) || [];
                     this.currentNoteIndex[id] = block.currentNoteIndex;
                     this.velocities[id] = block.velocities;
                     this.currentVelocityIndex[id] = block.currentVelocityIndex;
