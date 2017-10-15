@@ -52,20 +52,21 @@ export const MidiOut: BlockDescriptor<State> = {
         }
     },
     component: (props) => {
-        const channelText = `${props.channel !== undefined ? props.channel : ''}`;
-        const noteText = `${props.notes !== undefined ? props.notes.split(',')[props.currentNoteIndex] : ''}`;
+        const channelText = `${props.channel !== undefined ? props.channel : 'ch'}`;
+        const noteText = `${props.notes !== undefined ? props.notes.split(',')[props.currentNoteIndex] : 'no'}`;
+        const velocityText = `${props.velocity !== undefined ? props.velocity : 've'}`;
         return (
             <Block
                 {...props}
                 label={'\uf176'}
-                labelX={18}
+                labelX={14}
                 labelY={9}
                 labelFontSize={30}
             >
                 <Text
                     key={1}
                     text={channelText}
-                    x={textOffset(channelText, 40, 34, 30, 24, 18, 12, 6)}
+                    x={textOffset(channelText, 40, 34, 29, 27, 18, 12, 6)}
                     y={4}
                     fill={props.theme.blockTextColor}
                     fontFamily={props.theme.font}
@@ -74,7 +75,16 @@ export const MidiOut: BlockDescriptor<State> = {
                 <Text
                     key={2}
                     text={noteText}
-                    x={textOffset(noteText, 40, 34, 30, 24, 18, 12, 6)}
+                    x={textOffset(noteText, 40, 34, 29, 27, 18, 12, 6)}
+                    y={26}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+                <Text
+                    key={3}
+                    text={velocityText}
+                    x={textOffset(velocityText, 40, 34, 29, 27, 18, 12, 6)}
                     y={37}
                     fill={props.theme.blockTextColor}
                     fontFamily={props.theme.font}
