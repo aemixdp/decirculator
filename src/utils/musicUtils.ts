@@ -37,6 +37,29 @@ export function parseNotes(notes: string): number[] | null {
     return midiNotes;
 }
 
+export function textIntervalToMillis(interval: string, bpm: number): number {
+    const match = (/(\d+)\/(\d+)/g).exec(interval);
+    if (match) {
+        const numerator = parseInt(match[1], 10);
+        const denominator = parseInt(match[2], 10);
+        return noteToMs(numerator, denominator, bpm);
+    } else {
+        return NaN;
+    }
+}
+
+export function parseDelays(delays: string, bpm: number): number[] | null {
+    const textDelays = delays.split(',');
+    const numericDelays = [];
+    for (const textDelay of textDelays) {
+        const numericDelay = textIntervalToMillis(textDelay, bpm) || parseInt(textDelay, 10);
+        if (!numericDelay)
+            return null;
+        numericDelays.push(numericDelay);
+    }
+    return numericDelays;
+}
+
 export function noteToMs(beats: number, noteFraction: number, bpm: number): number {
     return ((60000 / (bpm / 4)) / noteFraction) * beats;
 }
