@@ -123,8 +123,16 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 if (!action.circuit.changed[block.id])
                     return block;
                 switch (block.name) {
+                    case 'Clock':
+                        return {
+                            ...block,
+                            currentIntervalIndex: action.circuit.currentIntervalIndex[block.id],
+                        };
                     case 'Counter':
-                        return { ...block, current: action.circuit.counterValue[block.id] };
+                        return {
+                            ...block,
+                            current: action.circuit.counterValue[block.id]
+                        };
                     case 'MidiOut':
                         return {
                             ...block,

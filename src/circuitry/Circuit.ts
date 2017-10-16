@@ -5,7 +5,7 @@ import { BlockCircuitObject } from '../data/CircuitObject/BlockCircuitObject';
 import { WireCircuitObject } from '../data/CircuitObject/WireCircuitObject';
 import { TickProcessor } from './data/TickProcessor';
 import { CircuitConfig } from './data/CircuitConfig';
-import { noteToMs, parseNotes } from '../utils/musicUtils';
+import { parseNotes, parseIntervals } from '../utils/musicUtils';
 import blockDescriptors from './blocks';
 
 type OnMidiOut =
@@ -85,6 +85,14 @@ export class Circuit {
      */
     noteFraction: Array<number>;
     /**
+     * intervals[i] {Delay, Clock} = time intervals to wait for i-th block (stored as if bpm = 1).
+     */
+    intervals: Array<Array<number>>;
+    /**
+     * currentIntervalIndex[i] {Delay, Clock} = index of current interval of i-th block.
+     */
+    currentIntervalIndex: Array<number>;
+    /**
      * channel[i] {MidiOut} = i-th block channel to send midi messages.
      */
     channel: Array<number>;
@@ -155,6 +163,8 @@ export class Circuit {
         this.counterSteps = [];
         this.beats = [];
         this.noteFraction = [];
+        this.intervals = [];
+        this.currentIntervalIndex = [];
         this.channel = [];
         this.notes = [];
         this.currentNoteIndex = [];
@@ -192,6 +202,8 @@ export class Circuit {
             this.counterSteps.push(0);
             this.beats.push(0);
             this.noteFraction.push(0);
+            this.intervals.push([]);
+            this.currentIntervalIndex.push(0);
             this.channel.push(0);
             this.notes.push([]);
             this.currentNoteIndex.push(0);
@@ -223,8 +235,11 @@ export class Circuit {
                     this.counterSteps[id] = block.steps;
                     break;
                 case 'Clock':
+                    this.intervals[id] = parseIntervals(block.intervals, 1) || [];
                     if (block.skipFirstGate) {
-                        this.timeUntilTurnOn[id] = noteToMs(block.beats, block.noteFraction, config.bpm);
+                        const intervals = this.intervals[id];
+                        this.timeUntilTurnOn[id] = intervals[0] / config.bpm;
+                        this.currentIntervalIndex[id] = intervals.length > 1 ? 1 : 0;
                     }
                 case 'Delay':
                     this.beats[id] = block.beats;

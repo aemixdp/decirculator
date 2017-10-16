@@ -48,16 +48,16 @@ export function textIntervalToMillis(interval: string, bpm: number): number {
     }
 }
 
-export function parseDelays(delays: string, bpm: number): number[] | null {
-    const textDelays = delays.split(',');
-    const numericDelays = [];
-    for (const textDelay of textDelays) {
-        const numericDelay = textIntervalToMillis(textDelay, bpm) || parseInt(textDelay, 10);
-        if (!numericDelay)
+export function parseIntervals(intervals: string, bpm: number): number[] | null {
+    const textIntervals = intervals.split(',');
+    const numericIntervals = [];
+    for (const textInterval of textIntervals) {
+        const numericInterval = textIntervalToMillis(textInterval, bpm) || parseInt(textInterval, 10);
+        if (!numericInterval)
             return null;
-        numericDelays.push(numericDelay);
+        numericIntervals.push(numericInterval);
     }
-    return numericDelays;
+    return numericIntervals;
 }
 
 export function noteToMs(beats: number, noteFraction: number, bpm: number): number {

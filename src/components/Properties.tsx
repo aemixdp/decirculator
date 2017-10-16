@@ -1,7 +1,7 @@
 import React from 'react';
 import { CircuitObject } from '../data/CircuitObject';
 import { mangle } from '../utils/textUtils';
-import { parseNotes } from '../utils/musicUtils';
+import { parseNotes, parseIntervals } from '../utils/musicUtils';
 import blockDescriptors from '../circuitry/blocks';
 
 const INPUT_TYPE_BY_PROP_TYPE = {
@@ -9,7 +9,7 @@ const INPUT_TYPE_BY_PROP_TYPE = {
     'number': 'text',
     'numbers': 'text',
     'notes': 'text',
-    'delays': 'text',
+    'intervals': 'text',
 };
 
 const PARSER_BY_PROP_TYPE = {
@@ -23,7 +23,7 @@ const PARSER_BY_PROP_TYPE = {
             : null;
     },
     'notes': (value: string) => parseNotes(value) && value,
-    'delays': (value: string) => parseInt(value, 10),
+    'intervals': (value: string) => parseIntervals(value, 1) && value,
 };
 
 type EventListeners = {

@@ -3,26 +3,24 @@ import { Text } from 'react-konva';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
 import { textOffset } from '../../utils/textUtils';
-import { noteToMs } from '../../utils/musicUtils';
 
 type State = {
-    beats: number;
-    noteFraction: number;
     skipFirstGate: boolean;
+    intervals: string;
+    currentIntervalIndex: number;
 };
 
 export const Clock: BlockDescriptor<State> = {
     name: 'Clock',
     initialState: {
-        beats: 1,
-        noteFraction: 4,
         skipFirstGate: false,
+        intervals: '1/4',
+        currentIntervalIndex: 0,
     },
     statePropsToResetAfterSimulation: [],
     editableStateProps: [
         { propKey: 'skipFirstGate', propType: 'boolean', propLabel: 'skipInit' },
-        { propKey: 'beats', propType: 'number' },
-        { propKey: 'noteFraction', propType: 'number' },
+        { propKey: 'intervals', propType: 'intervals' },
     ],
     tick: (circuit, blockId, delta, config) => {
         const timeUntilTurnOn = circuit.timeUntilTurnOn[blockId] -= delta;
@@ -33,13 +31,20 @@ export const Clock: BlockDescriptor<State> = {
                     circuit.outputGate[offset + i] = true;
                 }
             }
-            circuit.timeUntilTurnOn[blockId] =
-                noteToMs(circuit.beats[blockId], circuit.noteFraction[blockId], config.bpm);
+            const intervals = circuit.intervals[blockId];
+            const currentIntervalIndex = circuit.currentIntervalIndex[blockId];
+            circuit.timeUntilTurnOn[blockId] = intervals[currentIntervalIndex] / config.bpm;
+            circuit.currentIntervalIndex[blockId] = (currentIntervalIndex + 1) % intervals.length;
+            circuit.changed[blockId] = true;
         }
     },
     component: (props) => {
-        const beatsText = `${props.beats !== undefined ? props.beats : 'be'}`;
-        const noteFractionText = `${props.noteFraction !== undefined ? props.noteFraction : 'nF'}`;
+        const statusText = 'on';
+        const intervalText = `${
+            props.intervals === undefined
+                ? '1/4'
+                : props.intervals.split(',')[props.currentIntervalIndex]
+            }`;
         return (
             <Block
                 {...props }
@@ -49,8 +54,8 @@ export const Clock: BlockDescriptor<State> = {
             >
                 <Text
                     key={1}
-                    text={beatsText}
-                    x={textOffset(beatsText, 40, 34, 30, 24, 18, 12, 6)}
+                    text={statusText}
+                    x={textOffset(statusText, 40, 34, 30, 24, 18, 12, 6)}
                     y={4}
                     fill={props.theme.blockTextColor}
                     fontFamily={props.theme.font}
@@ -58,8 +63,8 @@ export const Clock: BlockDescriptor<State> = {
                 />
                 <Text
                     key={2}
-                    text={noteFractionText}
-                    x={textOffset(noteFractionText, 40, 34, 30, 24, 18, 12, 6)}
+                    text={intervalText}
+                    x={textOffset(intervalText, 40, 34, 30, 24, 18, 12, 6)}
                     y={37}
                     fill={props.theme.blockTextColor}
                     fontFamily={props.theme.font}
