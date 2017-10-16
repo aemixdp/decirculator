@@ -77,14 +77,6 @@ export class Circuit {
      */
     counterSteps: Array<number>;
     /**
-     * beats[i] {Delay, Clock} = number of beats to delay for i-th block.
-     */
-    beats: Array<number>;
-    /**
-     * noteFraction[i] {Delay, Clock} = note fraction used with beats to calcute delay for i-th block.
-     */
-    noteFraction: Array<number>;
-    /**
      * intervals[i] {Delay, Clock} = time intervals to wait for i-th block (stored as if bpm = 1).
      */
     intervals: Array<Array<number>>;
@@ -161,8 +153,6 @@ export class Circuit {
         this.delayList = [];
         this.counterValue = [];
         this.counterSteps = [];
-        this.beats = [];
-        this.noteFraction = [];
         this.intervals = [];
         this.currentIntervalIndex = [];
         this.channel = [];
@@ -200,8 +190,6 @@ export class Circuit {
             this.delayList.push(new DelayList());
             this.counterValue.push(0);
             this.counterSteps.push(0);
-            this.beats.push(0);
-            this.noteFraction.push(0);
             this.intervals.push([]);
             this.currentIntervalIndex.push(0);
             this.channel.push(0);
@@ -242,8 +230,7 @@ export class Circuit {
                         this.currentIntervalIndex[id] = intervals.length > 1 ? 1 : 0;
                     }
                 case 'Delay':
-                    this.beats[id] = block.beats;
-                    this.noteFraction[id] = block.noteFraction;
+                    this.intervals[id] = parseIntervals(block.intervals, 1) || [];
                     break;
                 case 'MidiOut':
                     this.channel[id] = block.channel;
