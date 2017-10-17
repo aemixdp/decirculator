@@ -59,9 +59,9 @@ export const MidiOut: BlockDescriptor<State> = {
         }
     },
     component: (props) => {
-        const channelText = `${props.channel !== undefined ? props.channel : 'ch'}`;
-        const noteText = `${props.notes !== undefined ? props.notes.split(',')[props.currentNoteIndex] : 'no'}`;
-        const velocityText = `${props.velocities !== undefined ? props.velocities[props.currentVelocityIndex] : 've'}`;
+        const channelText = `${props.channel !== undefined ? props.channel : '1'}`;
+        const noteText = `${props.notes !== undefined ? props.notes.split(',')[props.currentNoteIndex] : 'C3'}`;
+        const velocityText = `${props.velocities !== undefined ? props.velocities[props.currentVelocityIndex] : '100'}`;
         return (
             <Block
                 {...props}

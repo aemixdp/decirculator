@@ -39,8 +39,8 @@ export const Counter: BlockDescriptor<State> = {
         }
     },
     component: (props) => {
-        const currentText = `${props.current !== undefined ? props.current : 'c'}`;
-        const stepsText = `${props.steps !== undefined ? props.steps : 's'}`;
+        const currentText = `${props.current !== undefined ? props.current : '0'}`;
+        const stepsText = `${props.steps !== undefined ? props.steps : '4'}`;
         return (
             <Block
                 {...props}
