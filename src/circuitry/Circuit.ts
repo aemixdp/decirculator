@@ -231,7 +231,7 @@ export class Circuit {
                 case 'Clock':
                     this.ticking[id] = block.ticking;
                     this.intervals[id] = parseIntervals(block.intervals, 1) || [];
-                    if (block.skipFirstGate) {
+                    if (block.skipFirstGate && this.timeUntilTurnOn[id] === 0) {
                         const intervals = this.intervals[id];
                         this.timeUntilTurnOn[id] = intervals[0] / config.bpm;
                         this.currentIntervalIndex[id] = intervals.length > 1 ? 1 : 0;
