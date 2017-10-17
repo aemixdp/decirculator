@@ -5,6 +5,7 @@ import { BlockDescriptor } from '../../data/BlockDescriptor';
 import { textOffset } from '../../utils/textUtils';
 
 type State = {
+    ticking: boolean;
     skipFirstGate: boolean;
     intervals: string;
     currentIntervalIndex: number;
@@ -13,33 +14,46 @@ type State = {
 export const Clock: BlockDescriptor<State> = {
     name: 'Clock',
     initialState: {
+        ticking: true,
         skipFirstGate: false,
         intervals: '1/4',
         currentIntervalIndex: 0,
     },
     statePropsToResetAfterSimulation: [],
     editableStateProps: [
+        { propKey: 'ticking', propType: 'boolean' },
         { propKey: 'skipFirstGate', propType: 'boolean', propLabel: 'skipInit' },
         { propKey: 'intervals', propType: 'intervals' },
     ],
     tick: (circuit, blockId, delta, config) => {
-        const timeUntilTurnOn = circuit.timeUntilTurnOn[blockId] -= delta;
-        if (timeUntilTurnOn <= 0) {
-            const offset = blockId * 4;
-            for (let i = 0; i < 4; i += 1) {
-                if (circuit.input[offset + i] === -1) {
-                    circuit.outputGate[offset + i] = true;
+        const offset = blockId * 4;
+        if (circuit.ticking[blockId]) {
+            const timeUntilTurnOn = circuit.timeUntilTurnOn[blockId] -= delta;
+            if (timeUntilTurnOn <= 0) {
+                for (let i = 0; i < 4; i += 1) {
+                    if (circuit.input[offset + i] === -1) {
+                        circuit.outputGate[offset + i] = true;
+                    }
                 }
+                const intervals = circuit.intervals[blockId];
+                const currentIntervalIndex = circuit.currentIntervalIndex[blockId];
+                circuit.timeUntilTurnOn[blockId] = intervals[currentIntervalIndex] / config.bpm;
+                circuit.currentIntervalIndex[blockId] = (currentIntervalIndex + 1) % intervals.length;
+                circuit.changed[blockId] = true;
             }
-            const intervals = circuit.intervals[blockId];
-            const currentIntervalIndex = circuit.currentIntervalIndex[blockId];
-            circuit.timeUntilTurnOn[blockId] = intervals[currentIntervalIndex] / config.bpm;
-            circuit.currentIntervalIndex[blockId] = (currentIntervalIndex + 1) % intervals.length;
-            circuit.changed[blockId] = true;
+        }
+        for (let i = 0; i < 4; i += 1) {
+            const inputId = circuit.input[offset + i];
+            if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
+                circuit.ticking[blockId] = !circuit.ticking[blockId];
+                circuit.changed[blockId] = true;
+                circuit.cooldown[inputId] = true;
+                return;
+            }
         }
     },
     component: (props) => {
-        const statusText = 'on';
+        const tickingText = props.ticking === false ? 'off' : 'on';
         const intervalText = `${
             props.intervals === undefined
                 ? '1/4'
@@ -54,8 +68,8 @@ export const Clock: BlockDescriptor<State> = {
             >
                 <Text
                     key={1}
-                    text={statusText}
-                    x={textOffset(statusText, 40, 34, 30, 24, 18, 12, 6)}
+                    text={tickingText}
+                    x={textOffset(tickingText, 40, 34, 34, 24, 18, 12, 6)}
                     y={4}
                     fill={props.theme.blockTextColor}
                     fontFamily={props.theme.font}

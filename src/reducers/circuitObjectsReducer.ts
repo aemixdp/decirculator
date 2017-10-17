@@ -124,6 +124,11 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                     return block;
                 switch (block.name) {
                     case 'Clock':
+                        return {
+                            ...block,
+                            ticking: action.circuit.ticking[block.id],
+                            currentIntervalIndex: action.circuit.currentIntervalIndex[block.id],
+                        };
                     case 'Delay':
                         return {
                             ...block,

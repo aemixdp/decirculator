@@ -77,6 +77,10 @@ export class Circuit {
      */
     counterSteps: Array<number>;
     /**
+     * ticking[i] {Clock} = true if i-th block is ticking (on), false otherwise (off).
+     */
+    ticking: Array<boolean>;
+    /**
      * intervals[i] {Delay, Clock} = time intervals to wait for i-th block (stored as if bpm = 1).
      */
     intervals: Array<Array<number>>;
@@ -153,6 +157,7 @@ export class Circuit {
         this.delayList = [];
         this.counterValue = [];
         this.counterSteps = [];
+        this.ticking = [];
         this.intervals = [];
         this.currentIntervalIndex = [];
         this.channel = [];
@@ -190,6 +195,7 @@ export class Circuit {
             this.delayList.push(new DelayList());
             this.counterValue.push(0);
             this.counterSteps.push(0);
+            this.ticking.push(true);
             this.intervals.push([]);
             this.currentIntervalIndex.push(0);
             this.channel.push(0);
@@ -223,6 +229,7 @@ export class Circuit {
                     this.counterSteps[id] = block.steps;
                     break;
                 case 'Clock':
+                    this.ticking[id] = block.ticking;
                     this.intervals[id] = parseIntervals(block.intervals, 1) || [];
                     if (block.skipFirstGate) {
                         const intervals = this.intervals[id];
