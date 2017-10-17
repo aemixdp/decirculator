@@ -2,19 +2,12 @@ import React from 'react';
 import AutosizeInput from 'react-input-autosize';
 import { CircuitObject } from '../data/CircuitObject';
 import { mangle } from '../utils/textUtils';
-import { parseNotes, parseIntervals } from '../utils/musicUtils';
+import { parseNotes, parseIntervals, parseVelocities } from '../utils/musicUtils';
 import blockDescriptors from '../circuitry/blocks';
 
 const PARSER_BY_PROP_TYPE = {
     'number': (value: string) => parseInt(value, 10),
-    'numbers': (value: string) => {
-        const numbers = value.split(',')
-            .filter(s => s.length > 0)
-            .map(s => parseInt(s, 10));
-        return numbers.findIndex(isNaN) === -1
-            ? numbers
-            : null;
-    },
+    'velocities': (value: string) => parseVelocities(value) && value,
     'notes': (value: string) => parseNotes(value) && value,
     'intervals': (value: string) => parseIntervals(value, 1) && value,
 };

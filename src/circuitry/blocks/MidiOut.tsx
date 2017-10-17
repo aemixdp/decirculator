@@ -3,13 +3,13 @@ import { Text } from 'react-konva';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
 import { textOffset } from '../../utils/textUtils';
-import { expandNotes } from '../../utils/musicUtils';
+import { expandNotes, expandVelocities } from '../../utils/musicUtils';
 
 type State = {
     channel: number;
     notes: string;
     currentNoteIndex: number;
-    velocities: number[];
+    velocities: string;
     currentVelocityIndex: number;
 };
 
@@ -19,14 +19,14 @@ export const MidiOut: BlockDescriptor<State> = {
         channel: 1,
         notes: 'C3',
         currentNoteIndex: 0,
-        velocities: [100],
+        velocities: '100',
         currentVelocityIndex: 0,
     },
     statePropsToResetAfterSimulation: [],
     editableStateProps: [
         { propKey: 'channel', propType: 'number' },
         { propKey: 'notes', propType: 'notes' },
-        { propKey: 'velocities', propType: 'numbers' },
+        { propKey: 'velocities', propType: 'velocities' },
     ],
     tick: (circuit, blockId, delta, config) => {
         if (circuit.cooldown[blockId]) {
@@ -62,7 +62,11 @@ export const MidiOut: BlockDescriptor<State> = {
     component: (props) => {
         const channelText = `${props.channel !== undefined ? props.channel : '1'}`;
         const noteText = `${props.notes !== undefined ? expandNotes(props.notes)[props.currentNoteIndex] : 'C3'}`;
-        const velocityText = `${props.velocities !== undefined ? props.velocities[props.currentVelocityIndex] : '100'}`;
+        const velocityText = `${
+            props.velocities !== undefined
+                ? expandVelocities(props.velocities)[props.currentVelocityIndex]
+                : '100'
+            }`;
         return (
             <Block
                 {...props}

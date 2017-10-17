@@ -13,6 +13,15 @@ const ACCIDENTAL = {
     'b': -1,
 };
 
+export function expandVelocities(notes: string): string[] {
+    return notes.split(',').map(s => s.trim()).filter(s => s.length > 0);
+}
+
+export function parseVelocities(velocities: string): number[] | null {
+    const numericVelocities = expandVelocities(velocities).map(s => parseInt(s, 10));
+    return numericVelocities.findIndex(isNaN) === -1 ? numericVelocities : null;
+}
+
 export function textNoteToMidiNote(note: string): number {
     const match = (/(\w)(-?\d)?([#b])?/g).exec(note);
     const noteIndex = match && NOTE_INDEX[match[1]];
