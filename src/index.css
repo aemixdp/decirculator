@@ -153,9 +153,8 @@ html, body, input, textarea, select, button {
     margin-right: 2px;
 }
 
-.object-properties input[type="text"] {
+.object-properties input:not([type="checkbox"]) {
     height: 12px;
-    width: 30px;
     text-align: center;
 }
 

@@ -1,16 +1,9 @@
 import React from 'react';
+import AutosizeInput from 'react-input-autosize';
 import { CircuitObject } from '../data/CircuitObject';
 import { mangle } from '../utils/textUtils';
 import { parseNotes, parseIntervals } from '../utils/musicUtils';
 import blockDescriptors from '../circuitry/blocks';
-
-const INPUT_TYPE_BY_PROP_TYPE = {
-    'boolean': 'checkbox',
-    'number': 'text',
-    'numbers': 'text',
-    'notes': 'text',
-    'intervals': 'text',
-};
 
 const PARSER_BY_PROP_TYPE = {
     'number': (value: string) => parseInt(value, 10),
@@ -71,23 +64,37 @@ export class Properties extends React.Component<Props, any> {
                 <span key="name">
                     [{this.props.kind === 'block' ? this.props.name : 'Wire'}]
                 </span>
-                {editableProps.map(prop =>
-                    <div className="h-box" key={prop.propKey}>
-                        <span className="property-name">
-                            {mangle(prop.propLabel || prop.propKey)}:
+                {editableProps.map(prop => {
+                    const commonInputProps = {
+                        'data-prop-name': prop.propKey,
+                        'data-prop-type': prop.propType,
+                        className: 'property-value',
+                        onChange: this.handlePropertyChange,
+                        onClick: this.handlePropertyClick,
+                    };
+                    return (
+                        <div className="h-box" key={prop.propKey}>
+                            <span className="property-name">
+                                {mangle(prop.propLabel || prop.propKey)}:
                         </span>
-                        <input
-                            type={INPUT_TYPE_BY_PROP_TYPE[prop.propType]}
-                            className="property-value"
-                            data-prop-name={prop.propKey}
-                            data-prop-type={prop.propType}
-                            value={this.props[prop.propKey]}
-                            checked={this.props[prop.propKey]}
-                            onChange={this.handlePropertyChange}
-                            onClick={this.handlePropertyClick}
-                        />
-                    </div>
-                )}
+                            {
+                                prop.propType === 'boolean'
+                                    ?
+                                    <input
+                                        type="checkbox"
+                                        checked={this.props[prop.propKey]}
+                                        {...commonInputProps}
+                                    />
+                                    :
+                                    <AutosizeInput
+                                        value={this.props[prop.propKey]}
+                                        {...commonInputProps}
+                                    />
+                            }
+
+                        </div>
+                    );
+                })}
             </div>
         );
     }
