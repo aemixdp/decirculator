@@ -3,6 +3,7 @@ import { Text } from 'react-konva';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
 import { textOffset } from '../../utils/textUtils';
+import { expandNotes } from '../../utils/musicUtils';
 
 type State = {
     channel: number;
@@ -60,7 +61,7 @@ export const MidiOut: BlockDescriptor<State> = {
     },
     component: (props) => {
         const channelText = `${props.channel !== undefined ? props.channel : '1'}`;
-        const noteText = `${props.notes !== undefined ? props.notes.split(',')[props.currentNoteIndex] : 'C3'}`;
+        const noteText = `${props.notes !== undefined ? expandNotes(props.notes)[props.currentNoteIndex] : 'C3'}`;
         const velocityText = `${props.velocities !== undefined ? props.velocities[props.currentVelocityIndex] : '100'}`;
         return (
             <Block

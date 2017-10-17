@@ -3,6 +3,7 @@ import { Text } from 'react-konva';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
 import { textOffset } from '../../utils/textUtils';
+import { expandIntervals } from '../../utils/musicUtils';
 
 type State = {
     intervals: string;
@@ -49,7 +50,7 @@ export const Delay: BlockDescriptor<State> = {
         const intervalText = `${
             props.intervals === undefined
                 ? '1/4'
-                : props.intervals.split(',')[props.currentIntervalIndex]
+                : expandIntervals(props.intervals)[props.currentIntervalIndex]
             }`;
         return (
             <Block
