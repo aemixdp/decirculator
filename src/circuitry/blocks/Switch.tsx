@@ -2,11 +2,19 @@ import React from 'react';
 import { Block } from '../../components/Block';
 import { BlockDescriptor } from '../../data/BlockDescriptor';
 
-export const Switch: BlockDescriptor<{}> = {
+type State = {
+    targetSide: number;
+};
+
+export const Switch: BlockDescriptor<State> = {
     name: 'Switch',
-    initialState: {},
-    statePropsToResetAfterSimulation: [],
-    editableStateProps: [],
+    initialState: {
+        targetSide: 0,
+    },
+    statePropsToResetAfterSimulation: ['targetSide'],
+    editableStateProps: [
+        { propKey: 'targetSide', propType: 'number' }
+    ],
     tick: (circuit, blockId) => {
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {
@@ -19,6 +27,7 @@ export const Switch: BlockDescriptor<{}> = {
                     if (circuit.isOutputPort[offset + newSwitchTargetSide]) {
                         circuit.outputGate[offset + newSwitchTargetSide] = true;
                         circuit.switchTargetSide[blockId] = newSwitchTargetSide;
+                        circuit.changed[blockId] = true;
                         return;
                     }
                 }

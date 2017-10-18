@@ -245,6 +245,9 @@ export class Circuit {
                     this.currentNoteIndex[id] = block.currentNoteIndex;
                     this.velocities[id] = parseVelocities(block.velocities) || [];
                     this.currentVelocityIndex[id] = block.currentVelocityIndex;
+                case 'Switch':
+                    this.switchTargetSide[id] = block.targetSide;
+                    break;
                 default:
                     break;
             }
