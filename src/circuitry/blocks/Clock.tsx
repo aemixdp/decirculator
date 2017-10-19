@@ -36,9 +36,12 @@ export const Clock: BlockDescriptor<State> = {
                         circuit.outputGate[offset + i] = true;
                     }
                 }
+                const compensation = timeUntilTurnOn;
+                circuit.compensation[blockId] = compensation;
                 const intervals = circuit.intervals[blockId];
                 const currentIntervalIndex = circuit.currentIntervalIndex[blockId];
-                circuit.timeUntilTurnOn[blockId] = intervals[currentIntervalIndex] / config.bpm;
+                const delay = intervals[currentIntervalIndex] / config.bpm;
+                circuit.timeUntilTurnOn[blockId] = delay + compensation;
                 circuit.currentIntervalIndex[blockId] = (currentIntervalIndex + 1) % intervals.length;
                 circuit.changed[blockId] = true;
             }
