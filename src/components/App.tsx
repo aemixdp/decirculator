@@ -149,12 +149,17 @@ export class App extends React.Component<Props, State> {
     }
     handleNewBlockDragStart = (event: any, blockDescriptor: BlockDescriptor<any>) => {
         event.dataTransfer.setData('blockDescriptorName', blockDescriptor.name);
+        const clientRect = event.target.getBoundingClientRect();
+        event.dataTransfer.setData('offsetX', event.clientX - clientRect.left - Block.width / 2);
+        event.dataTransfer.setData('offsetY', event.clientY - clientRect.top - Block.height / 2);
     }
     handleNewBlockViewportDragOver = (event: any) => {
         event.preventDefault();
     }
     handleNewBlockDrop = (event: any) => {
         const blockDescriptor = blockDescriptors[event.dataTransfer.getData('blockDescriptorName')];
+        const dragOffsetX = +event.dataTransfer.getData('offsetX');
+        const dragOffsetY = +event.dataTransfer.getData('offsetY');
         const viewportClientRect = event.target.getBoundingClientRect();
         this.props.dispatch(circuitObjectsActions.createBlock({
             id: NaN,
@@ -164,8 +169,10 @@ export class App extends React.Component<Props, State> {
             ports: defaultPortDirections,
             ...blockDescriptor.initialState,
             ...snapToWireframe(wireframeCellSize, {
-                x: event.clientX - viewportClientRect.left - this.props.viewportOffset.x - Block.width / 2,
-                y: event.clientY - viewportClientRect.top - this.props.viewportOffset.y - Block.height / 2,
+                x: event.clientX - viewportClientRect.left - this.props.viewportOffset.x
+                - dragOffsetX - Block.width / 2,
+                y: event.clientY - viewportClientRect.top - this.props.viewportOffset.y
+                - dragOffsetY - Block.height / 2,
             }),
         }));
     }
