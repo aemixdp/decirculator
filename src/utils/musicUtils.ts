@@ -77,6 +77,17 @@ export function parseIntervals(intervals: string, bpm: number): number[] | null 
     return numericIntervals;
 }
 
+export function parseSignature(signature: string): [number, number] | null {
+    const match = (/^(\d+)?\/(\d+)?$/g).exec(signature);
+    if (match) {
+        const numerator = parseInt(match[1], 10);
+        const denominator = parseInt(match[2], 10);
+        return [numerator || 4, denominator || 4];
+    } else {
+        return null;
+    }
+}
+
 export function noteToMs(beats: number, noteFraction: number, bpm: number): number {
     return ((60000 / (bpm / 4)) / noteFraction) * beats;
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import AutosizeInput from 'react-input-autosize';
 import { CircuitObject } from '../data/CircuitObject';
 import { mangle } from '../utils/textUtils';
-import { parseNotes, parseIntervals, parseVelocities } from '../utils/musicUtils';
+import { parseNotes, parseIntervals, parseVelocities, parseSignature } from '../utils/musicUtils';
 import blockDescriptors from '../circuitry/blocks';
 
 const PARSER_BY_PROP_TYPE = {
@@ -10,6 +10,7 @@ const PARSER_BY_PROP_TYPE = {
     'velocities': (value: string) => parseVelocities(value) && value,
     'notes': (value: string) => parseNotes(value) && value,
     'intervals': (value: string) => parseIntervals(value, 1) && value,
+    'signature': (value: string) => parseSignature(value) && value,
 };
 
 type EventListeners = {

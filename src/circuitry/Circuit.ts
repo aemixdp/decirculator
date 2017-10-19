@@ -236,6 +236,7 @@ export class Circuit {
                         this.timeUntilTurnOn[id] = intervals[0] / config.bpm;
                         this.currentIntervalIndex[id] = intervals.length > 1 ? 1 : 0;
                     }
+                    break;
                 case 'Delay':
                     this.intervals[id] = parseIntervals(block.intervals, 1) || [];
                     break;
@@ -247,6 +248,12 @@ export class Circuit {
                     this.currentVelocityIndex[id] = block.currentVelocityIndex;
                 case 'Switch':
                     this.switchTargetSide[id] = block.targetSide;
+                    break;
+                case 'Play':
+                    if (this.timeUntilTurnOn[id] === 0) {
+                        this.timeUntilTurnOn[id] = block.skipBars *
+                            (parseIntervals(block.signature, config.bpm) || [0])[0];
+                    }
                     break;
                 default:
                     break;
