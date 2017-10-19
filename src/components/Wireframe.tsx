@@ -12,8 +12,8 @@ type Props = {
 export function snapToWireframe<T extends Point>(wireframeCellSize: number, object: T): T {
     return {
         ...object as any,
-        x: object.x - object.x % wireframeCellSize,
-        y: object.y - object.y % wireframeCellSize,
+        x: Math.round(object.x / wireframeCellSize) * wireframeCellSize,
+        y: Math.round(object.y / wireframeCellSize) * wireframeCellSize,
     };
 }
 
