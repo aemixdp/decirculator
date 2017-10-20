@@ -17,6 +17,10 @@ export class Circuit {
      */
     length: number;
     /**
+     * active[i] {blocks, wires} = true if i-th object is active, false otherwise.
+     */
+    active: Array<boolean>;
+    /**
      * isWire[i] {blocks, wires} = true if i-th object is a wire, false otherwise.
      */
     isWire: Array<boolean>;
@@ -146,6 +150,7 @@ export class Circuit {
     timer: any;
     constructor() {
         this.length = 0;
+        this.active = [];
         this.isWire = [];
         this.isOutputPort = [];
         this.startPortInfo = [];
@@ -185,6 +190,7 @@ export class Circuit {
         }
         for (let i = this.length; i <= maxId; i += 1) {
             this.length += 1;
+            this.active.push(true);
             this.isWire.push(false);
             this.isOutputPort.push(false);
             this.startPortInfo.push(null);
@@ -224,6 +230,7 @@ export class Circuit {
             const block = blocks[i] as any;
             const blockDescriptor = blockDescriptors[block.name];
             const id = block.id;
+            this.active[id] = block.active;
             this.blockTick[id] = blockDescriptor.tick;
             this.removed[id] = false;
             for (let sideName in block.ports) {
@@ -269,10 +276,12 @@ export class Circuit {
         for (let i = 0; i < wires.length; i += 1) {
             const wire = wires[i];
             if (wire.endPortInfo) {
-                this.isWire[wire.id] = true;
-                this.startPortInfo[wire.id] = wire.startPortInfo;
-                this.removed[wire.id] = false;
-                this.input[wire.endPortInfo.blockId * 4 + wire.endPortInfo.port.side.index] = wire.id;
+                const id = wire.id;
+                this.active[id] = wire.active;
+                this.isWire[id] = true;
+                this.startPortInfo[id] = wire.startPortInfo;
+                this.removed[id] = false;
+                this.input[wire.endPortInfo.blockId * 4 + wire.endPortInfo.port.side.index] = id;
             }
         }
     }
@@ -282,7 +291,7 @@ export class Circuit {
         this.timestamp = now;
         for (let i = 0; i < this.length; i += 1) {
             const blockTick = this.blockTick[i];
-            if (!this.removed[i] && blockTick) {
+            if (!this.removed[i] && this.active[i] && blockTick) {
                 blockTick(this, i, delta, this.config);
             }
         }
