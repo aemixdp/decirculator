@@ -4,6 +4,7 @@ import { GlobalState } from '../reducers/globalReducer';
 import * as globalActions from '../actions/GlobalAction';
 import { MidiManager } from '../utils/MidiManager';
 import { GlobalAction, SEND_MIDI, REFRESH_MIDI_DEVICES } from '../actions/GlobalAction';
+import { STOP_SIMULATION, SimulationAction } from '../actions/SimulationAction';
 
 function* dispatchMidiOutputsInvalidation(midiManager: MidiManager) {
     const chan = eventChannel(emitter => {
@@ -20,7 +21,7 @@ export function* midiSaga() {
     const midiManager = new MidiManager();
     yield fork(dispatchMidiOutputsInvalidation, midiManager);
     while (true) {
-        const action: GlobalAction = yield take();
+        const action: GlobalAction | SimulationAction = yield take();
         const state: GlobalState = (yield select()).present;
         switch (action.type) {
             case SEND_MIDI:
@@ -34,6 +35,9 @@ export function* midiSaga() {
                 break;
             case REFRESH_MIDI_DEVICES:
                 midiManager.refreshDevices();
+                break;
+            case STOP_SIMULATION:
+                midiManager.neutralizeHangingMidi();
                 break;
             default:
                 break;

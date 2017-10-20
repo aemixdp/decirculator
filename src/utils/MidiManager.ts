@@ -12,9 +12,15 @@ type MidiOutput = {
 export class MidiManager {
     midiOutputs: { [_: string]: MidiOutput };
     midiAccess: any;
+    hangingMidi: {
+        [midiOutput: string]: {
+            [note: number]: 'note' | 'cc'
+        }[]
+    };
     onOutputsChange: () => void;
     constructor() {
         this.midiOutputs = {};
+        this.hangingMidi = {};
         this.refreshDevices();
     }
     refreshDevices = async () => {
@@ -25,6 +31,11 @@ export class MidiManager {
             outputs[output.name] = output;
             if (!this.midiOutputs[output.name]) {
                 outputsChanged = true;
+                const hangingOutputMidi = [];
+                for (let ch = 0; ch < 16; ch += 1) {
+                    hangingOutputMidi[ch] = {};
+                }
+                this.hangingMidi[output.name] = hangingOutputMidi;
             }
         });
         for (const output of objectValues(this.midiOutputs)) {
@@ -41,10 +52,40 @@ export class MidiManager {
         const midiOutput = this.midiOutputs[outputName];
         if (!midiOutput) return;
         if (ccMode) {
-            midiOutput.send([CONTROL_CHANGE + channel - 1, note, toggleState ? velocity : 0]);
+            if (toggleState) {
+                midiOutput.send([CONTROL_CHANGE + channel - 1, note, velocity]);
+                this.hangingMidi[outputName][channel - 1][note] = 'cc';
+            } else {
+                midiOutput.send([CONTROL_CHANGE + channel - 1, note, 0]);
+                delete this.hangingMidi[outputName][channel - 1][note];
+            }
         } else {
-            const statusPrefix = toggleState ? NOTE_ON : NOTE_OFF;
-            midiOutput.send([statusPrefix + channel - 1, note, velocity]);
+            if (toggleState) {
+                midiOutput.send([NOTE_ON + channel - 1, note, velocity]);
+                this.hangingMidi[outputName][channel - 1][note] = 'note';
+            } else {
+                midiOutput.send([NOTE_OFF + channel - 1, note, velocity]);
+                delete this.hangingMidi[outputName][channel - 1][note];
+            }
+        }
+    }
+    neutralizeHangingMidi() {
+        for (const outputName in this.midiOutputs) {
+            const hangingOutputMidi = this.hangingMidi[outputName];
+            const midiOutput = this.midiOutputs[outputName];
+            if (!midiOutput) continue;
+            for (let ch = 0; ch < 16; ch += 1) {
+                const hangingChannelMidi = hangingOutputMidi[ch];
+                for (const note in hangingChannelMidi) {
+                    const messageType = hangingChannelMidi[note];
+                    switch (messageType) {
+                        case 'cc': midiOutput.send([CONTROL_CHANGE + ch, note, 0]); break;
+                        case 'note': midiOutput.send([NOTE_OFF + ch, note, 0]); break;
+                        default:
+                    }
+                    delete hangingChannelMidi[note];
+                }
+            }
         }
     }
 }
