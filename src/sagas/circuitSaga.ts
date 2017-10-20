@@ -12,8 +12,8 @@ import { CircuitConfig } from '../circuitry/data/CircuitConfig';
 
 function* dispatchCircuitEvents(circuit: Circuit) {
     const chan = eventChannel(emitter => {
-        circuit.onMidiOut = (noteOn, note, channel, velocity) =>
-            emitter(globalActions.sendMidi(noteOn, note, channel, velocity));
+        circuit.onMidiOut = (ccMode, noteOn, note, channel, velocity) =>
+            emitter(globalActions.sendMidi(ccMode, noteOn, note, channel, velocity));
         circuit.onVisibleChanges = () =>
             emitter(circuitObjectsActions.invalidateCircuitry(circuit));
         return () => {

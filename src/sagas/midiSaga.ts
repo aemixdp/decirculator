@@ -26,7 +26,10 @@ export function* midiSaga() {
             case SEND_MIDI:
                 const midiOutputName = state.config.midiOutputName;
                 if (midiOutputName) {
-                    midiManager.note(midiOutputName, action.noteOn, action.channel, action.note, action.velocity);
+                    midiManager.send(
+                        midiOutputName, action.ccMode, action.noteOn,
+                        action.channel, action.note, action.velocity
+                    );
                 }
                 break;
             case REFRESH_MIDI_DEVICES:

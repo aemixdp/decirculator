@@ -9,7 +9,7 @@ import { parseNotes, parseIntervals, parseVelocities } from '../utils/musicUtils
 import blockDescriptors from './blocks';
 
 type OnMidiOut =
-    (noteOn: boolean, note: number, channel: number, velocity: number) => void;
+    (ccMode: boolean, noteOn: boolean, note: number, channel: number, velocity: number) => void;
 
 export class Circuit {
     /**
@@ -89,6 +89,10 @@ export class Circuit {
      */
     currentIntervalIndex: Array<number>;
     /**
+     * ccMode[i] {MidiOut} = true if i-th block should send control change messages instead of note on/off.
+     */
+    ccMode: Array<boolean>;
+    /**
      * channel[i] {MidiOut} = i-th block channel to send midi messages.
      */
     channel: Array<number>;
@@ -160,6 +164,7 @@ export class Circuit {
         this.ticking = [];
         this.intervals = [];
         this.currentIntervalIndex = [];
+        this.ccMode = [];
         this.channel = [];
         this.notes = [];
         this.currentNoteIndex = [];
@@ -198,6 +203,7 @@ export class Circuit {
             this.ticking.push(true);
             this.intervals.push([]);
             this.currentIntervalIndex.push(0);
+            this.ccMode.push(false);
             this.channel.push(0);
             this.notes.push([]);
             this.currentNoteIndex.push(0);
@@ -241,6 +247,7 @@ export class Circuit {
                     this.intervals[id] = parseIntervals(block.intervals, 1) || [];
                     break;
                 case 'MidiOut':
+                    this.ccMode[id] = block.ccMode;
                     this.channel[id] = block.channel;
                     this.notes[id] = parseNotes(block.notes) || [];
                     this.currentNoteIndex[id] = block.currentNoteIndex;

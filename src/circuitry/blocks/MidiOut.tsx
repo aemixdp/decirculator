@@ -6,6 +6,7 @@ import { textOffset } from '../../utils/textUtils';
 import { expandNotes, expandVelocities } from '../../utils/musicUtils';
 
 type State = {
+    ccMode: boolean;
     channel: number;
     notes: string;
     currentNoteIndex: number;
@@ -16,6 +17,7 @@ type State = {
 export const MidiOut: BlockDescriptor<State> = {
     name: 'MidiOut',
     initialState: {
+        ccMode: false,
         channel: 1,
         notes: 'C3',
         currentNoteIndex: 0,
@@ -24,6 +26,7 @@ export const MidiOut: BlockDescriptor<State> = {
     },
     statePropsToResetAfterSimulation: [],
     editableStateProps: [
+        { propKey: 'ccMode', propLabel: 'cc', propType: 'boolean' },
         { propKey: 'channel', propType: 'number' },
         { propKey: 'notes', propType: 'notes' },
         { propKey: 'velocities', propType: 'velocities' },
@@ -34,7 +37,7 @@ export const MidiOut: BlockDescriptor<State> = {
             if (timeUntilTurnOff <= 0) {
                 const note = circuit.notes[blockId][circuit.currentNoteIndex[blockId]];
                 const velocity = circuit.velocities[blockId][circuit.currentVelocityIndex[blockId]];
-                circuit.onMidiOut(false, note, circuit.channel[blockId], velocity);
+                circuit.onMidiOut(circuit.ccMode[blockId], false, note, circuit.channel[blockId], velocity);
                 circuit.cooldown[blockId] = false;
             }
         }
@@ -48,7 +51,7 @@ export const MidiOut: BlockDescriptor<State> = {
                 const velocities = circuit.velocities[blockId];
                 const currentVelocityIndex = circuit.currentVelocityIndex[blockId];
                 const velocity = velocities[currentVelocityIndex];
-                circuit.onMidiOut(true, note, circuit.channel[blockId], velocity);
+                circuit.onMidiOut(circuit.ccMode[blockId], true, note, circuit.channel[blockId], velocity);
                 circuit.currentNoteIndex[blockId] = (currentNoteIndex + 1) % notes.length;
                 circuit.currentVelocityIndex[blockId] = (currentVelocityIndex + 1) % velocities.length;
                 circuit.timeUntilTurnOff[blockId] = config.gateLength;
@@ -60,6 +63,7 @@ export const MidiOut: BlockDescriptor<State> = {
         }
     },
     component: (props) => {
+        const ccText = props.ccMode ? 'cc' : '';
         const channelText = `${props.channel !== undefined ? props.channel : '1'}`;
         const noteText = `${props.notes !== undefined ? expandNotes(props.notes)[props.currentNoteIndex] : 'C3'}`;
         const velocityText = `${
@@ -77,6 +81,15 @@ export const MidiOut: BlockDescriptor<State> = {
             >
                 <Text
                     key={1}
+                    text={ccText}
+                    x={4}
+                    y={3}
+                    fill={props.theme.blockTextColor}
+                    fontFamily={props.theme.font}
+                    fontSize={10}
+                />
+                <Text
+                    key={2}
                     text={channelText}
                     x={textOffset(channelText, 40, 34, 29, 27, 18, 12, 6)}
                     y={4}
@@ -85,7 +98,7 @@ export const MidiOut: BlockDescriptor<State> = {
                     fontSize={10}
                 />
                 <Text
-                    key={2}
+                    key={3}
                     text={noteText}
                     x={textOffset(noteText, 40, 34, 29, 27, 18, 12, 6)}
                     y={26}
@@ -94,7 +107,7 @@ export const MidiOut: BlockDescriptor<State> = {
                     fontSize={10}
                 />
                 <Text
-                    key={3}
+                    key={4}
                     text={velocityText}
                     x={textOffset(velocityText, 40, 34, 29, 27, 18, 12, 6)}
                     y={37}

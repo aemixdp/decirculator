@@ -25,6 +25,7 @@ export type Load = {
 
 export type SendMidi = {
     type: typeof SEND_MIDI;
+    ccMode: boolean;
     note: number;
     channel: number;
     velocity: number;
@@ -59,9 +60,10 @@ export function load(circuitName: string): Load {
     };
 }
 
-export function sendMidi(noteOn: boolean, note: number, channel: number, velocity: number): SendMidi {
+export function sendMidi(ccMode: boolean, noteOn: boolean, note: number, channel: number, velocity: number): SendMidi {
     return {
         type: SEND_MIDI,
+        ccMode,
         noteOn,
         note,
         channel,

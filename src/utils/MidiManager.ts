@@ -1,5 +1,6 @@
 import { objectValues } from './objectUtils';
 
+const CONTROL_CHANGE = 0xB0;
 const NOTE_ON = 0x90;
 const NOTE_OFF = 0x80;
 
@@ -36,10 +37,13 @@ export class MidiManager {
             this.onOutputsChange();
         }
     }
-    note(outputName: string, toggleState: boolean, channel: number, note: number, velocity: number): void {
-        const statusPrefix = toggleState ? NOTE_ON : NOTE_OFF;
+    send(outputName: string, ccMode: boolean, toggleState: boolean, channel: number, note: number, velocity: number) {
         const midiOutput = this.midiOutputs[outputName];
-        if (midiOutput) {
+        if (!midiOutput) return;
+        if (ccMode) {
+            midiOutput.send([CONTROL_CHANGE + channel - 1, note, toggleState ? velocity : 0]);
+        } else {
+            const statusPrefix = toggleState ? NOTE_ON : NOTE_OFF;
             midiOutput.send([statusPrefix + channel - 1, note, velocity]);
         }
     }
