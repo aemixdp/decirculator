@@ -39,15 +39,8 @@ export function expandNotes(notes: string): string[] {
 }
 
 export function parseNotes(notes: string): number[] | null {
-    const textNotes = expandNotes(notes);
-    const midiNotes = [];
-    for (const textNote of textNotes) {
-        const midiNote = parseInt(textNote, 10) || textNoteToMidiNote(textNote);
-        if (!midiNote)
-            return null;
-        midiNotes.push(midiNote);
-    }
-    return midiNotes;
+    const midiNotes = expandNotes(notes).map(s => textNoteToMidiNote(s) || parseInt(s, 10));
+    return midiNotes.findIndex(isNaN) === -1 ? midiNotes : null;
 }
 
 export function textIntervalToMillis(interval: string, bpm: number): number {
