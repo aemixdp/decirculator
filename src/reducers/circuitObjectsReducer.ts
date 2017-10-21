@@ -11,6 +11,8 @@ import {
     DELETE_OBJECTS, EDIT_OBJECT, COPY_OBJECTS, PASTE_OBJECTS,
     CREATE_WIRE, CREATE_BLOCK
 } from '../actions/CircuitObjectsAction';
+import { snapToWireframe } from '../components/Wireframe';
+import { wireframeCellSize } from '../config';
 
 export type CircuitObjectsState = {
     idCounter: number;
@@ -188,11 +190,13 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
             });
             meanX = meanX / state.copyBufferBlockIds.size;
             meanY = meanY / state.copyBufferBlockIds.size;
-            const offsetX = action.targetPosition.x - meanX;
-            const offsetY = action.targetPosition.y - meanY;
             for (const block of copiedBlocks) {
-                block.x += offsetX;
-                block.y += offsetY;
+                const newPosition = snapToWireframe(wireframeCellSize, {
+                    x: block.x + action.targetPosition.x - meanX,
+                    y: block.y + action.targetPosition.y - meanY,
+                });
+                block.x = newPosition.x;
+                block.y = newPosition.y;
             }
             const blocksAfterPaste = [...state.blocks, ...copiedBlocks];
             const copiedWires = state.wires.filter(w =>
