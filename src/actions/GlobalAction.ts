@@ -29,7 +29,7 @@ export type SendMidi = {
     note: number;
     channel: number;
     velocity: number;
-    noteOn: boolean;
+    expireAt: number;
 };
 
 export type RefreshMidiDevices = {
@@ -60,14 +60,14 @@ export function load(circuitName: string): Load {
     };
 }
 
-export function sendMidi(ccMode: boolean, noteOn: boolean, note: number, channel: number, velocity: number): SendMidi {
+export function sendMidi(ccMode: boolean, note: number, channel: number, velocity: number, expireAt: number): SendMidi {
     return {
         type: SEND_MIDI,
         ccMode,
-        noteOn,
         note,
         channel,
         velocity,
+        expireAt,
     };
 }
 

@@ -9,7 +9,7 @@ import { parseNotes, parseIntervals, parseVelocities } from '../utils/musicUtils
 import blockDescriptors from './blocks';
 
 type OnMidiOut =
-    (ccMode: boolean, noteOn: boolean, note: number, channel: number, velocity: number) => void;
+    (ccMode: boolean, note: number, channel: number, velocity: number, expireAt: number) => void;
 
 export class Circuit {
     /**

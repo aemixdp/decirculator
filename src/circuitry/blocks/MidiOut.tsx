@@ -32,15 +32,6 @@ export const MidiOut: BlockDescriptor<State> = {
         { propKey: 'velocities', propType: 'velocities' },
     ],
     tick: (circuit, blockId, delta, config) => {
-        if (circuit.cooldown[blockId]) {
-            const timeUntilTurnOff = circuit.timeUntilTurnOff[blockId] -= delta;
-            if (timeUntilTurnOff <= 0) {
-                const note = circuit.notes[blockId][circuit.currentNoteIndex[blockId]];
-                const velocity = circuit.velocities[blockId][circuit.currentVelocityIndex[blockId]];
-                circuit.onMidiOut(circuit.ccMode[blockId], false, note, circuit.channel[blockId], velocity);
-                circuit.cooldown[blockId] = false;
-            }
-        }
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
@@ -51,10 +42,10 @@ export const MidiOut: BlockDescriptor<State> = {
                 const velocities = circuit.velocities[blockId];
                 const currentVelocityIndex = circuit.currentVelocityIndex[blockId];
                 const velocity = velocities[currentVelocityIndex];
-                circuit.onMidiOut(circuit.ccMode[blockId], true, note, circuit.channel[blockId], velocity);
+                const expireAt = Date.now() + config.gateLength;
+                circuit.onMidiOut(circuit.ccMode[blockId], note, circuit.channel[blockId], velocity, expireAt);
                 circuit.currentNoteIndex[blockId] = (currentNoteIndex + 1) % notes.length;
                 circuit.currentVelocityIndex[blockId] = (currentVelocityIndex + 1) % velocities.length;
-                circuit.timeUntilTurnOff[blockId] = config.gateLength;
                 circuit.changed[blockId] = true;
                 circuit.cooldown[blockId] = true;
                 circuit.cooldown[inputId] = true;
