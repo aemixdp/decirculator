@@ -26,7 +26,9 @@ export class MidiManager {
     onOutputsChange: () => void;
     constructor() {
         this.midiOutputs = {};
-        this.hangingMidi = new FastPriorityQueue();
+        this.hangingMidi = new FastPriorityQueue(
+            (a, b) => a.expireAt < b.expireAt
+        );
         this.refreshDevices();
         setInterval(this.tick);
     }
