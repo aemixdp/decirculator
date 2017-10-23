@@ -160,7 +160,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                 ...state,
                 wires: state.wires.map(w =>
                     action.circuit.changed[w.id]
-                        ? { ...w, gate: action.circuit.gate[w.id] }
+                        ? { ...w, gate: action.circuit.visualGate[w.id] }
                         : w
                 ),
                 blocks: blocksAfterInvalidate,

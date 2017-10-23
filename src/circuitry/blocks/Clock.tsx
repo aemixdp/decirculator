@@ -48,10 +48,9 @@ export const Clock: BlockDescriptor<State> = {
         }
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
-            if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
+            if (inputId !== -1 && circuit.gate[inputId]) {
                 circuit.ticking[blockId] = !circuit.ticking[blockId];
                 circuit.changed[blockId] = true;
-                circuit.cooldown[inputId] = true;
                 return;
             }
         }

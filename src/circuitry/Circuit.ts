@@ -41,6 +41,10 @@ export class Circuit {
      */
     gate: Array<boolean>;
     /**
+     * visualGate[i] {wires} = visual gate state of i-th object.
+     */
+    visualGate: Array<boolean>;
+    /**
      * outputGate[i*4+s] {blocks} = gate state at Side s of i-th object.
      */
     outputGate: Array<boolean>;
@@ -48,10 +52,6 @@ export class Circuit {
      * compensation[i] {blocks, wires} = compensation of i-th object in milliseconds.
      */
     compensation: Array<number>;
-    /**
-     * cooldown[i] {wires, MidiOut} = cooldown state of i-th object.
-     */
-    cooldown: Array<boolean>;
     /**
      * input[i*4+s] {blocks} = id of a wire, which is connected to Side s of i-th block.
      */
@@ -63,7 +63,7 @@ export class Circuit {
     /**
      * timeUntilTurnOff[i] {wires} = time in milliseconds until i-th object should turn off.
      */
-    timeUntilTurnOff: Array<number>;
+    timeUntilVisualGateOff: Array<number>;
     /**
      * switchTargetSide[i] {Switch} = currently selected i-th block side.
      */
@@ -156,12 +156,12 @@ export class Circuit {
         this.startPortInfo = [];
         this.blockTick = [];
         this.gate = [];
+        this.visualGate = [];
         this.outputGate = [];
         this.compensation = [];
-        this.cooldown = [];
         this.input = [];
         this.timeUntilTurnOn = [];
-        this.timeUntilTurnOff = [];
+        this.timeUntilVisualGateOff = [];
         this.switchTargetSide = [];
         this.delayList = [];
         this.counterValue = [];
@@ -196,12 +196,12 @@ export class Circuit {
             this.startPortInfo.push(null);
             this.blockTick.push(null);
             this.gate.push(false);
+            this.visualGate.push(false);
             this.outputGate.push(false, false, false, false);
             this.compensation.push(0);
-            this.cooldown.push(false);
             this.input.push(-1, -1, -1, -1);
             this.timeUntilTurnOn.push(0);
-            this.timeUntilTurnOff.push(0);
+            this.timeUntilVisualGateOff.push(0);
             this.switchTargetSide.push(0);
             this.delayList.push(new DelayList());
             this.counterValue.push(0);
@@ -297,31 +297,30 @@ export class Circuit {
         }
         for (let i = 0; i < this.length; i += 1) {
             if (this.isWire[i]) {
+                const visualGate = this.visualGate[i];
+                if (visualGate) {
+                    const timeUntilVisualGateOff = this.timeUntilVisualGateOff[i] -= delta;
+                    if (timeUntilVisualGateOff <= 0) {
+                        this.visualGate[i] = false;
+                        this.changed[i] = true;
+                    }
+                }
+                this.gate[i] = false;
                 const spi = this.startPortInfo[i] as PortInfo;
                 const outputGateIndex = spi.blockId * 4 + spi.port.side.index;
                 if (this.outputGate[outputGateIndex]) {
                     this.gate[i] = true;
-                    this.changed[i] = true;
                     this.compensation[i] = this.compensation[spi.blockId];
+                    if (!visualGate) {
+                        this.changed[i] = true;
+                    }
+                    this.visualGate[i] = true;
+                    this.timeUntilVisualGateOff[i] = this.config.gateLength;
                 }
             }
         }
         for (let i = 0; i < this.outputGate.length; i += 1) {
             this.outputGate[i] = false;
-        }
-        for (let i = 0; i < this.length; i += 1) {
-            if (!this.removed[i] && this.gate[i]) {
-                if (this.timeUntilTurnOff[i] <= 0) {
-                    this.timeUntilTurnOff[i] = this.config.gateLength;
-                } else {
-                    const timeUntilTurnOff = this.timeUntilTurnOff[i] -= delta;
-                    if (timeUntilTurnOff <= 0) {
-                        this.changed[i] = this.changed[i] || this.gate[i];
-                        this.gate[i] = false;
-                        this.cooldown[i] = false;
-                    }
-                }
-            }
         }
         if (this.changed.reduce((a, b) => a || b, false)) {
             this.onVisibleChanges();

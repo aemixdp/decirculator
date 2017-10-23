@@ -23,7 +23,7 @@ export const Counter: BlockDescriptor<State> = {
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
-            if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
+            if (inputId !== -1 && circuit.gate[inputId]) {
                 const newCurrent = circuit.counterValue[blockId] += 1;
                 if (newCurrent >= circuit.counterSteps[blockId]) {
                     for (let j = 0; j < 4; j += 1) {
@@ -34,7 +34,6 @@ export const Counter: BlockDescriptor<State> = {
                     circuit.counterValue[blockId] = 0;
                 }
                 circuit.changed[blockId] = true;
-                circuit.cooldown[inputId] = true;
             }
         }
     },

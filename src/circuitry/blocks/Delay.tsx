@@ -34,14 +34,13 @@ export const Delay: BlockDescriptor<State> = {
         }
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
-            if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
+            if (inputId !== -1 && circuit.gate[inputId]) {
                 const intervals = circuit.intervals[blockId];
                 const currentIntervalIndex = circuit.currentIntervalIndex[blockId];
                 const delay = intervals[currentIntervalIndex] / config.bpm;
                 delayList.add(delay + circuit.compensation[inputId] - delta);
                 circuit.currentIntervalIndex[blockId] = (currentIntervalIndex + 1) % intervals.length;
                 circuit.changed[blockId] = true;
-                circuit.cooldown[inputId] = true;
                 break;
             }
         }

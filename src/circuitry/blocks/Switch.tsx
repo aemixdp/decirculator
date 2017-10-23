@@ -19,8 +19,7 @@ export const Switch: BlockDescriptor<State> = {
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
-            if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
-                circuit.cooldown[inputId] = true;
+            if (inputId !== -1 && circuit.gate[inputId]) {
                 const oldSwitchTargetSide = circuit.switchTargetSide[blockId];
                 for (let j = 1; j <= 4; ++j) {
                     const newSwitchTargetSide = (oldSwitchTargetSide + j) % 4;

@@ -35,7 +35,7 @@ export const MidiOut: BlockDescriptor<State> = {
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
-            if (inputId !== -1 && !circuit.cooldown[inputId] && circuit.gate[inputId]) {
+            if (inputId !== -1 && circuit.gate[inputId]) {
                 const notes = circuit.notes[blockId];
                 const currentNoteIndex = circuit.currentNoteIndex[blockId];
                 const note = notes[currentNoteIndex];
@@ -47,8 +47,6 @@ export const MidiOut: BlockDescriptor<State> = {
                 circuit.currentNoteIndex[blockId] = (currentNoteIndex + 1) % notes.length;
                 circuit.currentVelocityIndex[blockId] = (currentVelocityIndex + 1) % velocities.length;
                 circuit.changed[blockId] = true;
-                circuit.cooldown[blockId] = true;
-                circuit.cooldown[inputId] = true;
                 return;
             }
         }
