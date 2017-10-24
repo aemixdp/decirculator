@@ -117,6 +117,14 @@ export class Circuit {
      */
     currentVelocityIndex: Array<number>;
     /**
+     * durations[i] {MidiOut} = durations of midi notes to send for i-th block.
+     */
+    durations: Array<Array<number>>;
+    /**
+     * currentDurationIndex[i] {MidiOut} = index of current duration of i-th block.
+     */
+    currentDurationIndex: Array<number>;
+    /**
      * playFired[i] {Play} = true if i-th block was already in 'gate on' state during current simulation run.
      */
     playFired: Array<boolean>;
@@ -175,6 +183,8 @@ export class Circuit {
         this.currentNoteIndex = [];
         this.velocities = [];
         this.currentVelocityIndex = [];
+        this.durations = [];
+        this.currentDurationIndex = [];
         this.playFired = [];
         this.removed = [];
         this.changed = [];
@@ -215,6 +225,8 @@ export class Circuit {
             this.currentNoteIndex.push(0);
             this.velocities.push([]);
             this.currentVelocityIndex.push(0);
+            this.durations.push([]);
+            this.currentDurationIndex.push(0);
             this.playFired.push(false);
             this.removed.push(false);
             this.changed.push(false);
@@ -260,6 +272,8 @@ export class Circuit {
                     this.currentNoteIndex[id] = block.currentNoteIndex;
                     this.velocities[id] = parseVelocities(block.velocities) || [];
                     this.currentVelocityIndex[id] = block.currentVelocityIndex;
+                    this.durations[id] = parseIntervals(block.durations, 1) || [];
+                    this.currentDurationIndex[id] = block.currentDurationIndex;
                 case 'Switch':
                     this.switchTargetSide[id] = block.targetSide;
                     break;

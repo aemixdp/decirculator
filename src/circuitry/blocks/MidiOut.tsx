@@ -12,6 +12,8 @@ type State = {
     currentNoteIndex: number;
     velocities: string;
     currentVelocityIndex: number;
+    durations: string;
+    currentDurationIndex: number;
 };
 
 export const MidiOut: BlockDescriptor<State> = {
@@ -23,6 +25,8 @@ export const MidiOut: BlockDescriptor<State> = {
         currentNoteIndex: 0,
         velocities: '100',
         currentVelocityIndex: 0,
+        durations: '1/64',
+        currentDurationIndex: 0,
     },
     statePropsToResetAfterSimulation: [],
     editableStateProps: [
@@ -30,6 +34,7 @@ export const MidiOut: BlockDescriptor<State> = {
         { propKey: 'channel', propType: 'number' },
         { propKey: 'notes', propType: 'notes' },
         { propKey: 'velocities', propType: 'velocities' },
+        { propKey: 'durations', propType: 'intervals' },
     ],
     tick: (circuit, blockId, delta, config) => {
         const offset = blockId * 4;
@@ -42,10 +47,14 @@ export const MidiOut: BlockDescriptor<State> = {
                 const velocities = circuit.velocities[blockId];
                 const currentVelocityIndex = circuit.currentVelocityIndex[blockId];
                 const velocity = velocities[currentVelocityIndex];
-                const expireAt = Date.now() + config.gateLength;
+                const durations = circuit.durations[blockId];
+                const currentDurationIndex = circuit.currentDurationIndex[blockId];
+                const duration = durations[currentDurationIndex];
+                const expireAt = Date.now() + duration / config.bpm;
                 circuit.onMidiOut(circuit.ccMode[blockId], note, circuit.channel[blockId], velocity, expireAt);
                 circuit.currentNoteIndex[blockId] = (currentNoteIndex + 1) % notes.length;
                 circuit.currentVelocityIndex[blockId] = (currentVelocityIndex + 1) % velocities.length;
+                circuit.currentDurationIndex[blockId] = (currentDurationIndex + 1) % durations.length;
                 circuit.changed[blockId] = true;
                 return;
             }

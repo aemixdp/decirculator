@@ -146,6 +146,7 @@ export function circuitObjectsReducer(state: CircuitObjectsState, action: Action
                             ...block,
                             currentNoteIndex: action.circuit.currentNoteIndex[block.id],
                             currentVelocityIndex: action.circuit.currentVelocityIndex[block.id],
+                            currentDurationIndex: action.circuit.currentDurationIndex[block.id],
                         };
                     case 'Switch':
                         return {
