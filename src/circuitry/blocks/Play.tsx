@@ -21,7 +21,7 @@ export const Play: BlockDescriptor<State> = {
         { propKey: 'skipBars', propType: 'number' },
     ],
     tick: (circuit, blockId, delta) => {
-        if (!circuit.playFired[blockId]) {
+        if (!circuit.fired[blockId]) {
             const timeUntilTurnOn = circuit.timeUntilTurnOn[blockId] -= delta;
             if (timeUntilTurnOn <= 0) {
                 const offset = blockId * 4;
@@ -30,7 +30,7 @@ export const Play: BlockDescriptor<State> = {
                         circuit.outputGate[offset + i] = true;
                     }
                 }
-                circuit.playFired[blockId] = true;
+                circuit.fired[blockId] = true;
             }
         }
     },

@@ -5,6 +5,7 @@ import { BlockDescriptor } from '../../data/BlockDescriptor';
 import { textOffset } from '../../utils/textUtils';
 
 type State = {
+    oneShot: boolean;
     current: number;
     steps: number;
 };
@@ -12,14 +13,19 @@ type State = {
 export const Counter: BlockDescriptor<State> = {
     name: 'Counter',
     initialState: {
+        oneShot: false,
         current: 0,
         steps: 4,
     },
     statePropsToResetAfterSimulation: ['current'],
     editableStateProps: [
+        { propKey: 'oneShot', propType: 'boolean' },
         { propKey: 'steps', propType: 'number' },
     ],
     tick: (circuit, blockId) => {
+        if (circuit.oneShot[blockId] && circuit.fired[blockId]) {
+            return;
+        }
         const offset = blockId * 4;
         for (let i = 0; i < 4; i += 1) {
             const inputId = circuit.input[offset + i];
@@ -31,9 +37,11 @@ export const Counter: BlockDescriptor<State> = {
                             circuit.outputGate[offset + j] = true;
                         }
                     }
+                    circuit.fired[blockId] = true;
                     circuit.counterValue[blockId] = 0;
                 }
                 circuit.changed[blockId] = true;
+                return;
             }
         }
     },

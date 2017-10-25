@@ -73,6 +73,10 @@ export class Circuit {
      */
     delayList: Array<DelayList>;
     /**
+     * oneShot[i] {Counter} = true if i-th block should output signals only once.
+     */
+    oneShot: Array<boolean>;
+    /**
      * counterValue[i] {Counter} = current counter value of i-th block.
      */
     counterValue: Array<number>;
@@ -127,7 +131,7 @@ export class Circuit {
     /**
      * playFired[i] {Play} = true if i-th block was already in 'gate on' state during current simulation run.
      */
-    playFired: Array<boolean>;
+    fired: Array<boolean>;
     /**
      * removed[i] {blocks, wires} = true if i-th block was removed.
      */
@@ -172,6 +176,7 @@ export class Circuit {
         this.timeUntilVisualGateOff = [];
         this.switchTargetSide = [];
         this.delayList = [];
+        this.oneShot = [];
         this.counterValue = [];
         this.counterSteps = [];
         this.ticking = [];
@@ -185,7 +190,7 @@ export class Circuit {
         this.currentVelocityIndex = [];
         this.durations = [];
         this.currentDurationIndex = [];
-        this.playFired = [];
+        this.fired = [];
         this.removed = [];
         this.changed = [];
     }
@@ -214,6 +219,7 @@ export class Circuit {
             this.timeUntilVisualGateOff.push(0);
             this.switchTargetSide.push(0);
             this.delayList.push(new DelayList());
+            this.oneShot.push(false);
             this.counterValue.push(0);
             this.counterSteps.push(0);
             this.ticking.push(true);
@@ -227,7 +233,7 @@ export class Circuit {
             this.currentVelocityIndex.push(0);
             this.durations.push([]);
             this.currentDurationIndex.push(0);
-            this.playFired.push(false);
+            this.fired.push(false);
             this.removed.push(false);
             this.changed.push(false);
         }
@@ -250,6 +256,7 @@ export class Circuit {
             }
             switch (block.name) {
                 case 'Counter':
+                    this.oneShot[id] = block.oneShot;
                     this.counterValue[id] = block.current;
                     this.counterSteps[id] = block.steps;
                     break;
