@@ -103,6 +103,12 @@ export class App extends React.Component<Props, State> {
             }
         } else if (e.keyCode === 27 /* esc */) {
             this.props.dispatch(uiActions.deselectObjects());
+        } else if (e.keyCode === 32 && document.activeElement.tagName === 'BODY') {
+            this.props.dispatch(
+                this.props.simulationState === 'STARTED'
+                    ? simulationActions.pause
+                    : simulationActions.start
+            );
         } else if (e.keyCode === 90 && e.ctrlKey /* ctrl-z */) {
             this.props.dispatch(reduxUndoActions.undo());
             if (this.props.newWire) {
