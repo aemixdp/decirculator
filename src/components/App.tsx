@@ -97,13 +97,14 @@ export class App extends React.Component<Props, State> {
         document.removeEventListener('keyup', this.handleKeyUp);
     }
     handleKeyDown = (e: KeyboardEvent) => {
+        if (document.activeElement.tagName !== 'BODY') return;
         if (e.keyCode === 46 /* delete */) {
             if (this.props.selectedObjectIds.size > 0) {
                 this.props.dispatch(circuitObjectsActions.deleteObjects(this.props.selectedObjectIds));
             }
         } else if (e.keyCode === 27 /* esc */) {
             this.props.dispatch(uiActions.deselectObjects());
-        } else if (e.keyCode === 32 && document.activeElement.tagName === 'BODY') {
+        } else if (e.keyCode === 32) {
             this.props.dispatch(
                 this.props.simulationState === 'STARTED'
                     ? simulationActions.pause
@@ -262,6 +263,7 @@ export class App extends React.Component<Props, State> {
         }
     }
     handleViewportClick = (event: any) => {
+        document.activeElement.blur();
         if (!this.isClickHandled) {
             if (this.props.selectedObjectIds.size > 0) {
                 this.props.dispatch(uiActions.deselectObjects());

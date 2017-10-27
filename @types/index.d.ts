@@ -8,3 +8,7 @@ declare module 'fastpriorityqueue' {
         poll(): T | undefined;
     }
 }
+
+interface Element {
+    blur(): void;
+}
