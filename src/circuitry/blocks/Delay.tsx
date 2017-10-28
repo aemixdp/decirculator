@@ -16,7 +16,9 @@ export const Delay: BlockDescriptor<State> = {
         intervals: '1/4',
         currentIntervalIndex: 0,
     },
-    statePropsToResetAfterSimulation: [],
+    statePropsToResetAfterSimulation: [
+        'currentIntervalIndex',
+    ],
     editableStateProps: [
         { propKey: 'intervals', propType: 'intervals' },
     ],

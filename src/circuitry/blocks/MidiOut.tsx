@@ -28,7 +28,11 @@ export const MidiOut: BlockDescriptor<State> = {
         durations: '1/64',
         currentDurationIndex: 0,
     },
-    statePropsToResetAfterSimulation: [],
+    statePropsToResetAfterSimulation: [
+        'currentNoteIndex',
+        'currentVelocityIndex',
+        'currentDurationIndex',
+    ],
     editableStateProps: [
         { propKey: 'ccMode', propLabel: 'cc', propType: 'boolean' },
         { propKey: 'channel', propType: 'number' },

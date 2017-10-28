@@ -11,7 +11,9 @@ export const Switch: BlockDescriptor<State> = {
     initialState: {
         targetSide: 0,
     },
-    statePropsToResetAfterSimulation: ['targetSide'],
+    statePropsToResetAfterSimulation: [
+        'targetSide',
+    ],
     editableStateProps: [
         { propKey: 'targetSide', propType: 'number' }
     ],

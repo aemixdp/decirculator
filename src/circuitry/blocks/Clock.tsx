@@ -20,7 +20,10 @@ export const Clock: BlockDescriptor<State> = {
         intervals: '1/4',
         currentIntervalIndex: 0,
     },
-    statePropsToResetAfterSimulation: ['ticking'],
+    statePropsToResetAfterSimulation: [
+        'ticking',
+        'currentIntervalIndex',
+    ],
     editableStateProps: [
         { propKey: 'ticking', propType: 'boolean' },
         { propKey: 'skipFirstGate', propType: 'boolean', propLabel: 'skipInit' },

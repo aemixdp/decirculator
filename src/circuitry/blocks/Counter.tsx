@@ -19,7 +19,9 @@ export const Counter: BlockDescriptor<State> = {
         current: 0,
         steps: 4,
     },
-    statePropsToResetAfterSimulation: ['current'],
+    statePropsToResetAfterSimulation: [
+        'current',
+    ],
     editableStateProps: [
         { propKey: 'oneShot', propType: 'boolean' },
         { propKey: 'inverse', propType: 'boolean' },
