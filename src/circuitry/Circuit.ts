@@ -77,6 +77,10 @@ export class Circuit {
      */
     oneShot: Array<boolean>;
     /**
+     * inverse[i] {Counter} = true if i-th block should operate in inverse mode.
+     */
+    inverse: Array<boolean>;
+    /**
      * counterValue[i] {Counter} = current counter value of i-th block.
      */
     counterValue: Array<number>;
@@ -177,6 +181,7 @@ export class Circuit {
         this.switchTargetSide = [];
         this.delayList = [];
         this.oneShot = [];
+        this.inverse = [];
         this.counterValue = [];
         this.counterSteps = [];
         this.ticking = [];
@@ -220,6 +225,7 @@ export class Circuit {
             this.switchTargetSide.push(0);
             this.delayList.push(new DelayList());
             this.oneShot.push(false);
+            this.inverse.push(false);
             this.counterValue.push(0);
             this.counterSteps.push(0);
             this.ticking.push(true);
@@ -257,6 +263,7 @@ export class Circuit {
             switch (block.name) {
                 case 'Counter':
                     this.oneShot[id] = block.oneShot;
+                    this.inverse[id] = block.inverse;
                     this.counterValue[id] = block.current;
                     this.counterSteps[id] = block.steps;
                     break;

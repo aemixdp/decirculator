@@ -6,6 +6,7 @@ import { textOffset } from '../../utils/textUtils';
 
 type State = {
     oneShot: boolean;
+    inverse: boolean;
     current: number;
     steps: number;
 };
@@ -14,12 +15,14 @@ export const Counter: BlockDescriptor<State> = {
     name: 'Counter',
     initialState: {
         oneShot: false,
+        inverse: false,
         current: 0,
         steps: 4,
     },
     statePropsToResetAfterSimulation: ['current'],
     editableStateProps: [
         { propKey: 'oneShot', propType: 'boolean' },
+        { propKey: 'inverse', propType: 'boolean' },
         { propKey: 'steps', propType: 'number' },
     ],
     tick: (circuit, blockId) => {
@@ -31,13 +34,16 @@ export const Counter: BlockDescriptor<State> = {
             const inputId = circuit.input[offset + i];
             if (inputId !== -1 && circuit.gate[inputId]) {
                 const newCurrent = circuit.counterValue[blockId] += 1;
-                if (newCurrent >= circuit.counterSteps[blockId]) {
+                const stepsReached = newCurrent >= circuit.counterSteps[blockId];
+                if (circuit.inverse[blockId] !== stepsReached) {
                     for (let j = 0; j < 4; j += 1) {
                         if (circuit.input[offset + j] === -1) {
                             circuit.outputGate[offset + j] = true;
                         }
                     }
                     circuit.fired[blockId] = true;
+                }
+                if (stepsReached) {
                     circuit.counterValue[blockId] = 0;
                 }
                 circuit.changed[blockId] = true;
