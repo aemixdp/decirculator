@@ -18,6 +18,7 @@ Visual programming language for sequencing MIDI signals using delay-based circui
 | Counter |             |               | Emits signal to all outputs after receiving specified number of input signals
 |         | steps       | 4             | number of input signals to receive before sending signal to outputs
 |         | one-shot    | false         | true if signals should be sent to outputs only once (per simulation)
+|         | inverse     | false         | if true counter will emit output signal after every input signal except of every n-th where n = steps
 | Switch  |             |               | Emits signal to one output at a time clockwise straight after receiving signal at any of inputs
 |         | side        | 1             | side of output port to send next output signal to (0 = up, 1 = right, 2 = down, 3 = left)
 | And     |             |               | Emits signal to all outputs when there are signals at all inputs at the same time
